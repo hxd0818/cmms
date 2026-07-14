@@ -1,0 +1,11 @@
+.next/
+node_modules/
+build/
+dist/
+coverage/
+playwright-report/
+test-results/
+pnpm-lock.yaml
+pnpm-workspace.yaml
+prisma/migrations/
+docs/plans/
