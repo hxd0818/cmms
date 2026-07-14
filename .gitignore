@@ -1,0 +1,49 @@
+# Dependencies
+node_modules/
+.pnpm-store/
+
+# Next.js
+.next/
+out/
+build/
+dist/
+
+# Environment
+.env
+.env.local
+.env.*.local
+!.env.example
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+npm-debug.log*
+pnpm-debug.log*
+
+# Testing
+coverage/
+playwright-report/
+test-results/
+
+# Prisma
+prisma/migrations/dev.db
+
+# Docker
+docker/data/
+
+# Uploads (runtime)
+tmp/uploads/
+
+# Misc
+.cache/
+.turbo/
+*.pem
