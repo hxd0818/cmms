@@ -55,7 +55,10 @@ jobs:
           cache: 'pnpm'
 
       - name: Install dependencies
-        run: pnpm install --frozen-lockfile
+        run: pnpm install --frozen-lockfile --config.dangerouslyAllowAllBuilds=true
+
+      - name: Generate Prisma client
+        run: pnpm db:generate
 
       - name: Lint
         run: pnpm lint
