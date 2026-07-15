@@ -48,6 +48,8 @@ model Guest {
   createdAt   DateTime   @default(now())
   updatedAt   DateTime   @updatedAt
 
+  meetingGuests MeetingGuest[]
+
   @@index([name])
   @@index([company])
   @@map("guests")
@@ -66,3 +68,86 @@ enum GuestLevel {
   B
   C
 }
+
+// ============ Meeting ============
+
+model Meeting {
+  id          String        @id @default(cuid())
+  name        String
+  code        String        @unique
+  status      MeetingStatus @default(DRAFT)
+  startAt     DateTime
+  endAt       DateTime
+  venue       String?
+  description String?
+  createdAt   DateTime      @default(now())
+  updatedAt   DateTime      @updatedAt
+
+  meetingGuests MeetingGuest[]
+
+  @@index([status, startAt])
+  @@map("meetings")
+}
+
+enum MeetingStatus {
+  DRAFT
+  PLANNING
+  ONGOING
+  COMPLETED
+  CANCELED
+}
+
+model MeetingGuest {
+  id                    String         @id @default(cuid())
+  meetingId             String
+  guestId               String
+  rsvpStatus            RsvpStatus     @default(PENDING)
+  groupTags             String[]
+  receptionStage        ReceptionStage @default(NOT_ARRIVED)
+  primaryMeetingGuestId String?
+  entourageRole         EntourageRole?
+  levelOverride         GuestLevel?
+  inheritLodging        Boolean        @default(true)
+  inheritTransport      Boolean        @default(true)
+  createdAt             DateTime       @default(now())
+  updatedAt             DateTime       @updatedAt
+
+  meeting      Meeting       @relation(fields: [meetingId], references: [id], onDelete: Cascade)
+  guest        Guest         @relation(fields: [guestId], references: [id])
+  primary      MeetingGuest? @relation("EntourageRelation", fields: [primaryMeetingGuestId], references: [id])
+  subordinates MeetingGuest[] @relation("EntourageRelation")
+
+  @@unique([meetingId, guestId])
+  @@index([meetingId, receptionStage])
+  @@index([guestId])
+  @@map("meeting_guests")
+}
+
+enum RsvpStatus {
+  PENDING
+  CONFIRMED
+  DECLINED
+}
+
+enum ReceptionStage {
+  NOT_ARRIVED
+  CHECKED_IN
+  IN_HOUSE
+  DEPARTED
+  NO_SHOW
+}
+
+enum EntourageRole {
+  PRIMARY
+  SECRETARY
+  SECURITY
+  INTERPRETER
+  FAMILY
+  AIDE
+  DRIVER
+}
+
+// ============ Forward declarations (full schemas added in their own phases) ============
+
+// AgendaItem will be fully defined in M2.2 (Phase 2 Task 2.2.1)
+
