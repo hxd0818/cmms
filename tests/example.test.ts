@@ -1,0 +1,11 @@
+import { describe, it, expect } from 'vitest';
+
+describe('vitest setup', () => {
+  it('works', () => {
+    expect(1 + 1).toBe(2);
+  });
+
+  it('handles strings', () => {
+    expect('CMMS'.toLowerCase()).toBe('cmms');
+  });
+});
