@@ -250,3 +250,32 @@ enum TransportStatus {
   REASSIGNED
   CANCELED
 }
+
+// ============ Access Tokens (portals) ============
+
+model GuestAccessToken {
+  id              String   @id @default(cuid())
+  meetingGuestId  String   @unique
+  tokenHash       String   @unique
+  issuedAt        DateTime @default(now())
+  expiresAt       DateTime
+  revokedAt       DateTime?
+  revokedBy       String?
+  lastAccessedAt  DateTime?
+  accessCount     Int      @default(0)
+
+  @@index([expiresAt])
+  @@map("guest_access_tokens")
+}
+
+model DriverAccessToken {
+  id               String   @id @default(cuid())
+  transportOrderId String   @unique
+  tokenHash        String   @unique
+  issuedAt         DateTime @default(now())
+  expiresAt        DateTime
+  revokedAt        DateTime?
+
+  @@map("driver_access_tokens")
+}
+
