@@ -8,11 +8,63 @@
 
 ## [Unreleased]
 
+### 进行中
+
+- **Phase 3 - 深度接待**：Lodging + Catering + Gift + Fee + Guest 360° 视图
+
 ### 计划中
 
-- **Phase 2 - 现场运营**：Meeting + MeetingGuest + Agenda + Reception + Transport + Driver portal（[plan](./docs/plans/2026-07-15-cmms-phase2.md)）
-- **Phase 3 - 深度接待**：Lodging + Catering + Gift + Fee + Guest 360° 视图
 - **Phase 4 - 运营优化**：报表 + 通知中心 + 审计日志 + 生产硬化
+
+---
+
+## [0.3.0] - 2026-07-15 — Phase 2：现场运营核心
+
+### Added — M2.1 Meeting + MeetingGuest
+
+- **Meeting Prisma 模型**：MeetingStatus 5 态状态机（DRAFT→PLANNING→ONGOING→COMPLETED，任意→CANCELED）
+- **MeetingGuest 自引用随行关系**：primaryMeetingGuestId + EntourageRole（7 种角色）+ 规格继承（levelOverride / inheritLodging / inheritTransport）
+- **ReceptionStage 5 态状态机**：NOT_ARRIVED→CHECKED_IN→IN_HOUSE→DEPARTED（+NO_SHOW）
+- **Meeting UI**：列表（状态 Badge）+ 详情（状态切换下拉）+ 创建/编辑表单（datetime-local）
+- **MeetingGuest Excel 批量导入**：BullMQ 异步，按手机号查找 Guest，主嘉宾缓存支持随行关联
+- **会议嘉宾管理 UI**：搜索添加 Dialog + 主嘉宾/随行缩进展示 + 移除
+
+### Added — M2.2 Agenda
+
+- **AgendaItem 模型**：含 AgendaType 6 类 + speakerIds 数组 + 时间范围
+- **演讲嘉宾冲突检测**：PostgreSQL `hasSome` + 日期重叠查询，同一演讲嘉宾不可时间重叠
+- **议程时间线 UI**：类型 Badge + 创建表单 + 删除确认
+
+### Added — M2.3 Reception
+
+- **签到服务**：5 态状态机 + 简化 Guest 360 聚合器（meetingGuest + speaker 议程）
+- **签到台 UI**：搜索待签到嘉宾（按姓名/单位）+ 一键签到 + 标记未到
+- **Kanban 任务看板**：4 列（待签到/已签到/在场/已离场）+ 5 秒轮询（替代 WebSocket）
+
+### Added — M2.4 Transport + Vehicle
+
+- **Vehicle 资源池**：plateNo 唯一 + 类型/容量/司机信息
+- **TransportOrder 冲突检测**：车辆时间窗口（前 30min + 后 60min）重叠检测 + 容量校验（主嘉宾 + inheritTransport 随行）
+- **7 态状态机**：UNASSIGNED→ASSIGNED→EN_ROUTE→PICKED_UP→COMPLETED（+REASSIGNED/CANCELED）
+- **调度 UI**：按时间排序表 + 分配车辆 Dialog + 状态切换下拉（只显示合法下一状态）
+
+### Added — M2.5 Token 系统 + 司机端
+
+- **GuestAccessToken + DriverAccessToken**：HMAC-SHA256 哈希存储（原值不入库），有状态（DB-backed），可吊销（revokedAt），自动过期
+- **Token Server Actions**：issueGuestToken / revokeGuestToken / issueDriverToken
+- **司机端 H5**：`/d/[token]` 路由，Token 验证 Layout + 任务详情 + 状态更新按钮 + REST API endpoint
+
+### Changed
+
+- Prisma 7 model relations 需在 MeetingGuest 上声明所有反向关系
+- shadcn 4.12 Select onValueChange 返回 `string | null`（非 `string`），需处理 null
+- Zod 4 `.partial()` 在含 `.refine()` 的 schema 上报错（拆分 base + refine 解决）
+
+### Fixed
+
+- AgendaForm zodResolver 用了含 `meetingId` 的 schema，表单不含 `meetingId` 导致校验失败 → 拆分 `agendaFormSchema`
+- Turbopack `.next` 缓存在 Prisma schema 变更后不自动失效 → 手动清理 `.next` 目录
+- Playwright strict mode 在多元素匹配时报错 → 用 `.first()` 或更精确的选择器
 
 ---
 

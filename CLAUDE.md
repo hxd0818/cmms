@@ -13,7 +13,7 @@ This file provides project-specific guidance to Claude Code when working in this
 
 CMMS（会务管理系统）是单组织内部使用的、以接待运营为核心的通用会务管理平台。Next.js 16 全栈单体，非 monorepo。
 
-**当前进度**：Phase 0+1 完成（v0.2.0-guest-module），Phase 2 计划已就绪待实施。
+**当前进度**：Phase 0-2 完成（v0.3.0-phase2），Phase 3 进行中（Lodging/Catering/Gift/Fee）。
 
 ## Critical Project Rules
 

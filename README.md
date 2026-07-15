@@ -83,8 +83,8 @@ pnpm worker:start
 | --------- | ------------------------------- | ------------------------------------------------------- |
 | Phase 0   | ✅ 完成 (`v0.1.0-foundation`)   | 项目骨架、认证、CI                                      |
 | Phase 1   | ✅ 完成 (`v0.2.0-guest-module`) | 嘉宾信息库（参考实现）                                  |
-| Phase 2   | 🚧 计划已就绪                   | Meeting/Reception/Transport/Driver                      |
-| Phase 3+4 | 🚧 计划已就绪                   | Lodging/Catering/Gift/Fee/360 + 报表/通知/审计/生产硬化 |
+| Phase 2   | ✅ 完成 (`v0.3.0-phase2`)       | Meeting/Reception/Transport/Driver portal               |
+| Phase 3+4 | 🚧 进行中                       | Lodging/Catering/Gift/Fee/360 + 报表/通知/审计/生产硬化 |
 
 详见 [CHANGELOG.md](./CHANGELOG.md) 与 [docs/plans/](./docs/plans/)。
 
