@@ -1,0 +1,90 @@
+'use server';
+
+import { transportFormSchema } from '@/lib/shared/transport';
+import { transportService } from '@/lib/domain/transport/service';
+import {
+  assertAuthorized,
+  getContext,
+  handleError,
+  type ActionResult,
+} from '@/lib/actions/utils';
+import { revalidatePath } from 'next/cache';
+import type { TransportStatus } from '@/lib/generated/prisma/enums';
+
+export async function createTransportOrder(input: {
+  meetingId: string;
+  meetingGuestId: string;
+  pickupType: string;
+  pickupLocation: string;
+  pickupTime: string;
+  dropoffLocation: string;
+  flightNo?: string;
+}): Promise<ActionResult<{ id: string }>> {
+  try {
+    const { ability } = await getContext();
+    assertAuthorized(ability, 'create', 'TransportOrder');
+    const data = transportFormSchema.parse({
+      pickupType: input.pickupType,
+      pickupLocation: input.pickupLocation,
+      pickupTime: input.pickupTime,
+      dropoffLocation: input.dropoffLocation,
+      flightNo: input.flightNo,
+    });
+    const order = await transportService.create({
+      meetingId: input.meetingId,
+      meetingGuestId: input.meetingGuestId,
+      ...data,
+    });
+    revalidatePath(`/meetings/${input.meetingId}/transport`);
+    return { ok: true, data: { id: order.id } };
+  } catch (e) {
+    return handleError(e);
+  }
+}
+
+export async function assignVehicle(
+  orderId: string,
+  vehicleId: string,
+  meetingId: string,
+): Promise<ActionResult<{ id: string }>> {
+  try {
+    const { ability } = await getContext();
+    assertAuthorized(ability, 'update', 'TransportOrder');
+    await transportService.assign(orderId, vehicleId);
+    revalidatePath(`/meetings/${meetingId}/transport`);
+    return { ok: true, data: { id: orderId } };
+  } catch (e) {
+    return handleError(e);
+  }
+}
+
+export async function updateTransportStatus(
+  orderId: string,
+  status: TransportStatus,
+  meetingId: string,
+): Promise<ActionResult<{ id: string }>> {
+  try {
+    const { ability } = await getContext();
+    assertAuthorized(ability, 'update', 'TransportOrder');
+    await transportService.updateStatus(orderId, status);
+    revalidatePath(`/meetings/${meetingId}/transport`);
+    return { ok: true, data: { id: orderId } };
+  } catch (e) {
+    return handleError(e);
+  }
+}
+
+export async function deleteTransportOrder(
+  orderId: string,
+  meetingId: string,
+): Promise<ActionResult<{ id: string }>> {
+  try {
+    const { ability } = await getContext();
+    assertAuthorized(ability, 'delete', 'TransportOrder');
+    await transportService.delete(orderId);
+    revalidatePath(`/meetings/${meetingId}/transport`);
+    return { ok: true, data: { id: orderId } };
+  } catch (e) {
+    return handleError(e);
+  }
+}
