@@ -84,6 +84,7 @@ model Meeting {
   updatedAt   DateTime      @updatedAt
 
   meetingGuests MeetingGuest[]
+  agendaItems   AgendaItem[]
 
   @@index([status, startAt])
   @@map("meetings")
@@ -151,3 +152,33 @@ enum EntourageRole {
 
 // AgendaItem will be fully defined in M2.2 (Phase 2 Task 2.2.1)
 
+
+// ============ AgendaItem ============
+
+model AgendaItem {
+  id         String    @id @default(cuid())
+  meetingId  String
+  title      String
+  type       AgendaType
+  startAt    DateTime
+  endAt      DateTime
+  venue      String?
+  speakerIds String[]
+  notes      String?
+  createdAt  DateTime  @default(now())
+  updatedAt  DateTime  @updatedAt
+
+  meeting Meeting @relation(fields: [meetingId], references: [id], onDelete: Cascade)
+
+  @@index([meetingId, startAt])
+  @@map("agenda_items")
+}
+
+enum AgendaType {
+  KEYNOTE
+  PANEL
+  BREAK
+  MEAL
+  TOUR
+  OTHER
+}
