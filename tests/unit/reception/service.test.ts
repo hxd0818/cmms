@@ -10,7 +10,31 @@ vi.mock('@/lib/domain/meeting-guest/repository', () => ({
 
 vi.mock('@/lib/domain/agenda/repository', () => ({
   agendaRepository: {
-    findByMeeting: vi.fn(),
+    findByMeeting: vi.fn().mockResolvedValue([]),
+  },
+}));
+
+vi.mock('@/lib/domain/transport/repository', () => ({
+  transportRepository: {
+    findByMeeting: vi.fn().mockResolvedValue([]),
+  },
+}));
+
+vi.mock('@/lib/domain/lodging/repository', () => ({
+  lodgingRepository: {
+    findByMeeting: vi.fn().mockResolvedValue([]),
+  },
+}));
+
+vi.mock('@/lib/domain/catering/repository', () => ({
+  cateringRepository: {
+    findByMeeting: vi.fn().mockResolvedValue([]),
+  },
+}));
+
+vi.mock('@/lib/domain/gift/repository', () => ({
+  giftRepository: {
+    findOrdersByMeeting: vi.fn().mockResolvedValue([]),
   },
 }));
 
