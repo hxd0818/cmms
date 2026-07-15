@@ -1,12 +1,16 @@
 import 'dotenv/config';
 import { logger } from '@/lib/utils/logger';
 import { registerGuestImportWorker } from '@/lib/queue/guest-import.queue';
+import { registerMeetingGuestImportWorker } from '@/lib/queue/meeting-guest-import.queue';
 import type { Worker } from 'bullmq';
 
 async function main() {
   logger.info('CMMS worker starting');
 
-  const workers: Worker[] = [registerGuestImportWorker()];
+  const workers: Worker[] = [
+    registerGuestImportWorker(),
+    registerMeetingGuestImportWorker(),
+  ];
 
   logger.info({ count: workers.length, names: workers.map((w) => w.name) }, 'workers registered');
 
