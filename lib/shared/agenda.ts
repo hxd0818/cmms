@@ -30,3 +30,16 @@ export type AgendaCreateInput = z.infer<typeof agendaCreateSchema>;
 
 export const agendaUpdateSchema = agendaBaseSchema.partial();
 export type AgendaUpdateInput = z.infer<typeof agendaUpdateSchema>;
+
+/**
+ * Form-only schema (without meetingId) for client-side form validation.
+ * meetingId is injected in the Server Action call.
+ */
+export const agendaFormSchema = agendaBaseSchema
+  .omit({ meetingId: true })
+  .refine((d) => d.endAt > d.startAt, {
+    message: '结束时间必须晚于开始时间',
+    path: ['endAt'],
+  });
+export type AgendaFormValues = z.infer<typeof agendaFormSchema>;
+
