@@ -1,9 +1,5 @@
 import { prisma } from '@/lib/db/client';
-import type {
-  VehicleCreateData,
-  VehicleListParams,
-  VehicleUpdateData,
-} from './types';
+import type { VehicleCreateData, VehicleListParams, VehicleUpdateData } from './types';
 
 export const vehicleRepository = {
   async create(data: VehicleCreateData) {

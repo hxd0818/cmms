@@ -76,9 +76,7 @@ export function VehicleForm() {
         <div>
           <Label htmlFor="plateNo">车牌号 *</Label>
           <Input id="plateNo" placeholder="如 京A12345" {...register('plateNo')} />
-          {errors.plateNo && (
-            <p className="text-xs text-red-500">{errors.plateNo.message}</p>
-          )}
+          {errors.plateNo && <p className="text-xs text-red-500">{errors.plateNo.message}</p>}
         </div>
         <div>
           <Label htmlFor="type">车辆类型 *</Label>
@@ -104,9 +102,7 @@ export function VehicleForm() {
             max={60}
             {...register('capacity', { valueAsNumber: true })}
           />
-          {errors.capacity && (
-            <p className="text-xs text-red-500">{errors.capacity.message}</p>
-          )}
+          {errors.capacity && <p className="text-xs text-red-500">{errors.capacity.message}</p>}
         </div>
         <div>
           <Label htmlFor="belongs">所属车队</Label>
@@ -115,9 +111,7 @@ export function VehicleForm() {
         <div>
           <Label htmlFor="driverName">司机姓名 *</Label>
           <Input id="driverName" {...register('driverName')} />
-          {errors.driverName && (
-            <p className="text-xs text-red-500">{errors.driverName.message}</p>
-          )}
+          {errors.driverName && <p className="text-xs text-red-500">{errors.driverName.message}</p>}
         </div>
         <div>
           <Label htmlFor="driverPhone">司机手机 *</Label>

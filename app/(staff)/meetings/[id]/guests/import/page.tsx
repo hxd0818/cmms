@@ -20,7 +20,11 @@ export default async function MeetingGuestImportPage({ params }: PageProps) {
         主嘉宾手机为空 → 该行为主嘉宾；填了 → 该行为对应主嘉宾的随行。
       </p>
       <p className="text-sm">
-        <Link href="/api/meetings/guests/template.xlsx" className="text-blue-600 underline" download>
+        <Link
+          href="/api/meetings/guests/template.xlsx"
+          className="text-blue-600 underline"
+          download
+        >
           下载模板
         </Link>
       </p>

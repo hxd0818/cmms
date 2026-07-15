@@ -11,14 +11,9 @@ const STAGE_TRANSITIONS: Record<ReceptionStage, ReceptionStage[]> = {
   NO_SHOW: [],
 };
 
-function assertTransition(
-  current: ReceptionStage,
-  target: ReceptionStage,
-): void {
+function assertTransition(current: ReceptionStage, target: ReceptionStage): void {
   if (!STAGE_TRANSITIONS[current].includes(target)) {
-    throw new ValidationError(
-      `Invalid reception stage transition: ${current} -> ${target}`,
-    );
+    throw new ValidationError(`Invalid reception stage transition: ${current} -> ${target}`);
   }
 }
 

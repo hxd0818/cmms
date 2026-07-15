@@ -46,10 +46,10 @@ const meetingBaseSchema = z.object({
   description: z.string().max(2000).optional(),
 });
 
-export const meetingCreateSchema = meetingBaseSchema.refine(
-  (d) => d.endAt > d.startAt,
-  { message: '结束时间必须晚于开始时间', path: ['endAt'] },
-);
+export const meetingCreateSchema = meetingBaseSchema.refine((d) => d.endAt > d.startAt, {
+  message: '结束时间必须晚于开始时间',
+  path: ['endAt'],
+});
 
 export type MeetingCreateInput = z.infer<typeof meetingCreateSchema>;
 

@@ -4,15 +4,16 @@
 
 ## 1. 环境要求
 
-| 工具 | 最低版本 | 备注 |
-|---|---|---|
-| Node.js | 22.13+ | pnpm 11 强制要求（用 `node --version` 确认） |
-| pnpm | 11.13+ | `npm install -g pnpm` |
-| Docker Desktop | 最新 | 用于 PostgreSQL + Redis |
-| Git | 2.40+ | |
-| VS Code（推荐） | 最新 | 安装 ESLint、Prettier、Tailwind CSS IntelliSense 扩展 |
+| 工具            | 最低版本 | 备注                                                  |
+| --------------- | -------- | ----------------------------------------------------- |
+| Node.js         | 22.13+   | pnpm 11 强制要求（用 `node --version` 确认）          |
+| pnpm            | 11.13+   | `npm install -g pnpm`                                 |
+| Docker Desktop  | 最新     | 用于 PostgreSQL + Redis                               |
+| Git             | 2.40+    |                                                       |
+| VS Code（推荐） | 最新     | 安装 ESLint、Prettier、Tailwind CSS IntelliSense 扩展 |
 
 可选：
+
 - PostgreSQL GUI：`pnpm exec prisma studio`（无需额外工具）
 - Redis GUI：`redis-insight`（可选）
 - API 测试：Hoppscotch / Postman
@@ -66,6 +67,7 @@ pnpm worker:start         # BullMQ worker (独立终端)
 ```
 
 **首次访问功能前**，确保两个都启动：
+
 - `pnpm dev` 提供 Web 界面
 - `pnpm worker:start` 处理 Excel 导入、通知等异步任务
 
@@ -201,11 +203,11 @@ export async function doSomething(
   try {
     const { ability } = await getContext();
     assertAuthorized(ability, 'create', 'SomeSubject');
-    
+
     const data = someSchema.parse(input);
     const result = await someService.create(data);
     revalidatePath('/some-path');
-    
+
     return { ok: true, data: { id: result.id } };
   } catch (e) {
     return handleError(e);
@@ -250,6 +252,7 @@ docker exec cmms-postgres psql -U cmms -d cmms -c "SELECT phone FROM guests LIMI
 ```
 
 应用层读出来是明文：
+
 ```bash
 docker exec cmms-postgres psql -U cmms -d cmms -c "SELECT name, phone FROM guests LIMIT 3;"
 # 注意：psql 看到的是密文；通过 Prisma client 查询是明文

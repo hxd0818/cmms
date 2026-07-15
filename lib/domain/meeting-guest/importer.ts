@@ -113,10 +113,7 @@ export async function processMeetingGuestImport(data: {
       }
 
       // Check if already in meeting
-      const existing = await meetingGuestRepository.findByMeetingAndGuest(
-        data.meetingId,
-        guest.id,
-      );
+      const existing = await meetingGuestRepository.findByMeetingAndGuest(data.meetingId, guest.id);
       if (existing) {
         result.skipped++;
         // Cache for subordinate lookup
@@ -146,7 +143,10 @@ export async function processMeetingGuestImport(data: {
       }
 
       const groupTags = record.groupTags
-        ? record.groupTags.split(/[,，]/).map((s) => s.trim()).filter(Boolean)
+        ? record.groupTags
+            .split(/[,，]/)
+            .map((s) => s.trim())
+            .filter(Boolean)
         : [];
 
       const mg = await meetingGuestRepository.create({
@@ -166,6 +166,9 @@ export async function processMeetingGuestImport(data: {
     }
   }
 
-  logger.info({ result, meetingId: data.meetingId, userId: data.userId }, 'meeting-guest import done');
+  logger.info(
+    { result, meetingId: data.meetingId, userId: data.userId },
+    'meeting-guest import done',
+  );
   return result;
 }

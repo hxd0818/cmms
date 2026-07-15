@@ -12,12 +12,7 @@ export default async function MeetingsPage({ searchParams }: PageProps) {
   const result = await meetingService.list({
     search: params.search,
     status: params.status as
-      | 'DRAFT'
-      | 'PLANNING'
-      | 'ONGOING'
-      | 'COMPLETED'
-      | 'CANCELED'
-      | undefined,
+      'DRAFT' | 'PLANNING' | 'ONGOING' | 'COMPLETED' | 'CANCELED' | undefined,
     page: params.page ? Number(params.page) : 1,
     pageSize: 20,
   });

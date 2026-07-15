@@ -35,10 +35,13 @@ export default async function TransportPage({ params }: PageProps) {
         </p>
       </div>
 
-      <NewOrderForm meetingId={id} guests={meetingGuests.map((mg) => ({
-        id: mg.id,
-        name: mg.guest.name,
-      }))} />
+      <NewOrderForm
+        meetingId={id}
+        guests={meetingGuests.map((mg) => ({
+          id: mg.id,
+          name: mg.guest.name,
+        }))}
+      />
 
       <TransportList meetingId={id} orders={orders} vehicles={vehicles.items} />
     </div>

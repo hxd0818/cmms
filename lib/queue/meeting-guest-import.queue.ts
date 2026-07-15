@@ -10,9 +10,8 @@ export interface MeetingGuestImportJobData {
   jobId: string;
 }
 
-export const meetingGuestImportQueue = defineQueue<MeetingGuestImportJobData>(
-  'meeting-guest-import',
-);
+export const meetingGuestImportQueue =
+  defineQueue<MeetingGuestImportJobData>('meeting-guest-import');
 
 export function registerMeetingGuestImportWorker(): Worker<MeetingGuestImportJobData> {
   return registerWorker<MeetingGuestImportJobData>(

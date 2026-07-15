@@ -95,9 +95,7 @@ export function AgendaForm({ meetingId, speakerOptions: _ }: Props) {
         <div className="col-span-2">
           <Label htmlFor="title">议程标题 *</Label>
           <Input id="title" {...register('title')} />
-          {errors.title && (
-            <p className="text-xs text-red-500">{errors.title.message}</p>
-          )}
+          {errors.title && <p className="text-xs text-red-500">{errors.title.message}</p>}
         </div>
         <div>
           <Label htmlFor="type">类型 *</Label>
@@ -121,16 +119,12 @@ export function AgendaForm({ meetingId, speakerOptions: _ }: Props) {
         <div>
           <Label htmlFor="startAt">开始时间 *</Label>
           <Input id="startAt" type="datetime-local" {...register('startAt')} />
-          {errors.startAt && (
-            <p className="text-xs text-red-500">{errors.startAt.message}</p>
-          )}
+          {errors.startAt && <p className="text-xs text-red-500">{errors.startAt.message}</p>}
         </div>
         <div>
           <Label htmlFor="endAt">结束时间 *</Label>
           <Input id="endAt" type="datetime-local" {...register('endAt')} />
-          {errors.endAt && (
-            <p className="text-xs text-red-500">{errors.endAt.message}</p>
-          )}
+          {errors.endAt && <p className="text-xs text-red-500">{errors.endAt.message}</p>}
         </div>
         <div className="col-span-2">
           <Label htmlFor="notes">备注</Label>

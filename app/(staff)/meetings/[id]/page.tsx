@@ -61,9 +61,7 @@ export default async function MeetingDetailPage({ params }: PageProps) {
         <Field label="开始时间">{new Date(meeting.startAt).toLocaleString('zh-CN')}</Field>
         <Field label="结束时间">{new Date(meeting.endAt).toLocaleString('zh-CN')}</Field>
         <Field label="场地">{meeting.venue ?? '-'}</Field>
-        <Field label="创建时间">
-          {new Date(meeting.createdAt).toLocaleString('zh-CN')}
-        </Field>
+        <Field label="创建时间">{new Date(meeting.createdAt).toLocaleString('zh-CN')}</Field>
         <Field label="会议说明" full>
           {meeting.description ?? '-'}
         </Field>

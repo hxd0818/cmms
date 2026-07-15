@@ -34,10 +34,7 @@ export const agendaService = {
     }
 
     // Re-check conflicts if time or speakers changed
-    if (
-      (data.startAt || data.endAt || data.speakerIds) &&
-      newSpeakers.length > 0
-    ) {
+    if ((data.startAt || data.endAt || data.speakerIds) && newSpeakers.length > 0) {
       const conflicts = await agendaRepository.findSpeakerItemsInRange(
         newSpeakers,
         newStart,
@@ -46,9 +43,7 @@ export const agendaService = {
       );
       if (conflicts.length > 0) {
         const c = conflicts[0]!;
-        throw new ConflictError(
-          `演讲嘉宾在此时段已有其他议程「${c.title}」`,
-        );
+        throw new ConflictError(`演讲嘉宾在此时段已有其他议程「${c.title}」`);
       }
     }
 

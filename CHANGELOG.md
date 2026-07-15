@@ -9,6 +9,7 @@
 ## [Unreleased]
 
 ### 计划中
+
 - **Phase 2 - 现场运营**：Meeting + MeetingGuest + Agenda + Reception + Transport + Driver portal（[plan](./docs/plans/2026-07-15-cmms-phase2.md)）
 - **Phase 3 - 深度接待**：Lodging + Catering + Gift + Fee + Guest 360° 视图
 - **Phase 4 - 运营优化**：报表 + 通知中心 + 审计日志 + 生产硬化
@@ -18,6 +19,7 @@
 ## [0.2.0] - 2026-07-15 — Phase 1：Guest 模块端到端
 
 ### Added
+
 - **Guest Prisma 模型**：含 Gender / GuestLevel 枚举，软删除（deletedAt）
 - **AES-256-GCM 字段加密**：手机号、身份证号透明加密（`lib/db/field-encryption.ts` + Prisma `$extends`）
 - **共享 Zod schema**：`lib/shared/guest.ts`（含中文手机号正则、身份证号校验）
@@ -39,6 +41,7 @@
 - **测试覆盖**：20 单元测试 + 8 E2E 测试
 
 ### Changed
+
 - 域模型枚举 import 路径：Prisma 7 改为 `@/lib/generated/prisma/{client,enums}`，不再用 `@prisma/client`
 
 ---
@@ -46,6 +49,7 @@
 ## [0.1.0] - 2026-07-15 — Phase 0：项目骨架
 
 ### Added
+
 - **Next.js 16.2.10 全栈**：App Router + Turbopack + React 19.2.4
 - **TypeScript 5.9 严格模式**：开启 `strict` / `noUncheckedIndexedAccess` / `noImplicitOverride`
 - **Tailwind CSS v4**：CSS-first 配置（`@import "tailwindcss"`）
@@ -61,6 +65,7 @@
 - **种子数据**：`admin@cmms.local` (SUPER_ADMIN) + `viewer@cmms.local` (VIEWER)
 
 ### Decisions
+
 - **Next.js 14 → 16**：原计划 14 已 EOL，升级到 2026-07-01 发布的 16.2.10（active 版本）
 - **Tailwind v3 → v4**：CSS-first 配置，与 Next.js 16 原生兼容
 - **Prisma 5 → 7**：最新大版本，driver adapter 模式

@@ -1,10 +1,6 @@
 import { vehicleRepository } from './repository';
 import { ConflictError, NotFoundError } from '@/lib/shared/errors';
-import type {
-  VehicleCreateData,
-  VehicleListParams,
-  VehicleUpdateData,
-} from './types';
+import type { VehicleCreateData, VehicleListParams, VehicleUpdateData } from './types';
 
 export const vehicleService = {
   async create(data: VehicleCreateData) {

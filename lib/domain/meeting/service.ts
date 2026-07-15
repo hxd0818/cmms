@@ -1,11 +1,7 @@
 import { meetingRepository } from './repository';
 import { ConflictError, NotFoundError, ValidationError } from '@/lib/shared/errors';
 import type { MeetingStatus } from '@/lib/generated/prisma/enums';
-import type {
-  MeetingCreateData,
-  MeetingListParams,
-  MeetingUpdateData,
-} from './types';
+import type { MeetingCreateData, MeetingListParams, MeetingUpdateData } from './types';
 
 const STATUS_TRANSITIONS: Record<MeetingStatus, MeetingStatus[]> = {
   DRAFT: ['PLANNING', 'CANCELED'],
@@ -45,9 +41,7 @@ export const meetingService = {
       throw new ValidationError(`Meeting already in status ${current}`);
     }
     if (!STATUS_TRANSITIONS[current].includes(target)) {
-      throw new ValidationError(
-        `Invalid status transition: ${current} -> ${target}`,
-      );
+      throw new ValidationError(`Invalid status transition: ${current} -> ${target}`);
     }
     return meetingRepository.updateStatus(id, target);
   },

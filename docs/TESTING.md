@@ -21,15 +21,15 @@
 
 ## 2. 工具与版本
 
-| 工具 | 版本 | 用途 |
-|---|---|---|
-| Vitest | 4.1 | 单元测试 + 集成测试 |
-| @testing-library/react | 16.3 | React 组件测试 |
-| @testing-library/jest-dom | 6.9 | DOM 断言扩展 |
-| jsdom | 29.1 | 浏览器环境模拟 |
-| Playwright | 1.61 | E2E 测试（Chromium） |
-| @vitejs/plugin-react | 6.0 | Vitest React 支持 |
-| Zod | 4.4 | 运行时 schema 验证（也算一层"测试"） |
+| 工具                      | 版本 | 用途                                 |
+| ------------------------- | ---- | ------------------------------------ |
+| Vitest                    | 4.1  | 单元测试 + 集成测试                  |
+| @testing-library/react    | 16.3 | React 组件测试                       |
+| @testing-library/jest-dom | 6.9  | DOM 断言扩展                         |
+| jsdom                     | 29.1 | 浏览器环境模拟                       |
+| Playwright                | 1.61 | E2E 测试（Chromium）                 |
+| @vitejs/plugin-react      | 6.0  | Vitest React 支持                    |
+| Zod                       | 4.4  | 运行时 schema 验证（也算一层"测试"） |
 
 ## 3. 目录结构
 
@@ -106,7 +106,7 @@ describe('guestService', () => {
     it('rejects duplicate phone', async () => {
       // Arrange
       vi.mocked(repo.findByPhone).mockResolvedValue({ id: 'existing' } as never);
-      
+
       // Act + Assert
       await expect(service.create({ phone: '138...', ... }))
         .rejects.toThrow(ConflictError);
@@ -152,12 +152,12 @@ test.describe('Guest management', () => {
   });
 
   test('creates a new guest via form', async ({ page }) => {
-    const phone = `139${Date.now().toString().slice(-8)}`;  // 唯一手机号
+    const phone = `139${Date.now().toString().slice(-8)}`; // 唯一手机号
     await page.goto('/guests/new');
     await page.getByLabel('姓名 *').fill(`E2E_${Date.now()}`);
     await page.getByLabel('手机').fill(phone);
     await page.getByRole('button', { name: '创建' }).click();
-    
+
     await expect(page).toHaveURL(/\/guests\/cmr/);
   });
 });
@@ -186,15 +186,15 @@ test.describe('Guest management', () => {
 
 ### 7.1 业务规则（每个规则一个测试）
 
-| 模块 | 必测规则 |
-|---|---|
-| Guest | 手机号去重、必填校验、软删除 |
-| Meeting | 状态机转换、code 唯一 |
-| MeetingGuest | 一会议一嘉宾、随行关系、规格继承 |
-| Agenda | 演讲嘉宾时间冲突 |
-| Transport | 车辆时间冲突、座位容量 |
-| Lodging | 房间日期冲突、同住人匹配 |
-| Token | 过期失效、吊销立即生效、HMAC 验证 |
+| 模块         | 必测规则                          |
+| ------------ | --------------------------------- |
+| Guest        | 手机号去重、必填校验、软删除      |
+| Meeting      | 状态机转换、code 唯一             |
+| MeetingGuest | 一会议一嘉宾、随行关系、规格继承  |
+| Agenda       | 演讲嘉宾时间冲突                  |
+| Transport    | 车辆时间冲突、座位容量            |
+| Lodging      | 房间日期冲突、同住人匹配          |
+| Token        | 过期失效、吊销立即生效、HMAC 验证 |
 
 ### 7.2 E2E 核心流程
 
@@ -216,6 +216,7 @@ test.describe('Guest management', () => {
 - **app/(staff)/**：30%+（UI 主要靠 E2E，不需要每个组件测试）
 
 查看覆盖率：
+
 ```bash
 pnpm test -- --coverage
 # 打开 coverage/index.html
@@ -262,12 +263,14 @@ CI 中 PostgreSQL 16 + Redis 7 作为 service containers 起来。
 ### 10.1 Seed 数据
 
 `prisma/seed/index.ts` 提供：
+
 - `admin@cmms.local` / `admin123`（SUPER_ADMIN）
 - `viewer@cmms.local` / `viewer123`（VIEWER）
 
 ### 10.2 测试专用 fixture（Phase 2+ 引入）
 
 如需更丰富的测试数据，创建 `prisma/seed/demo-meeting.ts`：
+
 - 1 个会议 + 5 个嘉宾 + 2 辆车 + 3 个 transport orders
 - 仅在开发环境手动运行：`pnpm exec tsx prisma/seed/demo-meeting.ts`
 
@@ -292,18 +295,20 @@ export function buildGuest(overrides: Partial<GuestCreateData> = {}): GuestCreat
 ### 11.1 E2E 性能监控
 
 Playwright 自带性能指标：
+
 ```typescript
 test('guest list page loads fast', async ({ page }) => {
   const start = Date.now();
   await page.goto('/guests');
   await page.getByRole('table').waitFor();
-  expect(Date.now() - start).toBeLessThan(2000);  // < 2s
+  expect(Date.now() - start).toBeLessThan(2000); // < 2s
 });
 ```
 
 ### 11.2 负载测试（可选，Phase 4）
 
 用 k6 测试签到并发：
+
 ```javascript
 // tests/load/check-in.k6.js
 import http from 'k6/http';
@@ -325,7 +330,8 @@ A: 选择器匹配到多个元素。用 `getByRole` 替代 `getByText`，或加 
 
 ### Q: E2E 测试很慢
 
-A: 
+A:
+
 - 减少 `test.beforeEach` 重复登录（用 `test.describe.serial` + 共享 session）
 - 用 `testProjects` 并行不同浏览器（当前只 chromium）
 - CI 上加 `--shard` 分片

@@ -86,7 +86,9 @@ export async function removeGuestFromMeeting(
 
 export async function searchGuestsForMeeting(
   query: string,
-): Promise<ActionResult<Array<{ id: string; name: string; phone: string | null; company: string | null }>>> {
+): Promise<
+  ActionResult<Array<{ id: string; name: string; phone: string | null; company: string | null }>>
+> {
   try {
     await getContext();
     const result = await guestService.list({ search: query, pageSize: 10 });

@@ -22,7 +22,11 @@ import {
   DialogTitle,
   DialogTrigger,
 } from '@/components/ui/dialog';
-import { addGuestToMeeting, removeGuestFromMeeting, searchGuestsForMeeting } from '@/app/actions/meeting-guest.actions';
+import {
+  addGuestToMeeting,
+  removeGuestFromMeeting,
+  searchGuestsForMeeting,
+} from '@/app/actions/meeting-guest.actions';
 import { toast } from 'sonner';
 
 type MeetingGuestWithGuest = MeetingGuest & { guest: Guest };
@@ -218,9 +222,7 @@ export function GuestManager({ meetingId, meetingGuests }: Props) {
                     </TableRow>
                     {subs.map((sub) => (
                       <TableRow key={sub.id} className="bg-slate-50">
-                        <TableCell className="pl-8 text-sm">
-                          └ {sub.guest.name}
-                        </TableCell>
+                        <TableCell className="pl-8 text-sm">└ {sub.guest.name}</TableCell>
                         <TableCell>
                           <Badge variant="outline">
                             {sub.entourageRole ? ROLE_LABEL[sub.entourageRole] : '-'}

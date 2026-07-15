@@ -3,9 +3,7 @@ import { vehicleCreateSchema, vehicleTypeSchema } from '@/lib/shared/transport';
 
 describe('Vehicle schemas', () => {
   it('accepts all vehicle types', () => {
-    ['SEDAN', 'MPV', 'BUS', 'OTHER'].forEach((t) =>
-      expect(vehicleTypeSchema.parse(t)).toBe(t),
-    );
+    ['SEDAN', 'MPV', 'BUS', 'OTHER'].forEach((t) => expect(vehicleTypeSchema.parse(t)).toBe(t));
   });
 
   it('accepts valid vehicle', () => {

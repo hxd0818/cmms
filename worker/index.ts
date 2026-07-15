@@ -7,10 +7,7 @@ import type { Worker } from 'bullmq';
 async function main() {
   logger.info('CMMS worker starting');
 
-  const workers: Worker[] = [
-    registerGuestImportWorker(),
-    registerMeetingGuestImportWorker(),
-  ];
+  const workers: Worker[] = [registerGuestImportWorker(), registerMeetingGuestImportWorker()];
 
   logger.info({ count: workers.length, names: workers.map((w) => w.name) }, 'workers registered');
 

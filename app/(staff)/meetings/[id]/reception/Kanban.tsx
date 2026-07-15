@@ -35,11 +35,7 @@ export function Kanban({ initial }: Props) {
     return () => clearInterval(id);
   }, [refresh]);
 
-  async function onAction(
-    action: 'promote' | 'depart',
-    id: string,
-    name: string,
-  ) {
+  async function onAction(action: 'promote' | 'depart', id: string, name: string) {
     const fn = action === 'promote' ? promoteToInHouse : markDeparted;
     const r = await fn(id);
     if (r.ok) {
@@ -91,9 +87,7 @@ export function Kanban({ initial }: Props) {
                       {mg.levelOverride ?? mg.guest.level}
                     </Badge>
                   </div>
-                  {mg.guest.company && (
-                    <p className="text-xs text-slate-500">{mg.guest.company}</p>
-                  )}
+                  {mg.guest.company && <p className="text-xs text-slate-500">{mg.guest.company}</p>}
                   {col.action && (
                     <Button
                       size="sm"

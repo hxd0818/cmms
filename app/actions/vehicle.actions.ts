@@ -2,12 +2,7 @@
 
 import { vehicleCreateSchema, vehicleUpdateSchema } from '@/lib/shared/transport';
 import { vehicleService } from '@/lib/domain/vehicle/service';
-import {
-  assertAuthorized,
-  getContext,
-  handleError,
-  type ActionResult,
-} from '@/lib/actions/utils';
+import { assertAuthorized, getContext, handleError, type ActionResult } from '@/lib/actions/utils';
 import { revalidatePath } from 'next/cache';
 
 export async function createVehicle(

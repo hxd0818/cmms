@@ -2,12 +2,7 @@
 
 import { agendaCreateSchema, agendaUpdateSchema } from '@/lib/shared/agenda';
 import { agendaService } from '@/lib/domain/agenda/service';
-import {
-  assertAuthorized,
-  getContext,
-  handleError,
-  type ActionResult,
-} from '@/lib/actions/utils';
+import { assertAuthorized, getContext, handleError, type ActionResult } from '@/lib/actions/utils';
 import { revalidatePath } from 'next/cache';
 
 export async function createAgendaItem(

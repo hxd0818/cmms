@@ -8,10 +8,7 @@ interface Body {
   status: string;
 }
 
-export async function POST(
-  req: NextRequest,
-  { params }: { params: Promise<{ token: string }> },
-) {
+export async function POST(req: NextRequest, { params }: { params: Promise<{ token: string }> }) {
   const { token } = await params;
   const verified = await verifyDriverToken(token);
   if (!verified) {
@@ -30,10 +27,7 @@ export async function POST(
   }
 
   try {
-    await transportService.updateStatus(
-      body.orderId,
-      body.status as TransportStatus,
-    );
+    await transportService.updateStatus(body.orderId, body.status as TransportStatus);
     return NextResponse.json({ ok: true });
   } catch (e) {
     const message = e instanceof Error ? e.message : '服务器错误';

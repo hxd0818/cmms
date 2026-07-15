@@ -27,7 +27,11 @@ import {
   DialogTitle,
   DialogFooter,
 } from '@/components/ui/dialog';
-import { assignVehicle, updateTransportStatus, deleteTransportOrder } from '@/app/actions/transport.actions';
+import {
+  assignVehicle,
+  updateTransportStatus,
+  deleteTransportOrder,
+} from '@/app/actions/transport.actions';
 import { toast } from 'sonner';
 
 type OrderWithRelations = TransportOrder & {
@@ -143,34 +147,22 @@ export function TransportList({ meetingId, orders, vehicles }: Props) {
           ) : (
             orders.map((o) => (
               <TableRow key={o.id}>
-                <TableCell className="font-medium">
-                  {o.meetingGuest.guest.name}
-                </TableCell>
-                <TableCell className="text-sm">
-                  {PICKUP_LABEL[o.pickupType]}
-                </TableCell>
+                <TableCell className="font-medium">{o.meetingGuest.guest.name}</TableCell>
+                <TableCell className="text-sm">{PICKUP_LABEL[o.pickupType]}</TableCell>
                 <TableCell className="text-sm">{o.pickupLocation}</TableCell>
                 <TableCell className="text-sm">{o.dropoffLocation}</TableCell>
                 <TableCell className="text-sm">
                   {new Date(o.pickupTime).toLocaleString('zh-CN')}
                 </TableCell>
-                <TableCell className="text-sm font-mono">
-                  {o.flightNo ?? '-'}
-                </TableCell>
+                <TableCell className="text-sm font-mono">{o.flightNo ?? '-'}</TableCell>
                 <TableCell>
                   {o.vehicle ? (
                     <span className="text-sm font-mono">
                       {o.vehicle.plateNo}
-                      <span className="text-xs text-slate-500 ml-1">
-                        ({o.vehicle.driverName})
-                      </span>
+                      <span className="text-xs text-slate-500 ml-1">({o.vehicle.driverName})</span>
                     </span>
                   ) : (
-                    <Button
-                      size="sm"
-                      variant="outline"
-                      onClick={() => setAssignDialogFor(o.id)}
-                    >
+                    <Button size="sm" variant="outline" onClick={() => setAssignDialogFor(o.id)}>
                       分配车辆
                     </Button>
                   )}
@@ -183,10 +175,7 @@ export function TransportList({ meetingId, orders, vehicles }: Props) {
                 <TableCell>
                   <div className="flex gap-1 items-center">
                     {(NEXT_STATUSES[o.status] ?? []).length > 0 && (
-                      <Select
-                        value=""
-                        onValueChange={(v) => v && onStatusChange(o.id, v)}
-                      >
+                      <Select value="" onValueChange={(v) => v && onStatusChange(o.id, v)}>
                         <SelectTrigger className="h-7 w-24 text-xs">
                           <SelectValue placeholder="切换" />
                         </SelectTrigger>
@@ -199,11 +188,7 @@ export function TransportList({ meetingId, orders, vehicles }: Props) {
                         </SelectContent>
                       </Select>
                     )}
-                    <Button
-                      size="sm"
-                      variant="ghost"
-                      onClick={() => onDelete(o.id)}
-                    >
+                    <Button size="sm" variant="ghost" onClick={() => onDelete(o.id)}>
                       删除
                     </Button>
                   </div>

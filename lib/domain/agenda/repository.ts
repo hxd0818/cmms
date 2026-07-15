@@ -50,10 +50,7 @@ export const agendaRepository = {
       where: {
         id: excludeItemId ? { not: excludeItemId } : undefined,
         speakerIds: { hasSome: speakerIds },
-        AND: [
-          { startAt: { lt: rangeEnd } },
-          { endAt: { gt: rangeStart } },
-        ],
+        AND: [{ startAt: { lt: rangeEnd } }, { endAt: { gt: rangeStart } }],
       },
     });
   },

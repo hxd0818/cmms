@@ -21,11 +21,7 @@ export function CheckInSearch({ pending }: { pending: PendingGuest[] }) {
   const router = useRouter();
 
   const filtered = query
-    ? pending.filter(
-        (g) =>
-          g.name.includes(query) ||
-          (g.company ?? '').includes(query),
-      )
+    ? pending.filter((g) => g.name.includes(query) || (g.company ?? '').includes(query))
     : pending;
 
   async function onCheckIn(id: string, name: string) {
@@ -76,9 +72,7 @@ export function CheckInSearch({ pending }: { pending: PendingGuest[] }) {
               <div className="flex items-center gap-2">
                 <span className="font-medium">{g.name}</span>
                 <Badge variant="outline">{g.level}</Badge>
-                {g.company && (
-                  <span className="text-xs text-slate-500">{g.company}</span>
-                )}
+                {g.company && <span className="text-xs text-slate-500">{g.company}</span>}
               </div>
               <div className="flex gap-1">
                 <Button
@@ -100,9 +94,7 @@ export function CheckInSearch({ pending }: { pending: PendingGuest[] }) {
             </div>
           ))}
           {filtered.length > 20 && (
-            <p className="text-xs text-slate-500 text-center pt-2">
-              仅显示前 20 位，请细化搜索
-            </p>
+            <p className="text-xs text-slate-500 text-center pt-2">仅显示前 20 位，请细化搜索</p>
           )}
         </div>
       )}

@@ -17,9 +17,7 @@ export const meetingGuestService = {
     }
 
     if (data.primaryMeetingGuestId) {
-      const primary = await meetingGuestRepository.findById(
-        data.primaryMeetingGuestId,
-      );
+      const primary = await meetingGuestRepository.findById(data.primaryMeetingGuestId);
       if (!primary) {
         throw new NotFoundError('MeetingGuest (primary)', data.primaryMeetingGuestId);
       }
@@ -68,9 +66,7 @@ export const meetingGuestService = {
 
     const subs = await meetingGuestRepository.findSubordinates(id);
     if (subs.length > 0) {
-      throw new ValidationError(
-        `该嘉宾有 ${subs.length} 位随行人员，请先迁移或删除随行`,
-      );
+      throw new ValidationError(`该嘉宾有 ${subs.length} 位随行人员，请先迁移或删除随行`);
     }
     return meetingGuestRepository.delete(id);
   },

@@ -56,10 +56,7 @@ export function AgendaTimeline({ items, meetingId }: Props) {
   return (
     <div className="space-y-3">
       {items.map((item) => (
-        <div
-          key={item.id}
-          className="bg-white rounded-md border p-4 flex items-start gap-4"
-        >
+        <div key={item.id} className="bg-white rounded-md border p-4 flex items-start gap-4">
           <div className="flex flex-col items-center text-xs text-slate-500 min-w-20">
             <span className="font-mono">
               {new Date(item.startAt).toLocaleTimeString('zh-CN', {
@@ -84,15 +81,10 @@ export function AgendaTimeline({ items, meetingId }: Props) {
             </div>
             <div className="text-sm text-slate-500">
               {item.venue && <span>{item.venue} · </span>}
-              演讲嘉宾 {item.speakerIds.length} 位
-              {item.notes && <span> · {item.notes}</span>}
+              演讲嘉宾 {item.speakerIds.length} 位{item.notes && <span> · {item.notes}</span>}
             </div>
           </div>
-          <Button
-            size="sm"
-            variant="ghost"
-            onClick={() => onDelete(item.id, item.title)}
-          >
+          <Button size="sm" variant="ghost" onClick={() => onDelete(item.id, item.title)}>
             删除
           </Button>
         </div>

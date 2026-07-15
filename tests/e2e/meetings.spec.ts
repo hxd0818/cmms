@@ -75,7 +75,9 @@ test.describe('Meeting management', () => {
     await page.getByRole('option', { name: '筹备中' }).click();
     await page.getByRole('button', { name: '应用' }).click();
     // Wait for toast then refresh
-    await expect(page.locator('[data-sonner-toast]').or(page.getByText('已切换到'))).toBeVisible({ timeout: 5000 }).catch(() => {});
+    await expect(page.locator('[data-sonner-toast]').or(page.getByText('已切换到')))
+      .toBeVisible({ timeout: 5000 })
+      .catch(() => {});
     await page.waitForTimeout(1000);
     await page.reload();
     await expect(page.getByText('筹备中')).toBeVisible({ timeout: 5000 });

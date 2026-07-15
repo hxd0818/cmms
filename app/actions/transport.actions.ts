@@ -2,12 +2,7 @@
 
 import { transportFormSchema } from '@/lib/shared/transport';
 import { transportService } from '@/lib/domain/transport/service';
-import {
-  assertAuthorized,
-  getContext,
-  handleError,
-  type ActionResult,
-} from '@/lib/actions/utils';
+import { assertAuthorized, getContext, handleError, type ActionResult } from '@/lib/actions/utils';
 import { revalidatePath } from 'next/cache';
 import type { TransportStatus } from '@/lib/generated/prisma/enums';
 

@@ -1,8 +1,5 @@
 import type { TransportOrder } from '@/lib/generated/prisma/client';
-import type {
-  PickupType,
-  TransportStatus,
-} from '@/lib/generated/prisma/enums';
+import type { PickupType, TransportStatus } from '@/lib/generated/prisma/enums';
 
 export type TransportOrderEntity = TransportOrder;
 

@@ -196,33 +196,33 @@ http {
   server {
     listen 80;
     server_name cmms.example.com;
-    
+
     # Let's Encrypt challenge
     location /.well-known/acme-challenge/ {
       root /var/www/certbot;
     }
-    
+
     location / {
       return 301 https://$host$request_uri;
     }
   }
-  
+
   server {
     listen 443 ssl http2;
     server_name cmms.example.com;
-    
+
     ssl_certificate /etc/letsencrypt/live/cmms.example.com/fullchain.pem;
     ssl_certificate_key /etc/letsencrypt/live/cmms.example.com/privkey.pem;
-    
+
     # Security headers
     add_header X-Frame-Options DENY;
     add_header X-Content-Type-Options nosniff;
     add_header Referrer-Policy strict-origin-when-cross-origin;
     add_header Strict-Transport-Security "max-age=31536000; includeSubDomains" always;
-    
+
     # Upload limit for Excel import
     client_max_body_size 10M;
-    
+
     location / {
       proxy_pass http://web:3000;
       proxy_set_header Host $host;
@@ -328,6 +328,7 @@ echo "Backup completed: cmms_$TIMESTAMP.sql.gz"
 ```
 
 加入 crontab：
+
 ```bash
 # 每日凌晨 3 点备份
 0 3 * * * /opt/cmms/backup.sh >> /var/log/cmms-backup.log 2>&1
@@ -369,10 +370,7 @@ export async function GET() {
     await prisma.$queryRaw`SELECT 1`;
     return NextResponse.json({ status: 'ok', db: 'ok' });
   } catch (e) {
-    return NextResponse.json(
-      { status: 'error', db: 'fail' },
-      { status: 503 }
-    );
+    return NextResponse.json({ status: 'error', db: 'fail' }, { status: 503 });
   }
 }
 ```
@@ -439,6 +437,7 @@ docker compose -f docker/docker-compose.prod.yml up -d
 ## 8. 故障处理
 
 ### 数据库无法启动
+
 ```bash
 # 检查数据卷
 docker compose -f docker/docker-compose.prod.yml logs postgres
@@ -454,6 +453,7 @@ gunzip -c /opt/cmms/backups/cmms_<latest>.sql.gz | \
 ```
 
 ### 字段加密密钥泄露
+
 - ⚠️ **极其严重**：FIELD_ENCRYPTION_KEY 泄露 = 所有加密字段可被解密
 - 立即步骤：
   1. 评估泄露范围（哪些数据可能被获取）
@@ -461,6 +461,7 @@ gunzip -c /opt/cmms/backups/cmms_<latest>.sql.gz | \
   3. 轮换密钥（需要先解密所有数据，再换密钥重新加密）
 
 ### Redis 故障
+
 ```bash
 # BullMQ 任务队列丢失 → 重新触发失败的导入任务
 # 应用层状态不会丢（在 PostgreSQL）
@@ -509,9 +510,7 @@ export default {
     return [
       {
         source: '/_next/static/:path*',
-        headers: [
-          { key: 'Cache-Control', value: 'public, max-age=31536000, immutable' },
-        ],
+        headers: [{ key: 'Cache-Control', value: 'public, max-age=31536000, immutable' }],
       },
     ];
   },

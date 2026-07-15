@@ -1,8 +1,5 @@
 import { prisma } from '@/lib/db/client';
-import type {
-  EntourageRole,
-  ReceptionStage,
-} from '@/lib/generated/prisma/enums';
+import type { EntourageRole, ReceptionStage } from '@/lib/generated/prisma/enums';
 import type {
   MeetingGuestCreateData,
   MeetingGuestListParams,
@@ -51,17 +48,8 @@ export const meetingGuestRepository = {
     });
   },
 
-  async findByMeeting(
-    params: MeetingGuestListParams,
-  ) {
-    const {
-      meetingId,
-      receptionStage,
-      entourageRole,
-      search,
-      page = 1,
-      pageSize = 100,
-    } = params;
+  async findByMeeting(params: MeetingGuestListParams) {
+    const { meetingId, receptionStage, entourageRole, search, page = 1, pageSize = 100 } = params;
 
     const where: Record<string, unknown> = { meetingId };
     if (receptionStage) where.receptionStage = receptionStage;

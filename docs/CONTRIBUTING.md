@@ -38,6 +38,7 @@ touch docs/plans/YYYY-MM-DD-<feature>-design.md
 ### 2.3 简单改动
 
 直接 TDD：
+
 ```
 1. 写测试 → 验证失败
 2. 实现 → 验证通过
@@ -64,6 +65,7 @@ touch docs/plans/YYYY-MM-DD-<feature>-design.md
 ```
 
 **type**：
+
 - `feat`：新功能
 - `fix`：bug 修复
 - `refactor`：重构（不改功能）
@@ -76,6 +78,7 @@ touch docs/plans/YYYY-MM-DD-<feature>-design.md
 **scope**（可选）：模块名，如 `guest`、`meeting`、`auth`、`db`、`ui`
 
 **示例**：
+
 ```
 feat(guest): add Excel batch import with BullMQ async pipeline
 
@@ -103,17 +106,17 @@ feat(guest): add Excel batch import with BullMQ async pipeline
 
 ### 4.2 命名
 
-| 类型 | 约定 | 示例 |
-|---|---|---|
-| 文件（组件） | PascalCase | `GuestForm.tsx` |
-| 文件（其他） | kebab-case | `field-encryption.ts` |
-| 函数/变量 | camelCase | `createGuest` |
-| 类型 | PascalCase | `GuestCreateInput` |
-| 常量 | SCREAMING_SNAKE | `STATUS_TRANSITIONS` |
-| 枚举值 | SCREAMING_SNAKE | `VIP_A`, `SUPER_ADMIN` |
-| React 组件 | PascalCase | `function GuestForm()` |
-| React hooks | camelCase + `use` | `useForm` |
-| Server Actions | camelCase + verb | `createGuest`, `deleteGuest` |
+| 类型           | 约定              | 示例                         |
+| -------------- | ----------------- | ---------------------------- |
+| 文件（组件）   | PascalCase        | `GuestForm.tsx`              |
+| 文件（其他）   | kebab-case        | `field-encryption.ts`        |
+| 函数/变量      | camelCase         | `createGuest`                |
+| 类型           | PascalCase        | `GuestCreateInput`           |
+| 常量           | SCREAMING_SNAKE   | `STATUS_TRANSITIONS`         |
+| 枚举值         | SCREAMING_SNAKE   | `VIP_A`, `SUPER_ADMIN`       |
+| React 组件     | PascalCase        | `function GuestForm()`       |
+| React hooks    | camelCase + `use` | `useForm`                    |
+| Server Actions | camelCase + verb  | `createGuest`, `deleteGuest` |
 
 ### 4.3 错误处理
 
@@ -160,14 +163,14 @@ feat(guest): add Excel batch import with BullMQ async pipeline
 
 ### 7.1 必须更新文档的场景
 
-| 场景 | 必须更新 |
-|---|---|
-| 新功能上线 | `CHANGELOG.md` |
-| 新领域模块 | `lib/domain/<module>/README.md` |
-| 新加密字段 | `SECURITY.md` 加密字段表 |
-| 新端口/资源 | `CLAUDE.md`、`README.md`、`DEVELOPMENT.md` |
-| 新增测试类型 | `TESTING.md` |
-| 架构变化 | `ARCHITECTURE.md`、`docs/plans/` 新设计 |
+| 场景         | 必须更新                                   |
+| ------------ | ------------------------------------------ |
+| 新功能上线   | `CHANGELOG.md`                             |
+| 新领域模块   | `lib/domain/<module>/README.md`            |
+| 新加密字段   | `SECURITY.md` 加密字段表                   |
+| 新端口/资源  | `CLAUDE.md`、`README.md`、`DEVELOPMENT.md` |
+| 新增测试类型 | `TESTING.md`                               |
+| 架构变化     | `ARCHITECTURE.md`、`docs/plans/` 新设计    |
 
 ### 7.2 文档语言
 
@@ -189,9 +192,11 @@ feat(guest): add Excel batch import with BullMQ async pipeline
 
 ```markdown
 ## 摘要
+
 [1-3 句话描述改动]
 
 ## 改动类型
+
 - [ ] feat: 新功能
 - [ ] fix: bug 修复
 - [ ] refactor: 重构
@@ -200,12 +205,14 @@ feat(guest): add Excel batch import with BullMQ async pipeline
 - [ ] chore: 杂项
 
 ## 测试计划
+
 - [ ] 单元测试通过
 - [ ] E2E 测试通过
 - [ ] 手动验证核心场景
 - [ ] CHANGELOG.md 已更新
 
 ## 关联
+
 Closes #<issue>
 ```
 

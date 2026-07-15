@@ -1,13 +1,6 @@
 import { z } from 'zod';
 
-export const agendaTypeSchema = z.enum([
-  'KEYNOTE',
-  'PANEL',
-  'BREAK',
-  'MEAL',
-  'TOUR',
-  'OTHER',
-]);
+export const agendaTypeSchema = z.enum(['KEYNOTE', 'PANEL', 'BREAK', 'MEAL', 'TOUR', 'OTHER']);
 export type AgendaType = z.infer<typeof agendaTypeSchema>;
 
 const agendaBaseSchema = z.object({
@@ -21,10 +14,10 @@ const agendaBaseSchema = z.object({
   notes: z.string().max(2000).optional(),
 });
 
-export const agendaCreateSchema = agendaBaseSchema.refine(
-  (d) => d.endAt > d.startAt,
-  { message: '结束时间必须晚于开始时间', path: ['endAt'] },
-);
+export const agendaCreateSchema = agendaBaseSchema.refine((d) => d.endAt > d.startAt, {
+  message: '结束时间必须晚于开始时间',
+  path: ['endAt'],
+});
 
 export type AgendaCreateInput = z.infer<typeof agendaCreateSchema>;
 
@@ -42,4 +35,3 @@ export const agendaFormSchema = agendaBaseSchema
     path: ['endAt'],
   });
 export type AgendaFormValues = z.infer<typeof agendaFormSchema>;
-

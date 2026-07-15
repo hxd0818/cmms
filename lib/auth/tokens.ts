@@ -24,9 +24,7 @@ export function hashToken(raw: string): string {
  *
  * Also updates lastAccessedAt + accessCount for audit.
  */
-export async function verifyGuestToken(
-  raw: string,
-): Promise<{ meetingGuestId: string } | null> {
+export async function verifyGuestToken(raw: string): Promise<{ meetingGuestId: string } | null> {
   const hash = hashToken(raw);
   const record = await prisma.guestAccessToken.findUnique({
     where: { tokenHash: hash },
@@ -52,9 +50,7 @@ export async function verifyGuestToken(
 /**
  * Verify a driver portal token. Returns the transportOrderId if valid.
  */
-export async function verifyDriverToken(
-  raw: string,
-): Promise<{ transportOrderId: string } | null> {
+export async function verifyDriverToken(raw: string): Promise<{ transportOrderId: string } | null> {
   const hash = hashToken(raw);
   const record = await prisma.driverAccessToken.findUnique({
     where: { tokenHash: hash },

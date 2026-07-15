@@ -34,11 +34,7 @@ export const transportRepository = {
    * Find bookings for a vehicle that overlap with [pickupTime - 30min, pickupTime + 60min].
    * Excludes CANCELED and REASSIGNED orders. Optionally excludes a specific order (self).
    */
-  async findVehicleBookingsInRange(
-    vehicleId: string,
-    pickupTime: Date,
-    excludeOrderId?: string,
-  ) {
+  async findVehicleBookingsInRange(vehicleId: string, pickupTime: Date, excludeOrderId?: string) {
     const windowStart = new Date(pickupTime.getTime() - CONFLICT_WINDOW_BEFORE_MS);
     const windowEnd = new Date(pickupTime.getTime() + CONFLICT_WINDOW_AFTER_MS);
     return prisma.transportOrder.findMany({

@@ -76,9 +76,7 @@ describe('agendaService', () => {
   describe('update', () => {
     it('rejects unknown agenda', async () => {
       vi.mocked(agendaRepository.findById).mockResolvedValue(null);
-      await expect(agendaService.update('missing', { title: 'X' })).rejects.toThrow(
-        NotFoundError,
-      );
+      await expect(agendaService.update('missing', { title: 'X' })).rejects.toThrow(NotFoundError);
     });
 
     it('checks conflict when time changes', async () => {

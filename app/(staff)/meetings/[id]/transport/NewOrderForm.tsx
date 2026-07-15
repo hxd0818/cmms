@@ -142,11 +142,7 @@ export function NewOrderForm({
         </div>
         <div>
           <Label htmlFor="flightNo">航班 / 车次</Label>
-          <Input
-            id="flightNo"
-            value={flightNo}
-            onChange={(e) => setFlightNo(e.target.value)}
-          />
+          <Input id="flightNo" value={flightNo} onChange={(e) => setFlightNo(e.target.value)} />
         </div>
       </div>
       <div className="flex gap-2">

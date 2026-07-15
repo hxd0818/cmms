@@ -69,11 +69,7 @@ export function VehicleList({ items }: { items: Vehicle[] }) {
                 <TableCell className="font-mono text-sm">{v.driverPhone}</TableCell>
                 <TableCell className="text-sm">{v.belongs ?? '-'}</TableCell>
                 <TableCell>
-                  <Button
-                    size="sm"
-                    variant="ghost"
-                    onClick={() => onDelete(v.id, v.plateNo)}
-                  >
+                  <Button size="sm" variant="ghost" onClick={() => onDelete(v.id, v.plateNo)}>
                     删除
                   </Button>
                 </TableCell>

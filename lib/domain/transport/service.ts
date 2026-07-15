@@ -1,16 +1,9 @@
 import { transportRepository } from './repository';
 import { vehicleRepository } from '@/lib/domain/vehicle/repository';
 import { meetingGuestRepository } from '@/lib/domain/meeting-guest/repository';
-import {
-  ConflictError,
-  NotFoundError,
-  ValidationError,
-} from '@/lib/shared/errors';
+import { ConflictError, NotFoundError, ValidationError } from '@/lib/shared/errors';
 import type { TransportStatus } from '@/lib/generated/prisma/enums';
-import type {
-  TransportCreateData,
-  TransportUpdateData,
-} from './types';
+import type { TransportCreateData, TransportUpdateData } from './types';
 
 const STATUS_TRANSITIONS: Record<TransportStatus, TransportStatus[]> = {
   UNASSIGNED: ['ASSIGNED', 'CANCELED'],
@@ -44,15 +37,11 @@ export const transportService = {
       orderId,
     );
     if (conflicts.length > 0) {
-      throw new ConflictError(
-        `车辆在此时间段已被占用（前后 30/60 分钟窗口内已有任务）`,
-      );
+      throw new ConflictError(`车辆在此时间段已被占用（前后 30/60 分钟窗口内已有任务）`);
     }
 
     // Capacity check: main + subordinates with inheritTransport
-    const subordinates = await meetingGuestRepository.findSubordinates(
-      order.meetingGuestId,
-    );
+    const subordinates = await meetingGuestRepository.findSubordinates(order.meetingGuestId);
     const inheritSubs = subordinates.filter((s) => s.inheritTransport);
     const totalNeeded = 1 + inheritSubs.length;
 
@@ -77,9 +66,7 @@ export const transportService = {
       throw new ValidationError(`订单已是 ${current} 状态`);
     }
     if (!STATUS_TRANSITIONS[current].includes(target)) {
-      throw new ValidationError(
-        `非法状态转换: ${current} -> ${target}`,
-      );
+      throw new ValidationError(`非法状态转换: ${current} -> ${target}`);
     }
     return transportRepository.updateStatus(id, target);
   },

@@ -15,20 +15,20 @@
 
 ## 技术栈
 
-| 层 | 技术 | 版本 |
-|---|---|---|
-| 前端+后端 | Next.js (App Router + Turbopack) | 16.2.10 |
-| 运行时 | React | 19.2.4 |
-| UI | shadcn/ui + Tailwind CSS | 4.12 / v4 |
-| 表单 | React Hook Form + Zod | 7.81 / 4.4 |
-| 数据获取 | TanStack Query + RSC | 5.101 |
-| ORM | Prisma | 7.8 |
-| 数据库 | PostgreSQL | 16 |
-| 缓存/队列 | Redis + BullMQ | 7 / 5.80 |
-| 认证 | Auth.js (NextAuth v5) | beta.31 |
-| 权限 | CASL.js | 7.0 |
-| 测试 | Vitest + Playwright | 4.1 / 1.61 |
-| 包管理 | pnpm | 11.13 |
+| 层        | 技术                             | 版本       |
+| --------- | -------------------------------- | ---------- |
+| 前端+后端 | Next.js (App Router + Turbopack) | 16.2.10    |
+| 运行时    | React                            | 19.2.4     |
+| UI        | shadcn/ui + Tailwind CSS         | 4.12 / v4  |
+| 表单      | React Hook Form + Zod            | 7.81 / 4.4 |
+| 数据获取  | TanStack Query + RSC             | 5.101      |
+| ORM       | Prisma                           | 7.8        |
+| 数据库    | PostgreSQL                       | 16         |
+| 缓存/队列 | Redis + BullMQ                   | 7 / 5.80   |
+| 认证      | Auth.js (NextAuth v5)            | beta.31    |
+| 权限      | CASL.js                          | 7.0        |
+| 测试      | Vitest + Playwright              | 4.1 / 1.61 |
+| 包管理    | pnpm                             | 11.13      |
 
 ## 快速开始
 
@@ -63,6 +63,7 @@ pnpm worker:start
 ```
 
 访问 http://localhost:3010/login，使用种子账号登录：
+
 - `admin@cmms.local` / `admin123`（管理员）
 - `viewer@cmms.local` / `viewer123`（只读用户）
 
@@ -70,36 +71,36 @@ pnpm worker:start
 
 本项目刻意避开本机其他项目占用的端口：
 
-| 服务 | 端口 | 备注 |
-|---|---|---|
+| 服务          | 端口 | 备注                           |
+| ------------- | ---- | ------------------------------ |
 | Web (Next.js) | 3010 | cdep 用 3000、ccidscan 用 3001 |
-| PostgreSQL | 5434 | cdep 用 5432、ccidscan 用 5433 |
-| Redis | 6381 | cdep 用 6379 |
+| PostgreSQL    | 5434 | cdep 用 5432、ccidscan 用 5433 |
+| Redis         | 6381 | cdep 用 6379                   |
 
 ## 项目状态
 
-| 阶段 | 状态 | 内容 |
-|---|---|---|
-| Phase 0 | ✅ 完成 (`v0.1.0-foundation`) | 项目骨架、认证、CI |
-| Phase 1 | ✅ 完成 (`v0.2.0-guest-module`) | 嘉宾信息库（参考实现） |
-| Phase 2 | 🚧 计划已就绪 | Meeting/Reception/Transport/Driver |
-| Phase 3+4 | 🚧 计划已就绪 | Lodging/Catering/Gift/Fee/360 + 报表/通知/审计/生产硬化 |
+| 阶段      | 状态                            | 内容                                                    |
+| --------- | ------------------------------- | ------------------------------------------------------- |
+| Phase 0   | ✅ 完成 (`v0.1.0-foundation`)   | 项目骨架、认证、CI                                      |
+| Phase 1   | ✅ 完成 (`v0.2.0-guest-module`) | 嘉宾信息库（参考实现）                                  |
+| Phase 2   | 🚧 计划已就绪                   | Meeting/Reception/Transport/Driver                      |
+| Phase 3+4 | 🚧 计划已就绪                   | Lodging/Catering/Gift/Fee/360 + 报表/通知/审计/生产硬化 |
 
 详见 [CHANGELOG.md](./CHANGELOG.md) 与 [docs/plans/](./docs/plans/)。
 
 ## 文档导航
 
-| 文档 | 内容 |
-|---|---|
+| 文档                                           | 内容                     |
+| ---------------------------------------------- | ------------------------ |
 | [docs/ARCHITECTURE.md](./docs/ARCHITECTURE.md) | 系统架构概览（一图读懂） |
-| [docs/DEVELOPMENT.md](./docs/DEVELOPMENT.md) | 开发环境详细指南 |
-| [docs/DEPLOYMENT.md](./docs/DEPLOYMENT.md) | 生产部署流程 |
-| [docs/SECURITY.md](./docs/SECURITY.md) | 安全设计与最佳实践 |
-| [docs/TESTING.md](./docs/TESTING.md) | 测试策略与覆盖目标 |
-| [docs/CONTRIBUTING.md](./docs/CONTRIBUTING.md) | 贡献规范 |
-| [CHANGELOG.md](./CHANGELOG.md) | 版本变更记录 |
-| [CLAUDE.md](./CLAUDE.md) | AI 辅助开发项目级规范 |
-| [docs/plans/](./docs/plans/) | 设计文档与各阶段实施计划 |
+| [docs/DEVELOPMENT.md](./docs/DEVELOPMENT.md)   | 开发环境详细指南         |
+| [docs/DEPLOYMENT.md](./docs/DEPLOYMENT.md)     | 生产部署流程             |
+| [docs/SECURITY.md](./docs/SECURITY.md)         | 安全设计与最佳实践       |
+| [docs/TESTING.md](./docs/TESTING.md)           | 测试策略与覆盖目标       |
+| [docs/CONTRIBUTING.md](./docs/CONTRIBUTING.md) | 贡献规范                 |
+| [CHANGELOG.md](./CHANGELOG.md)                 | 版本变更记录             |
+| [CLAUDE.md](./CLAUDE.md)                       | AI 辅助开发项目级规范    |
+| [docs/plans/](./docs/plans/)                   | 设计文档与各阶段实施计划 |
 
 ## 项目结构
 

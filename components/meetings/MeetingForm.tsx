@@ -80,9 +80,7 @@ export function MeetingForm({ mode, meetingId, defaultValues }: Props) {
         <div>
           <Label htmlFor="startAt">开始时间 *</Label>
           <Input id="startAt" type="datetime-local" {...register('startAt')} />
-          {errors.startAt && (
-            <p className="text-xs text-red-500">{errors.startAt.message}</p>
-          )}
+          {errors.startAt && <p className="text-xs text-red-500">{errors.startAt.message}</p>}
         </div>
         <div>
           <Label htmlFor="endAt">结束时间 *</Label>

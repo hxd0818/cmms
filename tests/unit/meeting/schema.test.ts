@@ -65,9 +65,7 @@ describe('Meeting schemas', () => {
   });
 
   it('rsvpStatusSchema accepts PENDING/CONFIRMED/DECLINED', () => {
-    ['PENDING', 'CONFIRMED', 'DECLINED'].forEach((s) =>
-      expect(rsvpStatusSchema.parse(s)).toBe(s),
-    );
+    ['PENDING', 'CONFIRMED', 'DECLINED'].forEach((s) => expect(rsvpStatusSchema.parse(s)).toBe(s));
   });
 
   it('receptionStageSchema accepts 5 stages', () => {
@@ -77,8 +75,8 @@ describe('Meeting schemas', () => {
   });
 
   it('entourageRoleSchema accepts all 7 roles', () => {
-    ['PRIMARY', 'SECRETARY', 'SECURITY', 'INTERPRETER', 'FAMILY', 'AIDE', 'DRIVER'].forEach(
-      (r) => expect(entourageRoleSchema.parse(r)).toBe(r),
+    ['PRIMARY', 'SECRETARY', 'SECURITY', 'INTERPRETER', 'FAMILY', 'AIDE', 'DRIVER'].forEach((r) =>
+      expect(entourageRoleSchema.parse(r)).toBe(r),
     );
   });
 

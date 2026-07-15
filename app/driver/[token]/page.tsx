@@ -35,9 +35,7 @@ export default async function DriverPage({ params }: PageProps) {
             </div>
             <div>
               <p className="text-xs text-slate-500">接送时间</p>
-              <p className="font-medium">
-                {new Date(order.pickupTime).toLocaleString('zh-CN')}
-              </p>
+              <p className="font-medium">{new Date(order.pickupTime).toLocaleString('zh-CN')}</p>
             </div>
             <div>
               <p className="text-xs text-slate-500">上车地点</p>
@@ -60,11 +58,7 @@ export default async function DriverPage({ params }: PageProps) {
           </div>
         </div>
 
-        <DriverActions
-          orderId={order.id}
-          status={order.status}
-          token={token}
-        />
+        <DriverActions orderId={order.id} status={order.status} token={token} />
       </div>
     </main>
   );

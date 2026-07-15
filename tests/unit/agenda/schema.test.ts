@@ -1,9 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import {
-  agendaTypeSchema,
-  agendaCreateSchema,
-  agendaUpdateSchema,
-} from '@/lib/shared/agenda';
+import { agendaTypeSchema, agendaCreateSchema, agendaUpdateSchema } from '@/lib/shared/agenda';
 
 describe('Agenda schemas', () => {
   it('accepts all agenda types', () => {

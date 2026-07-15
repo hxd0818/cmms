@@ -2,12 +2,7 @@
 
 import { meetingCreateSchema, meetingUpdateSchema } from '@/lib/shared/meeting';
 import { meetingService } from '@/lib/domain/meeting/service';
-import {
-  assertAuthorized,
-  getContext,
-  handleError,
-  type ActionResult,
-} from '@/lib/actions/utils';
+import { assertAuthorized, getContext, handleError, type ActionResult } from '@/lib/actions/utils';
 import { revalidatePath } from 'next/cache';
 import type { MeetingStatus } from '@/lib/generated/prisma/enums';
 

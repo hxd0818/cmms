@@ -54,12 +54,12 @@
 
 ### 2.1 为什么是 Next.js 全栈单体（不是 NestJS 独立后端）
 
-| 维度 | Next.js 全栈 | NestJS 独立后端 |
-|---|---|---|
-| 类型共享 | 天然共享（同一项目） | 需要 monorepo 或手动同步 |
-| 部署复杂度 | 1 个 Node 进程 | 2 个服务 |
-| Server Actions | 模板代码极少 | 必须 REST 端点 |
-| 中等规模 CRUD 业务 | 完美匹配 | 过度工程 |
+| 维度               | Next.js 全栈         | NestJS 独立后端          |
+| ------------------ | -------------------- | ------------------------ |
+| 类型共享           | 天然共享（同一项目） | 需要 monorepo 或手动同步 |
+| 部署复杂度         | 1 个 Node 进程       | 2 个服务                 |
+| Server Actions     | 模板代码极少         | 必须 REST 端点           |
+| 中等规模 CRUD 业务 | 完美匹配             | 过度工程                 |
 
 CMMS 是 CRUD + 调度型业务，无高并发、无复杂计算，Next.js 全栈是当前最现代、最高效的方案。
 
@@ -87,6 +87,7 @@ Venue / Vehicle / HotelRoom / DiningTable (资源池)
 ```
 
 **优势**：
+
 - 单一索引（vs 复合索引）
 - 强制"嘉宾必须先注册到会议才能分配任务"
 - Cascade 删除：删除会议清理所有相关订单
@@ -101,13 +102,14 @@ model MeetingGuest {
   levelOverride         GuestLevel?   // 为空则继承主嘉宾
   inheritLodging        Boolean       // 同住 / 邻房
   inheritTransport      Boolean       // 同车
-  
+
   primary     MeetingGuest?  @relation("EntourageRelation", ...)
   subordinates MeetingGuest[] @relation("EntourageRelation", ...)
 }
 ```
 
 **支持的能力**：
+
 - 同一人多身份：张三是 A 会议主讲，B 会议作为部长秘书陪同（两条 MeetingGuest 独立）
 - 规格继承：随行人员默认与主嘉宾同等级别
 - 批量调度：按主嘉宾分组操作
@@ -115,17 +117,18 @@ model MeetingGuest {
 
 ### 2.5 三端 Token 系统（有状态，可吊销）
 
-| 端 | 入口 | 用户 | Token 绑定 |
-|---|---|---|---|
-| 工作人员端 | NextAuth 登录 | 会务组 | NextAuth Session |
-| 嘉宾/陪同端 | `/g/[token]` | 嘉宾 + 陪同 | `GuestAccessToken.meetingGuestId` |
-| 司机端 | `/d/[token]` | 外部司机 | `DriverAccessToken.transportOrderId` |
+| 端          | 入口          | 用户        | Token 绑定                           |
+| ----------- | ------------- | ----------- | ------------------------------------ |
+| 工作人员端  | NextAuth 登录 | 会务组      | NextAuth Session                     |
+| 嘉宾/陪同端 | `/g/[token]`  | 嘉宾 + 陪同 | `GuestAccessToken.meetingGuestId`    |
+| 司机端      | `/d/[token]`  | 外部司机    | `DriverAccessToken.transportOrderId` |
 
 **为什么不用 JWT**：JWT 无状态、不可吊销。嘉宾手机丢失场景下，链接泄露 → 永久泄露。有状态 Token + DB + Redis 可以一键吊销。
 
 ### 2.6 字段级加密（AES-256-GCM）
 
 通过 Prisma `$extends` 拦截器：
+
 - 写入时自动加密（`Guest.phone`, `Guest.idNumber`）
 - 读取时自动解密
 - 每行独立 IV，相同明文产生不同密文
@@ -135,14 +138,14 @@ model MeetingGuest {
 
 ### RBAC 角色
 
-| 角色 | 数据范围 |
-|---|---|
-| SuperAdmin | 全部 |
-| MeetingOwner | 本会议全部 |
-| ReceptionLead | 本会议接待任务 |
-| ReceptionStaff | 本会议签到（敏感字段脱敏）|
-| ResourceCoordinator | 仅自己负责的模块 |
-| Viewer | 全部只读 |
+| 角色                | 数据范围                   |
+| ------------------- | -------------------------- |
+| SuperAdmin          | 全部                       |
+| MeetingOwner        | 本会议全部                 |
+| ReceptionLead       | 本会议接待任务             |
+| ReceptionStaff      | 本会议签到（敏感字段脱敏） |
+| ResourceCoordinator | 仅自己负责的模块           |
+| Viewer              | 全部只读                   |
 
 ### 实现
 
@@ -153,12 +156,14 @@ model MeetingGuest {
 ## 4. 关键状态机
 
 ### Meeting
+
 ```
 DRAFT → PLANNING → ONGOING → COMPLETED
 任意阶段 → CANCELED
 ```
 
 ### MeetingGuest.receptionStage
+
 ```
 NOT_ARRIVED → CHECKED_IN → IN_HOUSE → DEPARTED
               ↓
@@ -166,6 +171,7 @@ NOT_ARRIVED → CHECKED_IN → IN_HOUSE → DEPARTED
 ```
 
 ### TransportOrder
+
 ```
 UNASSIGNED → ASSIGNED → EN_ROUTE → PICKED_UP → COMPLETED
                 ↓                              │
@@ -204,7 +210,7 @@ UNASSIGNED → ASSIGNED → EN_ROUTE → PICKED_UP → COMPLETED
 ### 工作人员创建嘉宾
 
 ```
-[Form 提交] 
+[Form 提交]
   → Server Action createGuest (app/actions/guest.actions.ts)
   → getContext() 获取 session + ability
   → assertAuthorized(ability, 'create', 'Guest')
@@ -237,6 +243,7 @@ UNASSIGNED → ASSIGNED → EN_ROUTE → PICKED_UP → COMPLETED
 ### 加新领域模块
 
 按 Guest 模块（Phase 1 参考实现）的范式：
+
 1. `prisma/schema.prisma` 加 model + enum + migration
 2. `lib/shared/<module>.ts` 写 Zod schema
 3. `lib/domain/<module>/{types,repository,service}.ts` 写三层
@@ -255,13 +262,13 @@ UNASSIGNED → ASSIGNED → EN_ROUTE → PICKED_UP → COMPLETED
 
 ## 8. 性能与限制
 
-| 指标 | 目标 | 当前 |
-|---|---|---|
-| 嘉宾端首屏 | ≤ 2s（4G） | 待测 |
-| 工作人员端列表 | ≤ 500ms（1000 嘉宾） | 待测 |
-| Excel 导入 1000 行 | ≤ 30s | 已实现（BullMQ 异步） |
-| 并发签到 | 100 并发无冲突 | 待测（行锁保证） |
-| 可用性 | 99.5% | 单组织内部可接受计划停机 |
+| 指标               | 目标                 | 当前                     |
+| ------------------ | -------------------- | ------------------------ |
+| 嘉宾端首屏         | ≤ 2s（4G）           | 待测                     |
+| 工作人员端列表     | ≤ 500ms（1000 嘉宾） | 待测                     |
+| Excel 导入 1000 行 | ≤ 30s                | 已实现（BullMQ 异步）    |
+| 并发签到           | 100 并发无冲突       | 待测（行锁保证）         |
+| 可用性             | 99.5%                | 单组织内部可接受计划停机 |
 
 ## 9. 不做的事情（YAGNI）
 
