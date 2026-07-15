@@ -12,7 +12,7 @@ test.describe('Login flow', () => {
     await page.getByLabel('密码').fill('admin123');
     await page.getByRole('button', { name: '登录' }).click();
     await expect(page).toHaveURL(/\/dashboard/);
-    await expect(page.getByText('控制台')).toBeVisible();
+    await expect(page.getByRole('heading', { name: '控制台' })).toBeVisible();
   });
 
   test('rejects invalid credentials', async ({ page }) => {

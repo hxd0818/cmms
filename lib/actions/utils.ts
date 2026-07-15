@@ -26,11 +26,7 @@ export async function getContext() {
   return { session, ability };
 }
 
-export function assertAuthorized(
-  ability: AppAbility,
-  action: AppAction,
-  subject: AppSubject,
-) {
+export function assertAuthorized(ability: AppAbility, action: AppAction, subject: AppSubject) {
   if (!ability.can(action, subject)) {
     throw new ForbiddenError(`${action} ${subject}`);
   }

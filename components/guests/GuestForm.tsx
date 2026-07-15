@@ -66,9 +66,7 @@ export function GuestForm({ mode, guestId, defaultValues }: Props) {
     try {
       const payload = data as unknown as Record<string, unknown>;
       const result =
-        mode === 'create'
-          ? await createGuest(payload)
-          : await updateGuest(guestId!, payload);
+        mode === 'create' ? await createGuest(payload) : await updateGuest(guestId!, payload);
 
       if (!result.ok) {
         toast.error(result.error?.message ?? '保存失败');
@@ -92,10 +90,7 @@ export function GuestForm({ mode, guestId, defaultValues }: Props) {
         </div>
         <div>
           <Label htmlFor="gender">性别</Label>
-          <Select
-            value={gender ?? ''}
-            onValueChange={(v) => setValue('gender', v ?? undefined)}
-          >
+          <Select value={gender ?? ''} onValueChange={(v) => setValue('gender', v ?? undefined)}>
             <SelectTrigger>
               <SelectValue placeholder="请选择" />
             </SelectTrigger>
@@ -142,9 +137,7 @@ export function GuestForm({ mode, guestId, defaultValues }: Props) {
         <div>
           <Label htmlFor="idNumber">身份证号</Label>
           <Input id="idNumber" {...register('idNumber')} />
-          {errors.idNumber && (
-            <p className="text-xs text-red-500">{errors.idNumber.message}</p>
-          )}
+          {errors.idNumber && <p className="text-xs text-red-500">{errors.idNumber.message}</p>}
         </div>
       </div>
 

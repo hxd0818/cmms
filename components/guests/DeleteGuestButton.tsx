@@ -15,13 +15,7 @@ import {
 import { deleteGuest } from '@/app/actions/guest.actions';
 import { toast } from 'sonner';
 
-export function DeleteGuestButton({
-  guestId,
-  guestName,
-}: {
-  guestId: string;
-  guestName: string;
-}) {
+export function DeleteGuestButton({ guestId, guestName }: { guestId: string; guestName: string }) {
   const [open, setOpen] = useState(false);
   const [deleting, setDeleting] = useState(false);
   const router = useRouter();

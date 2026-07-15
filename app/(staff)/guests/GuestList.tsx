@@ -93,18 +93,12 @@ export function GuestList({ items, page, pageSize, total }: Props) {
           </p>
           <div className="space-x-2">
             {page > 1 && (
-              <Link
-                href={`/guests?page=${page - 1}`}
-                className="px-3 py-1 border rounded text-sm"
-              >
+              <Link href={`/guests?page=${page - 1}`} className="px-3 py-1 border rounded text-sm">
                 上一页
               </Link>
             )}
             {page * pageSize < total && (
-              <Link
-                href={`/guests?page=${page + 1}`}
-                className="px-3 py-1 border rounded text-sm"
-              >
+              <Link href={`/guests?page=${page + 1}`} className="px-3 py-1 border rounded text-sm">
                 下一页
               </Link>
             )}

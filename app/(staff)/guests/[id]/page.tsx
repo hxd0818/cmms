@@ -47,9 +47,7 @@ export default async function GuestDetailPage({ params }: PageProps) {
         <Field label="手机">{guest.phone ?? '-'}</Field>
         <Field label="邮箱">{guest.email ?? '-'}</Field>
         <Field label="身份证">{guest.idNumber ?? '-'}</Field>
-        <Field label="饮食标签">
-          {(guest.dietaryTags ?? []).join(', ') || '-'}
-        </Field>
+        <Field label="饮食标签">{(guest.dietaryTags ?? []).join(', ') || '-'}</Field>
         <Field label="创建时间">{new Date(guest.createdAt).toLocaleString('zh-CN')}</Field>
         <Field label="更新时间">{new Date(guest.updatedAt).toLocaleString('zh-CN')}</Field>
         <Field label="备注" full>

@@ -2,12 +2,7 @@
 
 import { guestCreateSchema, guestUpdateSchema } from '@/lib/shared/guest';
 import { guestService } from '@/lib/domain/guest/service';
-import {
-  assertAuthorized,
-  getContext,
-  handleError,
-  type ActionResult,
-} from '@/lib/actions/utils';
+import { assertAuthorized, getContext, handleError, type ActionResult } from '@/lib/actions/utils';
 import { revalidatePath } from 'next/cache';
 
 export async function createGuest(

@@ -14,11 +14,7 @@ export const guestCreateSchema = z.object({
     .regex(/^1[3-9]\d{9}$/, '手机号格式错误')
     .optional()
     .or(z.literal('')),
-  email: z
-    .string()
-    .email('邮箱格式错误')
-    .optional()
-    .or(z.literal('')),
+  email: z.string().email('邮箱格式错误').optional().or(z.literal('')),
   company: z.string().max(200).optional(),
   title: z.string().max(100).optional(),
   level: guestLevelSchema.default('C'),

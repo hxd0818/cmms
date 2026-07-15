@@ -39,11 +39,7 @@ export function defineAbilityFor(user: AppUser): AppAbility {
   return build();
 }
 
-export function assertCan(
-  ability: AppAbility,
-  action: AppAction,
-  subject: AppSubject,
-): void {
+export function assertCan(ability: AppAbility, action: AppAction, subject: AppSubject): void {
   if (!ability.can(action, subject)) {
     throw new Error(`Forbidden: ${action} ${subject}`);
   }

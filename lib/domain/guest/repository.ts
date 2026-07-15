@@ -1,10 +1,5 @@
 import { prisma } from '@/lib/db/client';
-import type {
-  GuestCreateData,
-  GuestListParams,
-  GuestListResult,
-  GuestUpdateData,
-} from './types';
+import type { GuestCreateData, GuestListParams, GuestListResult, GuestUpdateData } from './types';
 
 export const guestRepository = {
   async create(data: GuestCreateData) {
@@ -38,14 +33,7 @@ export const guestRepository = {
   },
 
   async list(params: GuestListParams): Promise<GuestListResult> {
-    const {
-      search,
-      level,
-      company,
-      page = 1,
-      pageSize = 20,
-      includeDeleted = false,
-    } = params;
+    const { search, level, company, page = 1, pageSize = 20, includeDeleted = false } = params;
 
     const where: Record<string, unknown> = {};
     if (!includeDeleted) where.deletedAt = null;
