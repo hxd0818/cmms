@@ -1,20 +1,22 @@
 import 'dotenv/config';
 import { logger } from '@/lib/utils/logger';
+import { registerGuestImportWorker } from '@/lib/queue/guest-import.queue';
+import type { Worker } from 'bullmq';
 
 async function main() {
-  logger.info('CMMS worker starting (placeholder)');
+  logger.info('CMMS worker starting');
 
-  // BullMQ workers will be registered here in Phase 1 Task 1.11 (Guest Excel import)
-  // Example:
-  //   import { registerGuestImportWorker } from '@/lib/queue/guest-import.queue';
-  //   registerGuestImportWorker();
+  const workers: Worker[] = [registerGuestImportWorker()];
+
+  logger.info({ count: workers.length, names: workers.map((w) => w.name) }, 'workers registered');
 
   const shutdown = async (signal: string) => {
-    logger.info({ signal }, 'shutting down worker...');
+    logger.info({ signal }, 'shutting down workers...');
+    await Promise.allSettled(workers.map((w) => w.close()));
     process.exit(0);
   };
-  process.on('SIGINT', () => shutdown('SIGINT'));
-  process.on('SIGTERM', () => shutdown('SIGTERM'));
+  process.on('SIGINT', () => void shutdown('SIGINT'));
+  process.on('SIGTERM', () => void shutdown('SIGTERM'));
 
   // Keep process alive
   setInterval(() => {}, 1 << 30);
