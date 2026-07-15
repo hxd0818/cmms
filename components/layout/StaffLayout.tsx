@@ -1,12 +1,7 @@
 import Link from 'next/link';
 import { auth } from '@/lib/auth/index';
 import { redirect } from 'next/navigation';
-
-const NAV_ITEMS = [
-  { href: '/dashboard', label: '控制台' },
-  { href: '/guests', label: '嘉宾库' },
-  { href: '/meetings', label: '会议管理' },
-];
+import { NAV_ITEMS } from './staff-nav';
 
 export default async function StaffLayout({ children }: { children: React.ReactNode }) {
   const session = await auth();

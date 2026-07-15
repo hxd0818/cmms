@@ -117,6 +117,7 @@ model MeetingGuest {
   guest        Guest         @relation(fields: [guestId], references: [id])
   primary      MeetingGuest? @relation("EntourageRelation", fields: [primaryMeetingGuestId], references: [id])
   subordinates MeetingGuest[] @relation("EntourageRelation")
+  transportOrders TransportOrder[]
 
   @@unique([meetingId, guestId])
   @@index([meetingId, receptionStage])
@@ -181,4 +182,71 @@ enum AgendaType {
   MEAL
   TOUR
   OTHER
+}
+
+// ============ Vehicle (resource pool) ============
+
+model Vehicle {
+  id          String      @id @default(cuid())
+  plateNo     String      @unique
+  type        VehicleType
+  capacity    Int
+  driverName  String
+  driverPhone String
+  belongs     String?
+  createdAt   DateTime    @default(now())
+  updatedAt   DateTime    @updatedAt
+
+  transportOrders TransportOrder[]
+
+  @@map("vehicles")
+}
+
+enum VehicleType {
+  SEDAN
+  MPV
+  BUS
+  OTHER
+}
+
+// ============ TransportOrder ============
+
+model TransportOrder {
+  id              String          @id @default(cuid())
+  meetingId       String
+  meetingGuestId  String
+  vehicleId       String?
+  pickupType      PickupType
+  pickupLocation  String
+  pickupTime      DateTime
+  dropoffLocation String
+  flightNo        String?
+  status          TransportStatus @default(UNASSIGNED)
+  actualPickupAt  DateTime?
+  createdAt       DateTime        @default(now())
+  updatedAt       DateTime        @updatedAt
+
+  meetingGuest MeetingGuest @relation(fields: [meetingGuestId], references: [id], onDelete: Cascade)
+  vehicle      Vehicle?     @relation(fields: [vehicleId], references: [id])
+
+  @@index([meetingId, pickupTime])
+  @@index([vehicleId, pickupTime])
+  @@map("transport_orders")
+}
+
+enum PickupType {
+  AIRPORT
+  TRAINSTATION
+  HOTEL
+  VENUE
+}
+
+enum TransportStatus {
+  UNASSIGNED
+  ASSIGNED
+  EN_ROUTE
+  PICKED_UP
+  COMPLETED
+  REASSIGNED
+  CANCELED
 }
