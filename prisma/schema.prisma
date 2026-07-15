@@ -494,4 +494,32 @@ enum FeeCategory {
   OTHER
 }
 
+// ============ Audit Log ============
+
+model AuditLog {
+  id         String    @id @default(cuid())
+  actorType  ActorType
+  actorId    String?
+  actorRole  String?
+  action     String
+  entityType String
+  entityId   String
+  before     Json?
+  after      Json?
+  source     String?
+  createdAt  DateTime  @default(now())
+
+  @@index([entityType, entityId])
+  @@index([actorType, actorId])
+  @@index([createdAt])
+  @@map("audit_logs")
+}
+
+enum ActorType {
+  USER
+  GUEST_PORTAL
+  DRIVER_PORTAL
+  SYSTEM
+}
+
 
