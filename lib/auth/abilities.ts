@@ -13,6 +13,7 @@ export type AppSubject =
   | 'FeeRecord'
   | 'AuditLog'
   | 'User'
+  | 'MeetingStaff'
   | 'all';
 
 export interface AppUser {
