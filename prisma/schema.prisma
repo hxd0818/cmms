@@ -28,3 +28,41 @@ enum SystemRole {
   SUPER_ADMIN
   VIEWER
 }
+
+// ============ Guest ============
+
+model Guest {
+  id          String     @id @default(cuid())
+  name        String
+  gender      Gender?
+  phone       String?    @unique
+  email       String?
+  company     String?
+  title       String?
+  level       GuestLevel @default(C)
+  avatarUrl   String?
+  idNumber    String?
+  dietaryTags String[]
+  notes       String?
+  deletedAt   DateTime?
+  createdAt   DateTime   @default(now())
+  updatedAt   DateTime   @updatedAt
+
+  @@index([name])
+  @@index([company])
+  @@map("guests")
+}
+
+enum Gender {
+  MALE
+  FEMALE
+  OTHER
+}
+
+enum GuestLevel {
+  VIP_A
+  VIP_B
+  A
+  B
+  C
+}
