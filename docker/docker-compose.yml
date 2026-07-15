@@ -1,5 +1,16 @@
 # CMMS Development Infrastructure
-# Usage: docker compose -f docker/docker-compose.yml up -d
+# Fully isolated from other projects:
+# - Explicit project name 'cmms' (avoids default dir-name collision)
+# - Custom network 'cmms-network'
+# - Bind mount to ./data/{postgres,redis} (data lives inside project, portable)
+# - Distinct ports (5434/6381) to avoid conflict with other projects
+#
+# Usage:
+#   docker compose -f docker/docker-compose.yml up -d
+#   docker compose -f docker/docker-compose.yml down
+#   docker compose -f docker/docker-compose.yml logs -f postgres
+
+name: cmms
 
 services:
   postgres:
@@ -13,7 +24,9 @@ services:
     ports:
       - '5434:5432'
     volumes:
-      - postgres_data:/var/lib/postgresql/data
+      - ./data/postgres:/var/lib/postgresql/data
+    networks:
+      - cmms-network
     healthcheck:
       test: ['CMD-SHELL', 'pg_isready -U cmms -d cmms']
       interval: 10s
@@ -27,13 +40,16 @@ services:
     ports:
       - '6381:6379'
     volumes:
-      - redis_data:/data
+      - ./data/redis:/data
+    networks:
+      - cmms-network
     healthcheck:
       test: ['CMD', 'redis-cli', 'ping']
       interval: 10s
       timeout: 5s
       retries: 5
 
-volumes:
-  postgres_data:
-  redis_data:
+networks:
+  cmms-network:
+    name: cmms-network
+    driver: bridge
