@@ -10,9 +10,11 @@ export type AppSubject =
   | 'TransportOrder'
   | 'LodgingOrder'
   | 'CateringOrder'
+  | 'Gift'
   | 'GiftOrder'
   | 'Companion'
   | 'FeeRecord'
+  | 'Hotel'
   | 'AuditLog'
   | 'User'
   | 'MeetingStaff'
@@ -37,7 +39,21 @@ export function defineAbilityFor(user: AppUser): AppAbility {
   // Order matters: deny first (catch-all), then allow specific subjects.
   cannot('manage', 'all').because('只读用户无权写操作');
   cannot('read', ['AuditLog', 'User']).because('只读用户无权访问审计日志和用户管理');
-  can('read', ['Guest', 'Meeting', 'MeetingGuest', 'AgendaItem']);
+  can('read', [
+    'Guest',
+    'Meeting',
+    'MeetingGuest',
+    'AgendaItem',
+    'Vehicle',
+    'TransportOrder',
+    'LodgingOrder',
+    'CateringOrder',
+    'Gift',
+    'GiftOrder',
+    'Companion',
+    'FeeRecord',
+    'Hotel',
+  ]);
 
   return build();
 }

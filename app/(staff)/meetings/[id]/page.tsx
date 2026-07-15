@@ -40,7 +40,7 @@ export default async function MeetingDetailPage({ params }: PageProps) {
             {meeting.venue ? ` · ${meeting.venue}` : ''}
           </p>
         </div>
-        <div className="flex gap-2">
+        <div className="flex flex-wrap gap-2">
           <Link
             href={`/meetings/${meeting.id}/edit`}
             className={cn(buttonVariants({ variant: 'outline' }))}
@@ -52,6 +52,54 @@ export default async function MeetingDetailPage({ params }: PageProps) {
             className={cn(buttonVariants({ variant: 'outline' }))}
           >
             嘉宾管理
+          </Link>
+          <Link
+            href={`/meetings/${meeting.id}/lodging`}
+            className={cn(buttonVariants({ variant: 'outline' }))}
+          >
+            住宿
+          </Link>
+          <Link
+            href={`/meetings/${meeting.id}/catering`}
+            className={cn(buttonVariants({ variant: 'outline' }))}
+          >
+            餐饮
+          </Link>
+          <Link
+            href={`/meetings/${meeting.id}/gifts`}
+            className={cn(buttonVariants({ variant: 'outline' }))}
+          >
+            礼品
+          </Link>
+          <Link
+            href={`/meetings/${meeting.id}/companions`}
+            className={cn(buttonVariants({ variant: 'outline' }))}
+          >
+            陪同
+          </Link>
+          <Link
+            href={`/meetings/${meeting.id}/fees`}
+            className={cn(buttonVariants({ variant: 'outline' }))}
+          >
+            费用
+          </Link>
+          <Link
+            href={`/meetings/${meeting.id}/transport`}
+            className={cn(buttonVariants({ variant: 'outline' }))}
+          >
+            接送
+          </Link>
+          <Link
+            href={`/meetings/${meeting.id}/reception`}
+            className={cn(buttonVariants({ variant: 'outline' }))}
+          >
+            签到
+          </Link>
+          <Link
+            href={`/meetings/${meeting.id}/agenda`}
+            className={cn(buttonVariants({ variant: 'outline' }))}
+          >
+            议程
           </Link>
           <MeetingStatusButton meetingId={meeting.id} currentStatus={meeting.status} />
         </div>

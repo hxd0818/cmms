@@ -118,6 +118,9 @@ model MeetingGuest {
   primary      MeetingGuest? @relation("EntourageRelation", fields: [primaryMeetingGuestId], references: [id])
   subordinates MeetingGuest[] @relation("EntourageRelation")
   transportOrders TransportOrder[]
+  lodgingOrders  LodgingOrder[]
+  cateringOrders CateringOrder[]
+  giftOrders     GiftOrder[]
 
   @@unique([meetingId, guestId])
   @@index([meetingId, receptionStage])
@@ -278,4 +281,217 @@ model DriverAccessToken {
 
   @@map("driver_access_tokens")
 }
+
+// ============ Lodging ============
+
+model Hotel {
+  id          String      @id @default(cuid())
+  name        String
+  address     String
+  contactPhone String?
+  rooms       HotelRoom[]
+  createdAt   DateTime    @default(now())
+  updatedAt   DateTime    @updatedAt
+
+  @@map("hotels")
+}
+
+model HotelRoom {
+  id         String     @id @default(cuid())
+  hotelId    String
+  roomNumber String
+  roomType   RoomType
+  status     RoomStatus @default(AVAILABLE)
+  hotel      Hotel      @relation(fields: [hotelId], references: [id], onDelete: Cascade)
+  lodgingOrders LodgingOrder[]
+
+  @@unique([hotelId, roomNumber])
+  @@map("hotel_rooms")
+}
+
+enum RoomType {
+  SINGLE
+  DOUBLE
+  SUITE
+}
+
+enum RoomStatus {
+  AVAILABLE
+  RESERVED
+  OCCUPIED
+  MAINTENANCE
+}
+
+model LodgingOrder {
+  id               String        @id @default(cuid())
+  meetingId        String
+  meetingGuestId   String
+  hotelRoomId      String?
+  checkInAt        DateTime
+  checkOutAt       DateTime
+  specialRequests  String?
+  status           LodgingStatus @default(UNASSIGNED)
+  roommateIds      String[]
+  actualCheckInAt  DateTime?
+  actualCheckOutAt DateTime?
+  createdAt        DateTime      @default(now())
+  updatedAt        DateTime      @updatedAt
+
+  meetingGuest MeetingGuest @relation(fields: [meetingGuestId], references: [id], onDelete: Cascade)
+  hotelRoom    HotelRoom?   @relation(fields: [hotelRoomId], references: [id])
+
+  @@index([meetingId, checkInAt])
+  @@index([hotelRoomId, checkInAt])
+  @@map("lodging_orders")
+}
+
+enum LodgingStatus {
+  UNASSIGNED
+  RESERVED
+  CHECKED_IN
+  CHECKED_OUT
+  ROOM_CHANGED
+  CANCELED
+}
+
+// ============ Catering ============
+
+model DiningTable {
+  id             String          @id @default(cuid())
+  meetingId      String
+  name           String
+  capacity       Int
+  type           TableType
+  cateringOrders CateringOrder[]
+
+  @@map("dining_tables")
+}
+
+enum TableType {
+  ROUND
+  SQUARE
+  BUFFET
+}
+
+model CateringOrder {
+  id             String          @id @default(cuid())
+  meetingId      String
+  meetingGuestId String
+  mealType       MealType
+  mealTime       DateTime
+  diningTableId  String?
+  specialDietary String[]
+  status         CateringStatus  @default(SCHEDULED)
+  notes          String?
+  createdAt      DateTime        @default(now())
+  updatedAt      DateTime        @updatedAt
+
+  meetingGuest MeetingGuest @relation(fields: [meetingGuestId], references: [id], onDelete: Cascade)
+  diningTable  DiningTable?  @relation(fields: [diningTableId], references: [id])
+
+  @@index([meetingId, mealTime])
+  @@map("catering_orders")
+}
+
+enum MealType {
+  WELCOME_BANQUET
+  FAREWELL
+  LUNCH
+  DINNER
+  BREAKFAST
+}
+
+enum CateringStatus {
+  SCHEDULED
+  SEATED
+  FINISHED
+  CANCELED
+}
+
+// ============ Gift + Companion + Fee ============
+
+model Gift {
+  id        String      @id @default(cuid())
+  name      String
+  stock     Int
+  unitPrice Decimal?    @db.Decimal(10, 2)
+  giftOrders GiftOrder[]
+
+  @@map("gifts")
+}
+
+model GiftOrder {
+  id             String     @id @default(cuid())
+  meetingId      String
+  meetingGuestId String
+  giftId         String
+  quantity       Int        @default(1)
+  status         GiftStatus @default(PENDING)
+  deliveredAt    DateTime?
+  notes          String?
+  createdAt      DateTime   @default(now())
+  updatedAt      DateTime   @updatedAt
+
+  meetingGuest MeetingGuest @relation(fields: [meetingGuestId], references: [id], onDelete: Cascade)
+  gift         Gift         @relation(fields: [giftId], references: [id])
+
+  @@map("gift_orders")
+}
+
+enum GiftStatus {
+  PENDING
+  DELIVERED
+  CANCELED
+}
+
+model Companion {
+  id         String               @id @default(cuid())
+  name       String
+  phone      String?
+  languages  String[]
+  role       String
+  assignments CompanionAssignment[]
+
+  @@map("companions")
+}
+
+model CompanionAssignment {
+  id              String   @id @default(cuid())
+  meetingId       String
+  meetingGuestId  String
+  companionId     String
+  assignmentScope String
+  notes           String?
+  createdAt       DateTime @default(now())
+
+  companion Companion @relation(fields: [companionId], references: [id], onDelete: Cascade)
+
+  @@unique([meetingGuestId, companionId, assignmentScope])
+  @@map("companion_assignments")
+}
+
+model FeeRecord {
+  id             String      @id @default(cuid())
+  meetingId      String
+  meetingGuestId String?
+  category       FeeCategory
+  amount         Decimal     @db.Decimal(10, 2)
+  currency       String      @default("CNY")
+  incurredAt     DateTime    @default(now())
+  notes          String?
+  createdBy      String
+  createdAt      DateTime    @default(now())
+
+  @@index([meetingId, category])
+  @@map("fee_records")
+}
+
+enum FeeCategory {
+  TRANSPORT
+  LODGING
+  MEAL
+  GIFT
+  OTHER
+}
+
 
