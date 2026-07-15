@@ -1,4 +1,4 @@
-import { auth } from '@/lib/auth/config';
+import { auth } from '@/lib/auth/index';
 import { redirect } from 'next/navigation';
 
 export default async function DashboardPage() {

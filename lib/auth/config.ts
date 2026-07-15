@@ -1,38 +1,26 @@
-import NextAuth, { type NextAuthConfig } from 'next-auth';
-import Credentials from 'next-auth/providers/credentials';
-import bcrypt from 'bcryptjs';
-import { prisma } from '@/lib/db/client';
+// Edge-safe NextAuth config — used by middleware (Edge runtime).
+// DO NOT import Prisma or any Node-only module here.
+import type { NextAuthConfig } from 'next-auth';
 
-export const authConfig: NextAuthConfig = {
+export const edgeAuthConfig: NextAuthConfig = {
   session: { strategy: 'jwt', maxAge: 60 * 60 * 8 },
   pages: { signIn: '/login' },
-  providers: [
-    Credentials({
-      credentials: {
-        email: { label: 'Email', type: 'email' },
-        password: { label: 'Password', type: 'password' },
-      },
-      async authorize(creds) {
-        if (!creds?.email || !creds?.password) return null;
-        const email = String(creds.email);
-        const user = await prisma.user.findUnique({ where: { email } });
-        if (!user) return null;
-        const ok = await bcrypt.compare(String(creds.password), user.passwordHash);
-        if (!ok) return null;
-        return {
-          id: user.id,
-          email: user.email,
-          name: user.name,
-          role: user.role,
-        };
-      },
-    }),
-  ],
+  providers: [], // providers with authorize() live in lib/auth/index.ts (Node-only)
   callbacks: {
+    authorized({ auth, request }) {
+      const isLoggedIn = !!auth?.user;
+      const { pathname } = request.nextUrl;
+      const PUBLIC_PATHS = ['/login', '/api/auth', '/g', '/d'];
+
+      if (PUBLIC_PATHS.some((p) => pathname.startsWith(p))) {
+        return true;
+      }
+      return isLoggedIn;
+    },
     jwt({ token, user }) {
       if (user) {
-        token.id = user.id;
-        token.role = (user as { role: string }).role;
+        token.id = (user as { id?: string }).id ?? token.sub ?? '';
+        token.role = (user as { role?: string }).role ?? 'VIEWER';
       }
       return token;
     },
@@ -45,5 +33,3 @@ export const authConfig: NextAuthConfig = {
     },
   },
 };
-
-export const { auth, handlers, signIn, signOut } = NextAuth(authConfig);
