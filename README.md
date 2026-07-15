@@ -92,12 +92,12 @@ pnpm worker:start
 
 | 文档 | 内容 |
 |---|---|
-| [ARCHITECTURE.md](./ARCHITECTURE.md) | 系统架构概览（一图读懂） |
-| [DEVELOPMENT.md](./DEVELOPMENT.md) | 开发环境详细指南 |
-| [DEPLOYMENT.md](./DEPLOYMENT.md) | 生产部署流程 |
-| [SECURITY.md](./SECURITY.md) | 安全设计与最佳实践 |
-| [TESTING.md](./TESTING.md) | 测试策略与覆盖目标 |
-| [CONTRIBUTING.md](./CONTRIBUTING.md) | 贡献规范 |
+| [docs/ARCHITECTURE.md](./docs/ARCHITECTURE.md) | 系统架构概览（一图读懂） |
+| [docs/DEVELOPMENT.md](./docs/DEVELOPMENT.md) | 开发环境详细指南 |
+| [docs/DEPLOYMENT.md](./docs/DEPLOYMENT.md) | 生产部署流程 |
+| [docs/SECURITY.md](./docs/SECURITY.md) | 安全设计与最佳实践 |
+| [docs/TESTING.md](./docs/TESTING.md) | 测试策略与覆盖目标 |
+| [docs/CONTRIBUTING.md](./docs/CONTRIBUTING.md) | 贡献规范 |
 | [CHANGELOG.md](./CHANGELOG.md) | 版本变更记录 |
 | [CLAUDE.md](./CLAUDE.md) | AI 辅助开发项目级规范 |
 | [docs/plans/](./docs/plans/) | 设计文档与各阶段实施计划 |

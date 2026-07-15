@@ -87,6 +87,7 @@ pnpm lint && pnpm typecheck && pnpm format:check && pnpm test && pnpm build
 - **2026-07-15 版本升级**：爸爸要求用最新稳定版（Next.js 16.2.10 / Tailwind v4 / Prisma 7.8 / Zod 4）。计划中的 14+v3 已废弃，所有任务按实际版本执行。
 - **2026-07-15 pnpm 安装方式**：Windows corepack 因权限失败，改用 `npm install -g pnpm`，效果一致。
 - **2026-07-15 端口冲突**：3000（cdep）/ 3001（ccidscan dev）/ 5432-5433 / 6379 都被占用，CMMS 改用 3010 / 5434 / 6381。
+- **2026-07-15 文档归位**：爸爸指出工程文档应统一放 `docs/` 目录，不应堆在根目录。已移动 ARCHITECTURE/DEVELOPMENT/DEPLOYMENT/SECURITY/TESTING/CONTRIBUTING 到 `docs/`。保留根目录的仅 4 份：`README.md`（GitHub 门面）、`LICENSE`（法律惯例）、`CLAUDE.md`（Claude Code 必需）、`CHANGELOG.md`（GitHub Release 兼容）。**新增文档默认放 docs/，不要堆根目录**。
 
 ## Architecture Quick Reference
 
