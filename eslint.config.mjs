@@ -25,6 +25,8 @@ const eslintConfig = defineConfig([
     'test-results/**',
     'coverage/**',
     'docs/plans/**',
+    'lib/generated/**',
+    'prisma/migrations/**',
   ]),
 ]);
 

@@ -65,9 +65,7 @@ export function LoginForm() {
       <Button type="submit" disabled={loading} className="w-full">
         {loading ? '登录中...' : '登录'}
       </Button>
-      <p className="text-xs text-gray-500 text-center">
-        默认账号: admin@cmms.local / admin123
-      </p>
+      <p className="text-xs text-gray-500 text-center">默认账号: admin@cmms.local / admin123</p>
     </form>
   );
 }
