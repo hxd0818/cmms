@@ -29,10 +29,7 @@ export async function logAction(params: {
     });
   } catch (e) {
     // Audit logging should never break the main operation
-    logger.error(
-      { err: e instanceof Error ? e.message : 'unknown', params },
-      'audit log failed',
-    );
+    logger.error({ err: e instanceof Error ? e.message : 'unknown', params }, 'audit log failed');
   }
 }
 

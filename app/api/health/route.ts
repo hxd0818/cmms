@@ -2,9 +2,7 @@ import { NextResponse } from 'next/server';
 import { prisma } from '@/lib/db/client';
 
 export async function GET() {
-  const checks = await Promise.allSettled([
-    prisma.$queryRaw`SELECT 1`,
-  ]);
+  const checks = await Promise.allSettled([prisma.$queryRaw`SELECT 1`]);
 
   const db = checks[0]?.status === 'fulfilled' ? 'ok' : 'fail';
 

@@ -38,7 +38,11 @@ export default async function DashboardPage() {
       <div className="grid grid-cols-3 gap-4 mb-8">
         <StatCard label="嘉宾总数" value={stats.totalGuests} href="/guests" />
         <StatCard label="会议总数" value={stats.totalMeetings} href="/meetings" />
-        <StatCard label="进行中会议" value={stats.ongoingMeetings} href="/meetings?status=ONGOING" />
+        <StatCard
+          label="进行中会议"
+          value={stats.ongoingMeetings}
+          href="/meetings?status=ONGOING"
+        />
       </div>
 
       <div>
@@ -79,15 +83,7 @@ export default async function DashboardPage() {
   );
 }
 
-function StatCard({
-  label,
-  value,
-  href,
-}: {
-  label: string;
-  value: number;
-  href: string;
-}) {
+function StatCard({ label, value, href }: { label: string; value: number; href: string }) {
   return (
     <Link
       href={href}

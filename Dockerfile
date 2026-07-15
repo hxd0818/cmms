@@ -1,0 +1,45 @@
+# CMMS Production Dockerfile (multi-stage, non-root)
+# Build: docker build -t cmms:latest .
+# Run:   docker run -p 3000:3000 --env-file .env.production cmms:latest
+
+# ============ Stage 1: Dependencies ============
+FROM node:22-alpine AS deps
+WORKDIR /app
+RUN corepack enable pnpm
+COPY package.json pnpm-lock.yaml pnpm-workspace.yaml ./
+RUN pnpm install --frozen-lockfile --config.dangerouslyAllowAllBuilds=true
+
+# ============ Stage 2: Build ============
+FROM node:22-alpine AS builder
+WORKDIR /app
+RUN corepack enable pnpm
+COPY --from=deps /app/node_modules ./node_modules
+COPY . .
+ENV NEXT_TELEMETRY_DISABLED=1
+RUN pnpm build
+
+# ============ Stage 3: Runtime ============
+FROM node:22-alpine AS runner
+WORKDIR /app
+ENV NODE_ENV=production
+ENV NEXT_TELEMETRY_DISABLED=1
+
+# Create non-root user
+RUN addgroup -g 1001 -S nodejs && adduser -S nextjs -u 1001
+
+# Copy only production files
+COPY --from=builder --chown=nextjs:nodejs /app/.next/standalone ./
+COPY --from=builder --chown=nextjs:nodejs /app/.next/static ./.next/static
+COPY --from=builder --chown=nextjs:nodejs /app/public ./public
+COPY --from=builder --chown=nextjs:nodejs /app/prisma ./prisma
+COPY --from=builder --chown=nextjs:nodejs /app/lib/generated ./lib/generated
+COPY --from=builder --chown=nextjs:nodejs /app/package.json ./package.json
+
+USER nextjs
+
+EXPOSE 3000
+
+HEALTHCHECK --interval=30s --timeout=10s --start-period=40s --retries=3 \
+  CMD wget --quiet --spider http://localhost:3000/api/health || exit 1
+
+CMD ["node", "server.js"]

@@ -1,0 +1,13 @@
+node_modules
+.next
+.git
+docker/data
+tmp
+docs
+tests
+playwright-report
+test-results
+coverage
+*.md
+.env*
+!.env.example

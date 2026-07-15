@@ -2,17 +2,16 @@ import { prisma } from '@/lib/db/client';
 
 export const reportService = {
   async getMeetingSummary(meetingId: string) {
-    const [meeting, meetingGuests, transportOrders, lodgingOrders, feeRecords] =
-      await Promise.all([
-        prisma.meeting.findUnique({ where: { id: meetingId } }),
-        prisma.meetingGuest.findMany({
-          where: { meetingId },
-          include: { guest: true },
-        }),
-        prisma.transportOrder.findMany({ where: { meetingId } }),
-        prisma.lodgingOrder.findMany({ where: { meetingId } }),
-        prisma.feeRecord.findMany({ where: { meetingId } }),
-      ]);
+    const [meeting, meetingGuests, transportOrders, lodgingOrders, feeRecords] = await Promise.all([
+      prisma.meeting.findUnique({ where: { id: meetingId } }),
+      prisma.meetingGuest.findMany({
+        where: { meetingId },
+        include: { guest: true },
+      }),
+      prisma.transportOrder.findMany({ where: { meetingId } }),
+      prisma.lodgingOrder.findMany({ where: { meetingId } }),
+      prisma.feeRecord.findMany({ where: { meetingId } }),
+    ]);
 
     if (!meeting) return null;
 
@@ -45,9 +44,8 @@ export const reportService = {
         lodging: {
           total: lodgingOrders.length,
           assigned: lodgingOrders.filter((l) => l.hotelRoomId).length,
-          checkedIn: lodgingOrders.filter((l) =>
-            ['CHECKED_IN', 'CHECKED_OUT'].includes(l.status),
-          ).length,
+          checkedIn: lodgingOrders.filter((l) => ['CHECKED_IN', 'CHECKED_OUT'].includes(l.status))
+            .length,
         },
       },
       feeSummary: {
@@ -62,20 +60,19 @@ export const reportService = {
     const now = new Date();
     const upcoming = new Date(now.getTime() + 30 * 24 * 60 * 60 * 1000);
 
-    const [totalGuests, totalMeetings, upcomingMeetings, ongoingMeetings] =
-      await Promise.all([
-        prisma.guest.count({ where: { deletedAt: null } }),
-        prisma.meeting.count(),
-        prisma.meeting.findMany({
-          where: {
-            startAt: { gte: now, lte: upcoming },
-            status: { in: ['DRAFT', 'PLANNING', 'ONGOING'] },
-          },
-          orderBy: { startAt: 'asc' },
-          take: 5,
-        }),
-        prisma.meeting.count({ where: { status: 'ONGOING' } }),
-      ]);
+    const [totalGuests, totalMeetings, upcomingMeetings, ongoingMeetings] = await Promise.all([
+      prisma.guest.count({ where: { deletedAt: null } }),
+      prisma.meeting.count(),
+      prisma.meeting.findMany({
+        where: {
+          startAt: { gte: now, lte: upcoming },
+          status: { in: ['DRAFT', 'PLANNING', 'ONGOING'] },
+        },
+        orderBy: { startAt: 'asc' },
+        take: 5,
+      }),
+      prisma.meeting.count({ where: { status: 'ONGOING' } }),
+    ]);
 
     return {
       totalGuests,
