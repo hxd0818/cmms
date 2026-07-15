@@ -2,13 +2,25 @@
 
 > **For Claude:** REQUIRED SUB-SKILL: Use superpowers:executing-plans to implement this plan task-by-task.
 
-**Goal:** 搭建 CMMS 项目骨架（Next.js 14 全栈 + Prisma + PostgreSQL + Redis + Docker），并实现 Guest（嘉宾信息库）模块作为参考实现，确立后续 7 个领域模块的开发范式。
+**Goal:** 搭建 CMMS 项目骨架（Next.js 16 全栈 + Prisma + PostgreSQL + Redis + Docker），并实现 Guest（嘉宾信息库）模块作为参考实现，确立后续 7 个领域模块的开发范式。
 
-**Architecture:** Next.js 14 App Router 全栈单体（非 monorepo），按 `lib/domain/<module>/` 严格分层（service/repository/types），Server Actions 作为业务入口，Prisma + PostgreSQL 持久化，NextAuth.js v5 认证，CASL.js 权限，shadcn/ui 组件库。
+**Architecture:** Next.js 16 App Router 全栈单体（非 monorepo），按 `lib/domain/<module>/` 严格分层（service/repository/types），Server Actions 作为业务入口，Prisma + PostgreSQL 持久化，Auth.js (NextAuth v5) 认证，CASL.js 权限，shadcn/ui 组件库。
 
-**Tech Stack:** Node.js 20+ / TypeScript 5+ / Next.js 14 / React 18 / Prisma 5 / PostgreSQL 16 / Redis 7 / BullMQ / Pino / Zod / React Hook Form / Vitest / Playwright / Docker Compose
+**Tech Stack:** Node.js 20+ / TypeScript 5.9 / **Next.js 16.2.10** / **React 19.2.4** / **Prisma 7.8** / **Zod 4** / PostgreSQL 16 / Redis 7 / BullMQ / Pino / React Hook Form / **Vitest 4.1** / Playwright 1.61 / Docker Compose / pnpm 11.13
 
-**Reference Design:** `docs/plans/2026-07-15-cmms-design.md`
+**Reference Design:** `docs/plans/2026-07-15-cmms-design.md` (Section 1.2 documents the version upgrade rationale)
+
+---
+
+## ⚠️ Important: Plan vs Reality Discrepancy
+
+This plan was originally drafted for Next.js 14 + Tailwind v3 + Prisma 5 + Zod 3, but Tasks 0.1-0.5 have been executed with the latest stable versions (Next.js 16.2.10 / Tailwind v4 / Prisma 7.8 / Zod 4). When executing subsequent tasks:
+
+1. **Tailwind v4 differences**: Use `@import "tailwindcss"` in CSS, no `tailwind.config.ts`. Theme via `@theme inline { ... }` in `globals.css`. Tailwind utilities mostly unchanged.
+2. **Next.js 16 differences**: Turbopack is default. Some imports slightly different. Middleware API compatible.
+3. **Prisma 7 differences**: Mostly compatible with v5 syntax. Some generator/datasource block syntax changes possible.
+4. **ESLint 9 differences**: Use `eslint.config.mjs` (flat config), NOT `.eslintrc.json`.
+5. **shadcn 4.12 differences**: Use `pnpm dlx shadcn@4.12.0 add ...`, NOT `shadcn-ui@latest`.
 
 ---
 

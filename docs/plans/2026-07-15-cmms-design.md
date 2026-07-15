@@ -84,26 +84,51 @@
 - 一个仓库一份代码，避免 monorepo 维护负担
 - Server Actions 减少前后端 API 模板代码
 
-### 1.2 技术栈
+### 1.2 技术栈（已升级到 2026-07 最新稳定版）
 
-| 层 | 选型 | 备注 |
-|---|---|---|
-| 前端 + 后端 | Next.js 14 (App Router) | 全栈统一 |
-| 业务逻辑入口 | Server Actions (默认) + Route Handlers (webhook/下载) | |
-| UI 组件 | shadcn/ui + Tailwind CSS | 无运行时开销 |
-| 数据获取 | TanStack Query (客户端) + Server Components (服务端) | |
-| 表单 | React Hook Form + Zod | 与服务端共享 schema |
-| ORM | Prisma 5 | 类型安全 |
-| 数据库 | PostgreSQL 16 | JSONB 支持灵活字段 |
-| 缓存/队列 | Redis 7 + BullMQ | |
-| 认证 | NextAuth.js v5 (Auth.js) | 工作人员端 |
-| 嘉宾端 Token | 有状态 token + HMAC + Redis | 可吊销 |
-| 权限 | CASL.js | 前后端共享规则 |
-| 导入导出 | exceljs | 流式处理大文件 |
-| 日志 | Pino (结构化) | |
-| 测试 | Vitest (单测) + Playwright (E2E) | |
-| 部署 | Docker Compose | 单组织不需要 K8s |
-| 监控 | Sentry | |
+| 层 | 选型 | 实际版本 | 备注 |
+|---|---|---|---|
+| 前端 + 后端 | Next.js (App Router + Turbopack) | **16.2.10** | 2026-07-01 发布，最新稳定版 |
+| 运行时 | React | **19.2.4** | 配合 Next.js 16 |
+| 业务逻辑入口 | Server Actions (默认) + Route Handlers (webhook/下载) | — | |
+| UI 组件 | shadcn/ui + Tailwind CSS | **shadcn 4.12 + Tailwind v4** | Tailwind v4 CSS-first 配置 |
+| 数据获取 | TanStack Query (客户端) + Server Components (服务端) | **5.101** | |
+| 表单 | React Hook Form + Zod | **RHF 7.81 + Zod 4.4** | 与服务端共享 schema |
+| ORM | Prisma | **7.8** | 类型安全 |
+| 数据库 | PostgreSQL | **16** | JSONB 支持灵活字段 |
+| 缓存/队列 | Redis + BullMQ | **Redis 7 + BullMQ 5.80** | |
+| 认证 | Auth.js (NextAuth v5) | **beta.31** | 工作人员端 |
+| 嘉宾端 Token | 有状态 token + HMAC + Redis | — | 可吊销 |
+| 权限 | CASL.js | **7.0** | 前后端共享规则 |
+| 导入导出 | exceljs | **4.4** | 流式处理大文件 |
+| 日志 | Pino (结构化) | **10.3** | |
+| 测试 | Vitest (单测) + Playwright (E2E) | **Vitest 4.1 + Playwright 1.61** | |
+| 部署 | Docker Compose | — | 单组织不需要 K8s |
+| 监控 | Sentry | — | |
+| 包管理 | pnpm | **11.13** | |
+| Node.js | LTS | **20+（实际 24.13）** | |
+| TypeScript | strict mode | **5.9** | |
+
+**版本选择理由**：
+- Next.js 16（2025-10-21 发布）是当前 active 版本，Next.js 15 进入 Maintenance LTS（2026-10-21 EOL），更早版本已 EOL
+- Tailwind v4（2025 发布）改用 CSS-first 配置（`@import "tailwindcss"` 替代 `@tailwind` 指令）
+- 所有版本均选择 2026-07 已生产就绪的最新稳定版
+
+---
+
+### 1.2.x 与原始计划的偏离说明
+
+原始设计（2026-07-15 brainstorming）基于惯性推荐了 Next.js 14 + Tailwind v3 + Prisma 5 + Zod 3，但实施时（Task 0.2-0.5）已升级到最新稳定版。偏离记录：
+
+| 项 | 原计划 | 实际 | 原因 |
+|---|---|---|---|
+| Next.js | 14 | 16.2.10 | Next.js 14 已 EOL，16 是当前 active |
+| React | 18 | 19.2.4 | 配合 Next.js 16 |
+| Tailwind | v3 | v4 | v4 是 2025 年发布的新版本 |
+| Prisma | 5 | 7.8 | 7 是 2025 年发布的新版 |
+| Zod | 3 | 4 | v4 是最新稳定版 |
+| ESLint Config | `.eslintrc.json` | `eslint.config.mjs` (flat) | ESLint 9 默认 flat config |
+| shadcn | (未指定) | 4.12 | 4.13 与 Next.js 16 有兼容问题 |
 
 ### 1.3 目录结构
 
