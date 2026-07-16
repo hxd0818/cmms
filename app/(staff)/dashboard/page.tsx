@@ -132,7 +132,7 @@ function StatCard({
         <div
           className={cn(
             'w-8 h-8 rounded-lg flex items-center justify-center',
-            highlight ? 'bg-teal-50 text-teal-600' : 'bg-stone-100 text-stone-400',
+            highlight ? 'bg-stone-800 text-white' : 'bg-stone-100 text-stone-400',
           )}
         >
           {icon}
@@ -141,7 +141,7 @@ function StatCard({
       <p
         className={cn(
           'text-3xl font-bold tracking-tight',
-          highlight ? 'text-teal-600' : 'text-stone-800',
+          highlight ? 'text-stone-900' : 'text-stone-800',
         )}
       >
         {value}

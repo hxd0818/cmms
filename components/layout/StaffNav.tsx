@@ -57,7 +57,7 @@ export function StaffNav() {
     <nav className="flex-1 px-3 overflow-y-auto pt-2">
       {NAV_GROUPS.map((group) => (
         <div key={group.label} className="mb-5">
-          <p className="px-3 mb-1.5 text-[10px] font-semibold uppercase tracking-wider text-white/30">
+          <p className="px-3 mb-1.5 text-[10px] font-semibold uppercase tracking-wider text-stone-400">
             {group.label}
           </p>
           <div className="space-y-0.5">
@@ -70,7 +70,7 @@ export function StaffNav() {
                   href={item.href}
                   className={`cmms-nav-item ${active ? 'active' : ''} flex items-center gap-3 px-3 py-2 rounded-lg text-[13px] font-medium`}
                   style={{
-                    color: active ? '#ffffff' : 'rgba(255, 255, 255, 0.55)',
+                    color: active ? '#1c1917' : '#78716c',
                   }}
                 >
                   <Icon
