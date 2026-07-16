@@ -36,6 +36,26 @@
   /* --- Larger border radius for modern feel --- */
   --radius-md: 10px;
   --radius-lg: 12px;
+
+  /* --- shadcn semantic tokens (required by ui components) --- */
+  --color-popover: #ffffff;
+  --color-popover-foreground: #1c1917;
+  --color-accent: #f5f5f4;
+  --color-accent-foreground: #1c1917;
+  --color-input: #e7e5e4;
+  --color-ring: #1c1917;
+  --color-muted-foreground: #78716c;
+  --color-secondary: #f5f5f4;
+  --color-secondary-foreground: #1c1917;
+  --color-destructive: #dc2626;
+  --color-destructive-foreground: #ffffff;
+  --color-background: #fafaf9;
+  --color-foreground: #1c1917;
+  --color-primary: #1c1917;
+  --color-primary-foreground: #ffffff;
+  --color-border: #e7e5e4;
+  --color-card: #ffffff;
+  --color-card-foreground: #1c1917;
 }
 
 /* ===== Design Tokens ===== */
