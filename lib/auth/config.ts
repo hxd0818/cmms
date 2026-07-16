@@ -10,7 +10,7 @@ export const edgeAuthConfig: NextAuthConfig = {
     authorized({ auth, request }) {
       const isLoggedIn = !!auth?.user;
       const { pathname } = request.nextUrl;
-      const PUBLIC_PATHS = ['/login', '/api/auth', '/g', '/d'];
+      const PUBLIC_PATHS = ['/login', '/api/auth', '/api/health', '/g', '/d'];
 
       if (PUBLIC_PATHS.some((p) => pathname.startsWith(p))) {
         return true;
