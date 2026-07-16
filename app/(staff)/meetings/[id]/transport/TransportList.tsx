@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import type { TransportOrder, Vehicle, MeetingGuest, Guest } from '@/lib/generated/prisma/client';
 import {
@@ -32,6 +32,7 @@ import { CheckCircle2 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import {
   assignVehicle,
+  getVehicleSeatInfo,
   updateTransportStatus,
   deleteTransportOrder,
 } from '@/app/actions/transport.actions';
@@ -87,12 +88,15 @@ interface Props {
 
 export function TransportList({ meetingId, orders, vehicles }: Props) {
   const router = useRouter();
-  const [assignDialogFor, setAssignDialogFor] = useState<string | null>(null);
+  const [assignDialogFor, setAssignDialogFor] = useState<{
+    orderId: string;
+    pickupTime: string;
+  } | null>(null);
   const [selectedVehicle, setSelectedVehicle] = useState('');
 
   async function onAssign() {
     if (!assignDialogFor || !selectedVehicle) return;
-    const r = await assignVehicle(assignDialogFor, selectedVehicle, meetingId);
+    const r = await assignVehicle(assignDialogFor.orderId, selectedVehicle, meetingId);
     if (r.ok) {
       toast.success('已分配车辆');
       setAssignDialogFor(null);
@@ -165,7 +169,16 @@ export function TransportList({ meetingId, orders, vehicles }: Props) {
                       <span className="text-xs text-slate-500 ml-1">({o.vehicle.driverName})</span>
                     </span>
                   ) : (
-                    <Button size="sm" variant="outline" onClick={() => setAssignDialogFor(o.id)}>
+                    <Button
+                      size="sm"
+                      variant="outline"
+                      onClick={() =>
+                        setAssignDialogFor({
+                          orderId: o.id,
+                          pickupTime: o.pickupTime.toISOString(),
+                        })
+                      }
+                    >
                       分配车辆
                     </Button>
                   )}
@@ -204,6 +217,7 @@ export function TransportList({ meetingId, orders, vehicles }: Props) {
 
       <VehicleAssignDialog
         open={!!assignDialogFor}
+        pickupTime={assignDialogFor?.pickupTime ?? ''}
         onClose={() => setAssignDialogFor(null)}
         vehicles={vehicles}
         selectedVehicle={selectedVehicle}
@@ -223,6 +237,7 @@ const VEHICLE_TYPE_LABEL: Record<string, string> = {
 
 function VehicleAssignDialog({
   open,
+  pickupTime,
   onClose,
   vehicles,
   selectedVehicle,
@@ -230,6 +245,7 @@ function VehicleAssignDialog({
   onConfirm,
 }: {
   open: boolean;
+  pickupTime: string;
   onClose: () => void;
   vehicles: Vehicle[];
   selectedVehicle: string;
@@ -237,6 +253,38 @@ function VehicleAssignDialog({
   onConfirm: () => void;
 }) {
   const [search, setSearch] = useState('');
+  const [seatInfo, setSeatInfo] = useState<{
+    capacity: number;
+    occupied: number;
+    remaining: number;
+    hasOthers: boolean;
+  } | null>(null);
+  const [needConfirm, setNeedConfirm] = useState(false);
+
+  // Fetch seat info when a vehicle is selected
+  useEffect(() => {
+    if (!selectedVehicle || !pickupTime) {
+      setSeatInfo(null);
+      setNeedConfirm(false);
+      return;
+    }
+    getVehicleSeatInfo(selectedVehicle, pickupTime).then((r) => {
+      if (r.ok && r.data) {
+        setSeatInfo(r.data);
+        setNeedConfirm(r.data.hasOthers);
+      }
+    });
+  }, [selectedVehicle, pickupTime]);
+
+  function handleSelect(id: string) {
+    onSelect(id);
+    setNeedConfirm(false);
+  }
+
+  function handleConfirm() {
+    if (needConfirm && !confirm('此车辆已有其他嘉宾，确认拼车？')) return;
+    onConfirm();
+  }
 
   const filtered = useMemo(() => {
     if (!search.trim()) return vehicles;
@@ -257,7 +305,6 @@ function VehicleAssignDialog({
           <DialogTitle>分配车辆</DialogTitle>
         </DialogHeader>
 
-        {/* Search */}
         <Input
           placeholder="搜索车牌 / 司机 / 车队 / 车型..."
           value={search}
@@ -265,15 +312,14 @@ function VehicleAssignDialog({
           className="mb-2"
         />
 
-        {/* Vehicle list */}
-        <div className="max-h-80 overflow-y-auto space-y-1.5">
+        <div className="max-h-72 overflow-y-auto space-y-1.5">
           {filtered.length === 0 ? (
             <p className="text-sm text-stone-400 text-center py-8">无匹配车辆</p>
           ) : (
             filtered.map((v) => (
               <button
                 key={v.id}
-                onClick={() => onSelect(v.id)}
+                onClick={() => handleSelect(v.id)}
                 className={cn(
                   'w-full text-left p-3 rounded-lg border transition-all',
                   selectedVehicle === v.id
@@ -303,12 +349,33 @@ function VehicleAssignDialog({
           )}
         </div>
 
+        {/* Seat info when selected */}
+        {seatInfo && selectedVehicle && (
+          <div
+            className={cn(
+              'rounded-lg p-3 text-sm',
+              seatInfo.hasOthers
+                ? 'bg-amber-50 border border-amber-200'
+                : 'bg-stone-50 border border-stone-200',
+            )}
+          >
+            {seatInfo.hasOthers ? (
+              <p className="text-amber-700">
+                此车辆在该时间段已有其他嘉宾，已占 {seatInfo.occupied}/{seatInfo.capacity} 座，剩余{' '}
+                {seatInfo.remaining} 座。点击确认后将拼车。
+              </p>
+            ) : (
+              <p className="text-stone-500">车辆空闲，{seatInfo.capacity} 座全部可用。</p>
+            )}
+          </div>
+        )}
+
         <DialogFooter>
           <Button variant="outline" onClick={onClose}>
             取消
           </Button>
-          <Button onClick={onConfirm} disabled={!selectedVehicle}>
-            确认分配
+          <Button onClick={handleConfirm} disabled={!selectedVehicle}>
+            {needConfirm ? '确认拼车' : '确认分配'}
           </Button>
         </DialogFooter>
       </DialogContent>

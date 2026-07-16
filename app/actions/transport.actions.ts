@@ -83,3 +83,34 @@ export async function deleteTransportOrder(
     return handleError(e);
   }
 }
+
+export async function getVehicleSeatInfo(
+  vehicleId: string,
+  pickupTime: string,
+): Promise<
+  ActionResult<{
+    capacity: number;
+    occupied: number;
+    remaining: number;
+    hasOthers: boolean;
+  }>
+> {
+  try {
+    await getContext();
+    const info = await transportService.checkVehicleAvailability(vehicleId, new Date(pickupTime));
+    return {
+      ok: true,
+      data: {
+        capacity: info.vehicleCapacity,
+        occupied: info.occupiedSeats,
+        remaining: info.remainingSeats,
+        hasOthers: info.hasOtherPassengers,
+      },
+    };
+  } catch {
+    return {
+      ok: true,
+      data: { capacity: 0, occupied: 0, remaining: 0, hasOthers: false },
+    };
+  }
+}

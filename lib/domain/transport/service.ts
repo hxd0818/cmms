@@ -30,27 +30,32 @@ export const transportService = {
     const order = await transportRepository.findById(orderId);
     if (!order) throw new NotFoundError('TransportOrder', orderId);
 
-    // Conflict check
-    const conflicts = await transportRepository.findVehicleBookingsInRange(
+    // Find existing bookings on same vehicle in time window (for shared ride)
+    const existingBookings = await transportRepository.findVehicleBookingsInRange(
       vehicleId,
       order.pickupTime,
       orderId,
     );
-    if (conflicts.length > 0) {
-      throw new ConflictError(`车辆在此时间段已被占用（前后 30/60 分钟窗口内已有任务）`);
+
+    // Calculate seats already taken by existing bookings
+    let occupiedSeats = 0;
+    for (const booking of existingBookings) {
+      const bookingSubs = await meetingGuestRepository.findSubordinates(booking.meetingGuestId);
+      occupiedSeats += 1 + bookingSubs.filter((s) => s.inheritTransport).length;
     }
 
-    // Capacity check: main + subordinates with inheritTransport
+    // Calculate seats needed for THIS order
     const subordinates = await meetingGuestRepository.findSubordinates(order.meetingGuestId);
     const inheritSubs = subordinates.filter((s) => s.inheritTransport);
-    const totalNeeded = 1 + inheritSubs.length;
+    const seatsNeeded = 1 + inheritSubs.length;
 
     const vehicle = await vehicleRepository.findById(vehicleId);
     if (!vehicle) throw new NotFoundError('Vehicle', vehicleId);
 
-    if (vehicle.capacity < totalNeeded) {
+    // Check total capacity (existing + new)
+    if (occupiedSeats + seatsNeeded > vehicle.capacity) {
       throw new ValidationError(
-        `车辆容量 ${vehicle.capacity} < 需求 ${totalNeeded}（含 ${inheritSubs.length} 位同车随行）`,
+        `车辆座位不足: 已占 ${occupiedSeats} + 本次需求 ${seatsNeeded} = ${occupiedSeats + seatsNeeded} > 容量 ${vehicle.capacity}`,
       );
     }
 
@@ -85,5 +90,35 @@ export const transportService = {
     const existing = await transportRepository.findById(id);
     if (!existing) throw new NotFoundError('TransportOrder', id);
     return transportRepository.delete(id);
+  },
+
+  /**
+   * Check vehicle seat availability for a given pickup time.
+   * Returns occupied seats, existing passengers, and remaining capacity.
+   * Used by UI to show ride-sharing info before assignment.
+   */
+  async checkVehicleAvailability(vehicleId: string, pickupTime: Date) {
+    const vehicle = await vehicleRepository.findById(vehicleId);
+    if (!vehicle) throw new NotFoundError('Vehicle', vehicleId);
+
+    const bookings = await transportRepository.findVehicleBookingsInRange(vehicleId, pickupTime);
+
+    let occupiedSeats = 0;
+    const passengers: Array<{ orderId: string; meetingGuestId: string; seats: number }> = [];
+
+    for (const b of bookings) {
+      const subs = await meetingGuestRepository.findSubordinates(b.meetingGuestId);
+      const seats = 1 + subs.filter((s) => s.inheritTransport).length;
+      occupiedSeats += seats;
+      passengers.push({ orderId: b.id, meetingGuestId: b.meetingGuestId, seats });
+    }
+
+    return {
+      vehicleCapacity: vehicle.capacity,
+      occupiedSeats,
+      remainingSeats: vehicle.capacity - occupiedSeats,
+      hasOtherPassengers: bookings.length > 0,
+      passengerCount: bookings.length,
+    };
   },
 };
