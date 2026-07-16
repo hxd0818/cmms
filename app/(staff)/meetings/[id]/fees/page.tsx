@@ -4,6 +4,7 @@ import { meetingGuestService } from '@/lib/domain/meeting-guest/service';
 import { notFound } from 'next/navigation';
 import { FeeList } from './FeeList';
 import { NewFeeForm } from './NewFeeForm';
+import { MeetingTabs } from '@/components/layout/MeetingTabs';
 
 interface PageProps {
   params: Promise<{ id: string }>;
@@ -35,8 +36,9 @@ export default async function FeesPage({ params }: PageProps) {
 
   return (
     <div className="space-y-6">
+      <MeetingTabs meetingId={id} meetingName={meeting.name} />
       <div>
-        <h1 className="text-2xl font-bold">费用管理 · {meeting.name}</h1>
+        <h1 className="text-xl font-bold">费用管理</h1>
         <p className="text-sm text-slate-500">
           共 {summary.count} 条记录 · 总计{' '}
           {summary.total.toLocaleString('zh-CN', {

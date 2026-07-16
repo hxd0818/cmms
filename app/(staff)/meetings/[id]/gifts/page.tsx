@@ -4,6 +4,7 @@ import { meetingGuestService } from '@/lib/domain/meeting-guest/service';
 import { notFound } from 'next/navigation';
 import { GiftList } from './GiftList';
 import { NewOrderForm } from './NewOrderForm';
+import { MeetingTabs } from '@/components/layout/MeetingTabs';
 
 interface PageProps {
   params: Promise<{ id: string }>;
@@ -36,6 +37,7 @@ export default async function GiftsPage({ params }: PageProps) {
 
   return (
     <div className="space-y-6">
+      <MeetingTabs meetingId={id} meetingName={meeting.name} />
       <div>
         <h1 className="text-xl font-bold">礼品管理 · {meeting.name}</h1>
         <p className="text-sm text-stone-400">共 {orders.length} 个礼品订单</p>

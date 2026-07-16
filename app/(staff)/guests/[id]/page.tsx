@@ -2,6 +2,7 @@ import { guestService } from '@/lib/domain/guest/service';
 import { reportService } from '@/lib/domain/report/service';
 import { notFound } from 'next/navigation';
 import Link from 'next/link';
+import { Breadcrumbs } from '@/components/layout/Breadcrumbs';
 import { buttonVariants } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { cn } from '@/lib/utils';
@@ -53,6 +54,7 @@ export default async function GuestDetailPage({ params }: PageProps) {
 
   return (
     <div className="space-y-6 max-w-5xl">
+      <Breadcrumbs items={[{ label: '嘉宾库', href: '/guests' }, { label: guest.name }]} />
       {/* Header */}
       <div className="flex items-start justify-between">
         <div>

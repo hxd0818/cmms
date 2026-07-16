@@ -4,6 +4,7 @@ import { receptionService } from '@/lib/domain/reception/service';
 import { notFound } from 'next/navigation';
 import { CheckInSearch } from './CheckInSearch';
 import { Kanban } from './Kanban';
+import { MeetingTabs } from '@/components/layout/MeetingTabs';
 
 interface PageProps {
   params: Promise<{ id: string }>;
@@ -38,8 +39,9 @@ export default async function ReceptionPage({ params }: PageProps) {
 
   return (
     <div className="space-y-6">
+      <MeetingTabs meetingId={id} meetingName={meeting.name} />
       <div>
-        <h1 className="text-2xl font-bold">现场签到 · {meeting.name}</h1>
+        <h1 className="text-xl font-bold">现场签到</h1>
         <p className="text-sm text-slate-500">
           待签到 {kanbanData.notArrived.length} · 已签到 {kanbanData.checkedIn.length} · 在场{' '}
           {kanbanData.inHouse.length} · 已离场 {kanbanData.departed.length}

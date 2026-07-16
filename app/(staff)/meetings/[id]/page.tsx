@@ -6,6 +6,7 @@ import { Badge } from '@/components/ui/badge';
 import { cn } from '@/lib/utils';
 import { getBadgeStyle } from '@/lib/shared/badge-colors';
 import { MeetingStatusButton } from './MeetingStatusButton';
+import { MeetingTabs } from '@/components/layout/MeetingTabs';
 import {
   Users,
   CalendarDays,
@@ -149,6 +150,7 @@ export default async function MeetingDetailPage({ params }: PageProps) {
 
   return (
     <div className="space-y-6 max-w-5xl">
+      <MeetingTabs meetingId={id} meetingName={meeting.name} />
       {/* Header */}
       <div className="flex items-start justify-between">
         <div>

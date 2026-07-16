@@ -5,6 +5,7 @@ import { meetingGuestService } from '@/lib/domain/meeting-guest/service';
 import { notFound } from 'next/navigation';
 import { TransportList } from './TransportList';
 import { NewOrderForm } from './NewOrderForm';
+import { MeetingTabs } from '@/components/layout/MeetingTabs';
 
 interface PageProps {
   params: Promise<{ id: string }>;
@@ -28,9 +29,10 @@ export default async function TransportPage({ params }: PageProps) {
 
   return (
     <div className="space-y-6">
+      <MeetingTabs meetingId={id} meetingName={meeting.name} />
       <div>
-        <h1 className="text-2xl font-bold">接送调度 · {meeting.name}</h1>
-        <p className="text-sm text-slate-500">
+        <h1 className="text-xl font-bold">接送调度</h1>
+        <p className="text-sm text-stone-400">
           共 {orders.length} 个接送任务 · 可用车辆 {vehicles.total}
         </p>
       </div>

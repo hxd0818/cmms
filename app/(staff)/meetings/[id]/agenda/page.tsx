@@ -1,8 +1,10 @@
 import { agendaService } from '@/lib/domain/agenda/service';
+import { meetingService } from '@/lib/domain/meeting/service';
 import { meetingGuestService } from '@/lib/domain/meeting-guest/service';
 import { notFound } from 'next/navigation';
 import { AgendaTimeline } from './AgendaTimeline';
 import { AgendaForm } from './AgendaForm';
+import { MeetingTabs } from '@/components/layout/MeetingTabs';
 
 interface PageProps {
   params: Promise<{ id: string }>;
@@ -11,10 +13,12 @@ interface PageProps {
 export default async function AgendaPage({ params }: PageProps) {
   const { id } = await params;
 
+  let meeting;
   let items;
   let meetingGuests;
   try {
-    [items, meetingGuests] = await Promise.all([
+    [meeting, items, meetingGuests] = await Promise.all([
+      meetingService.findById(id),
       agendaService.listByMeeting(id),
       meetingGuestService.listByMeeting({ meetingId: id, pageSize: 500 }),
     ]);
@@ -29,6 +33,7 @@ export default async function AgendaPage({ params }: PageProps) {
 
   return (
     <div className="space-y-6">
+      <MeetingTabs meetingId={id} meetingName={meeting.name} />
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-2xl font-bold">议程管理</h1>

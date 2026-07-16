@@ -1,10 +1,12 @@
 import { meetingGuestService } from '@/lib/domain/meeting-guest/service';
+import { meetingService } from '@/lib/domain/meeting/service';
 import { prisma } from '@/lib/db/client';
 import { notFound } from 'next/navigation';
 import Link from 'next/link';
 import { buttonVariants } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
 import { GuestManager } from './GuestManager';
+import { MeetingTabs } from '@/components/layout/MeetingTabs';
 
 interface PageProps {
   params: Promise<{ id: string }>;
@@ -13,12 +15,16 @@ interface PageProps {
 export default async function MeetingGuestsPage({ params }: PageProps) {
   const { id } = await params;
 
+  let meeting;
   let meetingGuests;
   try {
-    meetingGuests = await meetingGuestService.listByMeeting({
-      meetingId: id,
-      pageSize: 500,
-    });
+    [meeting, meetingGuests] = await Promise.all([
+      meetingService.findById(id),
+      meetingGuestService.listByMeeting({
+        meetingId: id,
+        pageSize: 500,
+      }),
+    ]);
   } catch {
     notFound();
   }
@@ -78,6 +84,7 @@ export default async function MeetingGuestsPage({ params }: PageProps) {
 
   return (
     <div className="space-y-6">
+      <MeetingTabs meetingId={id} meetingName={meeting.name} />
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-xl font-bold">嘉宾管理</h1>

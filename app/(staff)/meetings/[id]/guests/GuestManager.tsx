@@ -383,6 +383,12 @@ export function GuestManager({ meetingId, meetingGuests, tasksByGuestId }: Props
                   {selectedGuest.guest.company ?? '-'}{' '}
                   {selectedGuest.guest.title ? ' · ' + selectedGuest.guest.title : ''}
                 </p>
+                <Link
+                  href={'/guests/' + selectedGuest.guestId}
+                  className="text-xs text-stone-500 hover:text-stone-700 mt-1 inline-flex items-center gap-0.5"
+                >
+                  查看完整档案 →
+                </Link>
               </SheetHeader>
 
               <GuestTaskCards meetingId={meetingId} tasks={tasksByGuestId[selectedGuest.id]} />
