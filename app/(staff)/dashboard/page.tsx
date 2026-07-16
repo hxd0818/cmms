@@ -25,7 +25,7 @@ export default async function DashboardPage() {
   const stats = await reportService.getDashboardStats();
 
   return (
-    <div className="p-8 max-w-6xl">
+    <div className="max-w-6xl">
       <PageHeader title="控制台" description={`欢迎回来，${session.user.name}`}>
         <Link href="/meetings/new" className={cn(buttonVariants({ size: 'sm' }))}>
           <Plus size={15} className="mr-1" />
