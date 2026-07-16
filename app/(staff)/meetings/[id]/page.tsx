@@ -216,7 +216,10 @@ function TaskCard({ icon: Icon, title, href, stats, alert }: TaskCardData) {
           </div>
           <span className="text-sm font-semibold text-stone-700">{title}</span>
         </div>
-        <ChevronRight size={15} className="text-stone-300 group-hover:text-stone-400 transition-colors" />
+        <ChevronRight
+          size={15}
+          className="text-stone-300 group-hover:text-stone-400 transition-colors"
+        />
       </div>
       <div className="flex gap-4">
         {stats.map((s) => (
