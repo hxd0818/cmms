@@ -29,10 +29,12 @@ export default async function DashboardPage() {
   const stats = await reportService.getDashboardStats();
 
   return (
-    <main className="p-8">
-      <h1 className="text-2xl font-bold mb-2">控制台</h1>
-      <p className="text-sm text-slate-500 mb-6">
-        欢迎, {session.user.name} ({session.user.role})
+    <div className="p-8 max-w-6xl mx-auto">
+      <h1 className="text-2xl font-bold mb-1" style={{ color: 'var(--foreground)' }}>
+        控制台
+      </h1>
+      <p className="text-sm mb-8" style={{ color: 'var(--foreground-muted)' }}>
+        欢迎回来，{session.user.name}
       </p>
 
       <div className="grid grid-cols-3 gap-4 mb-8">
@@ -46,21 +48,25 @@ export default async function DashboardPage() {
       </div>
 
       <div>
-        <h2 className="text-lg font-semibold mb-3">近期会议</h2>
+        <h2 className="text-base font-semibold mb-3" style={{ color: 'var(--foreground)' }}>
+          近期会议
+        </h2>
         <div className="space-y-2">
           {stats.upcoming.length === 0 ? (
-            <p className="text-sm text-slate-500">未来 30 天无计划会议</p>
+            <p className="text-sm" style={{ color: 'var(--foreground-muted)' }}>
+              未来 30 天无计划会议
+            </p>
           ) : (
             stats.upcoming.map((m) => (
               <Link
                 key={m.id}
                 href={`/meetings/${m.id}`}
-                className="block bg-white rounded-md border p-3 hover:border-blue-400 transition-colors"
+                className="cmms-card cmms-card-hover block p-4 transition-all"
               >
                 <div className="flex items-center justify-between">
                   <div>
-                    <span className="font-medium">{m.name}</span>
-                    <span className="text-sm text-slate-500 ml-2">
+                    <span className="font-medium text-sm">{m.name}</span>
+                    <span className="text-sm ml-2" style={{ color: 'var(--foreground-muted)' }}>
                       {new Date(m.startAt).toLocaleDateString('zh-CN')}
                     </span>
                   </div>
@@ -79,7 +85,7 @@ export default async function DashboardPage() {
           新建会议
         </Link>
       </div>
-    </main>
+    </div>
   );
 }
 
@@ -87,10 +93,14 @@ function StatCard({ label, value, href }: { label: string; value: number; href: 
   return (
     <Link
       href={href}
-      className="bg-white rounded-md border p-4 hover:border-blue-400 transition-colors"
+      className="cmms-card cmms-card-hover block p-5 transition-all"
     >
-      <p className="text-sm text-slate-500">{label}</p>
-      <p className="text-3xl font-bold mt-1">{value}</p>
+      <p className="text-sm" style={{ color: 'var(--foreground-muted)' }}>
+        {label}
+      </p>
+      <p className="text-3xl font-bold mt-1" style={{ color: 'var(--primary)' }}>
+        {value}
+      </p>
     </Link>
   );
 }
