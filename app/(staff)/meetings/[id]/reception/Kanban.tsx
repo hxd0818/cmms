@@ -52,10 +52,10 @@ export function Kanban({ initial }: Props) {
     items: MG[];
     action?: { type: 'promote' | 'depart'; label: string };
   }> = [
-    { title: '待签到', color: 'bg-gray-50', items: initial.notArrived },
+    { title: '待签到', color: 'bg-stone-50', items: initial.notArrived },
     {
       title: '已签到',
-      color: 'bg-blue-50',
+      color: 'bg-teal-50',
       items: initial.checkedIn,
       action: { type: 'promote', label: '入场' },
     },
@@ -65,7 +65,7 @@ export function Kanban({ initial }: Props) {
       items: initial.inHouse,
       action: { type: 'depart', label: '离场' },
     },
-    { title: '已离场 / 未到', color: 'bg-slate-50', items: initial.departed },
+    { title: '已离场 / 未到', color: 'bg-stone-50', items: initial.departed },
   ];
 
   return (

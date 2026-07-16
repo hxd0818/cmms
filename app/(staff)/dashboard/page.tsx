@@ -91,10 +91,7 @@ export default async function DashboardPage() {
 
 function StatCard({ label, value, href }: { label: string; value: number; href: string }) {
   return (
-    <Link
-      href={href}
-      className="cmms-card cmms-card-hover block p-5 transition-all"
-    >
+    <Link href={href} className="cmms-card cmms-card-hover block p-5 transition-all">
       <p className="text-sm" style={{ color: 'var(--foreground-muted)' }}>
         {label}
       </p>

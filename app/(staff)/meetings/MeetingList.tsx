@@ -11,6 +11,7 @@ import {
   TableRow,
 } from '@/components/ui/table';
 import { Badge } from '@/components/ui/badge';
+import { getBadgeStyle } from '@/lib/shared/badge-colors';
 
 interface Props {
   items: Meeting[];
@@ -18,14 +19,6 @@ interface Props {
   pageSize: number;
   total: number;
 }
-
-const STATUS_COLORS: Record<string, string> = {
-  DRAFT: 'bg-gray-100 text-gray-700',
-  PLANNING: 'bg-blue-100 text-blue-800',
-  ONGOING: 'bg-green-100 text-green-800',
-  COMPLETED: 'bg-slate-100 text-slate-700',
-  CANCELED: 'bg-red-100 text-red-800',
-};
 
 const STATUS_LABEL: Record<string, string> = {
   DRAFT: '草稿',
@@ -38,7 +31,7 @@ const STATUS_LABEL: Record<string, string> = {
 export function MeetingList({ items, page, pageSize, total }: Props) {
   return (
     <div className="space-y-4">
-      <div className="rounded-md border bg-white">
+      <div className="cmms-card overflow-hidden">
         <Table>
           <TableHeader>
             <TableRow>
@@ -70,7 +63,7 @@ export function MeetingList({ items, page, pageSize, total }: Props) {
                   </TableCell>
                   <TableCell className="font-mono text-sm">{m.code}</TableCell>
                   <TableCell>
-                    <Badge className={STATUS_COLORS[m.status]} variant="secondary">
+                    <Badge className={getBadgeStyle(m.status)} variant="secondary">
                       {STATUS_LABEL[m.status]}
                     </Badge>
                   </TableCell>

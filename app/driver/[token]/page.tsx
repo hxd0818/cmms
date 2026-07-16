@@ -20,9 +20,9 @@ export default async function DriverPage({ params }: PageProps) {
   const meetingGuest = await meetingGuestService.findById(order.meetingGuestId);
 
   return (
-    <main className="min-h-screen bg-slate-50 p-4">
+    <main className="min-h-screen bg-stone-50 p-4">
       <div className="max-w-md mx-auto space-y-4">
-        <div className="bg-white rounded-lg shadow p-4">
+        <div className="cmms-card p-5">
           <h1 className="text-lg font-bold mb-2">司机任务</h1>
           <p className="text-xs text-slate-500 mb-4">
             车牌: {order.vehicleId ? '已分配' : '待分配'}

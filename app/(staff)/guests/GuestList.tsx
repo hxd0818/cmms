@@ -11,6 +11,7 @@ import {
   TableRow,
 } from '@/components/ui/table';
 import { Badge } from '@/components/ui/badge';
+import { getBadgeStyle } from '@/lib/shared/badge-colors';
 
 interface Props {
   items: Guest[];
@@ -20,17 +21,17 @@ interface Props {
 }
 
 const LEVEL_COLORS: Record<string, string> = {
-  VIP_A: 'bg-red-100 text-red-800',
-  VIP_B: 'bg-orange-100 text-orange-800',
-  A: 'bg-blue-100 text-blue-800',
-  B: 'bg-slate-100 text-slate-800',
-  C: 'bg-gray-100 text-gray-600',
+  VIP_A: getBadgeStyle('VIP_A'),
+  VIP_B: getBadgeStyle('VIP_B'),
+  A: getBadgeStyle('A'),
+  B: getBadgeStyle('B'),
+  C: getBadgeStyle('C'),
 };
 
 export function GuestList({ items, page, pageSize, total }: Props) {
   return (
     <div className="space-y-4">
-      <div className="rounded-md border bg-white">
+      <div className="cmms-card overflow-hidden">
         <Table>
           <TableHeader>
             <TableRow>
