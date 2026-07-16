@@ -25,11 +25,20 @@ export default async function GiftsPage({ params }: PageProps) {
     meetingGuestService.listByMeeting({ meetingId: id, pageSize: 500 }),
   ]);
 
+  // Convert Decimal fields to plain numbers for client components
+  const plainOrders = orders.map((o) => ({
+    ...o,
+    gift: {
+      ...o.gift,
+      unitPrice: o.gift.unitPrice ? Number(o.gift.unitPrice) : null,
+    },
+  }));
+
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-2xl font-bold">礼品管理 · {meeting.name}</h1>
-        <p className="text-sm text-slate-500">共 {orders.length} 个礼品订单</p>
+        <h1 className="text-xl font-bold">礼品管理 · {meeting.name}</h1>
+        <p className="text-sm text-stone-400">共 {orders.length} 个礼品订单</p>
       </div>
 
       <NewOrderForm
@@ -45,7 +54,7 @@ export default async function GiftsPage({ params }: PageProps) {
         }))}
       />
 
-      <GiftList meetingId={id} orders={orders} />
+      <GiftList meetingId={id} orders={plainOrders} />
     </div>
   );
 }

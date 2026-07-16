@@ -69,7 +69,7 @@ export default async function FeesPage({ params }: PageProps) {
         }))}
       />
 
-      <FeeList meetingId={id} records={records} />
+      <FeeList meetingId={id} records={records.map((r) => ({ ...r, amount: Number(r.amount) }))} />
     </div>
   );
 }
