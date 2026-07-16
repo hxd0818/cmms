@@ -109,4 +109,107 @@ export const reportService = {
       history,
     };
   },
+
+  async getGuestFullProfile(guestId: string) {
+    const guest = await prisma.guest.findUnique({ where: { id: guestId } });
+    if (!guest) return null;
+
+    const meetingGuests = await prisma.meetingGuest.findMany({
+      where: { guestId },
+      include: { meeting: true },
+      orderBy: { meeting: { startAt: 'desc' } },
+    });
+
+    const mgIds = meetingGuests.map((mg) => mg.id);
+
+    const [transport, lodging, catering, gifts, companions, fees] = await Promise.all([
+      prisma.transportOrder.findMany({
+        where: { meetingGuestId: { in: mgIds } },
+        include: { vehicle: true },
+      }),
+      prisma.lodgingOrder.findMany({
+        where: { meetingGuestId: { in: mgIds } },
+        include: { hotelRoom: { include: { hotel: true } } },
+      }),
+      prisma.cateringOrder.findMany({
+        where: { meetingGuestId: { in: mgIds } },
+        include: { diningTable: true },
+      }),
+      prisma.giftOrder.findMany({
+        where: { meetingGuestId: { in: mgIds } },
+        include: { gift: true },
+      }),
+      prisma.companionAssignment.findMany({
+        where: { meetingGuestId: { in: mgIds } },
+        include: { companion: true },
+      }),
+      prisma.feeRecord.findMany({
+        where: { meetingGuestId: { in: mgIds } },
+      }),
+    ]);
+
+    // Group items by meetingGuestId without generic helper (avoids type narrowing)
+    const groupBy = <A>(arr: A[], keyFn: (item: A) => string): Map<string, A[]> => {
+      const map = new Map<string, A[]>();
+      for (const item of arr) {
+        const k = keyFn(item);
+        const list = map.get(k) ?? [];
+        list.push(item);
+        map.set(k, list);
+      }
+      return map;
+    };
+
+    const transportMap = groupBy(transport, (x) => x.meetingGuestId);
+    const lodgingMap = groupBy(lodging, (x) => x.meetingGuestId);
+    const cateringMap = groupBy(catering, (x) => x.meetingGuestId);
+    const giftMap = groupBy(gifts, (x) => x.meetingGuestId);
+    const companionMap = groupBy(companions, (x) => x.meetingGuestId);
+    const feeMap = groupBy(
+      fees.filter((f) => f.meetingGuestId),
+      (x) => x.meetingGuestId!,
+    );
+
+    const meetings = meetingGuests.map((mg) => {
+      const mgFees = feeMap.get(mg.id) ?? [];
+      const totalFee = mgFees.reduce((s, f) => s + Number(f.amount), 0);
+      const tList = transportMap.get(mg.id) ?? [];
+      const lList = lodgingMap.get(mg.id) ?? [];
+      const cList = cateringMap.get(mg.id) ?? [];
+      const gList = giftMap.get(mg.id) ?? [];
+      const compList = companionMap.get(mg.id) ?? [];
+      const pendingCount =
+        tList.filter((t) => !['COMPLETED', 'CANCELED'].includes(t.status)).length +
+        lList.filter((l) => !['CHECKED_OUT', 'CANCELED'].includes(l.status)).length +
+        gList.filter((g) => g.status === 'PENDING').length;
+
+      return {
+        meetingGuestId: mg.id,
+        meeting: mg.meeting,
+        entourageRole: mg.entourageRole,
+        receptionStage: mg.receptionStage,
+        transport: tList,
+        lodging: lList,
+        catering: cList,
+        gifts: gList,
+        companions: compList,
+        fees: mgFees,
+        totalFee,
+        pendingCount,
+      };
+    });
+
+    const totalFeeAll = fees.reduce((s, f) => s + Number(f.amount), 0);
+    const totalPending = meetings.reduce((s, m) => s + m.pendingCount, 0);
+
+    return {
+      guest,
+      meetings,
+      stats: {
+        totalMeetings: meetingGuests.length,
+        totalFee: totalFeeAll,
+        totalPendingTasks: totalPending,
+      },
+    };
+  },
 };

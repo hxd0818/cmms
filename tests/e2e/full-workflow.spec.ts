@@ -13,7 +13,8 @@ async function login(page: import('@playwright/test').Page) {
 
 test.describe.serial('CMMS Full Workflow', () => {
   let meetingId: string;
-  const suffix = Date.now().toString().slice(-6) + Math.random().toString(36).slice(2, 5).toUpperCase();
+  const suffix =
+    Date.now().toString().slice(-6) + Math.random().toString(36).slice(2, 5).toUpperCase();
   const code = 'WF' + suffix;
   const name = 'Workflow Test ' + suffix;
 

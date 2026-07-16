@@ -83,7 +83,13 @@ async function main() {
     console.log('Created hotel:', hotel.name);
   }
 
-  const roomTypes: Array<'SINGLE' | 'DOUBLE' | 'SUITE'> = ['SUITE', 'DOUBLE', 'DOUBLE', 'SINGLE', 'SINGLE'];
+  const roomTypes: Array<'SINGLE' | 'DOUBLE' | 'SUITE'> = [
+    'SUITE',
+    'DOUBLE',
+    'DOUBLE',
+    'SINGLE',
+    'SINGLE',
+  ];
   const rooms = [];
   for (let i = 0; i < 5; i++) {
     const roomNumber = String(801 + i);
@@ -249,7 +255,10 @@ async function main() {
 
   // 13. Create fee records
   const feeCategories: Array<'TRANSPORT' | 'LODGING' | 'MEAL' | 'GIFT' | 'OTHER'> = [
-    'TRANSPORT', 'LODGING', 'MEAL', 'GIFT',
+    'TRANSPORT',
+    'LODGING',
+    'MEAL',
+    'GIFT',
   ];
   for (let i = 0; i < meetingGuests.length; i++) {
     for (const cat of feeCategories) {
@@ -258,7 +267,11 @@ async function main() {
       });
       if (existing > 0) continue;
       const amounts: Record<string, number> = {
-        TRANSPORT: 200, LODGING: 800, MEAL: 300, GIFT: 128, OTHER: 0,
+        TRANSPORT: 200,
+        LODGING: 800,
+        MEAL: 300,
+        GIFT: 128,
+        OTHER: 0,
       };
       await prisma.feeRecord.create({
         data: {
