@@ -16,8 +16,8 @@ import { Button } from '@/components/ui/button';
 import { deliverGiftOrder, deleteGiftOrder } from '@/app/actions/gift.actions';
 import { toast } from 'sonner';
 
-type OrderWithRelations = GiftOrder & {
-  gift: Gift;
+type OrderWithRelations = Omit<GiftOrder, 'gift'> & {
+  gift: Omit<Gift, 'unitPrice'> & { unitPrice: number | null };
   meetingGuest: MeetingGuest & { guest: Guest };
 };
 
