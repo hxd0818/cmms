@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 import { useRouter } from 'next/navigation';
 import type { TransportOrder, Vehicle, MeetingGuest, Guest } from '@/lib/generated/prisma/client';
 import {
@@ -27,6 +27,9 @@ import {
   DialogTitle,
   DialogFooter,
 } from '@/components/ui/dialog';
+import { Input } from '@/components/ui/input';
+import { CheckCircle2 } from 'lucide-react';
+import { cn } from '@/lib/utils';
 import {
   assignVehicle,
   updateTransportStatus,
@@ -199,33 +202,116 @@ export function TransportList({ meetingId, orders, vehicles }: Props) {
         </TableBody>
       </Table>
 
-      <Dialog open={!!assignDialogFor} onOpenChange={(o) => !o && setAssignDialogFor(null)}>
-        <DialogContent>
-          <DialogHeader>
-            <DialogTitle>分配车辆</DialogTitle>
-          </DialogHeader>
-          <Select value={selectedVehicle} onValueChange={(v) => setSelectedVehicle(v ?? '')}>
-            <SelectTrigger>
-              <SelectValue placeholder="选择车辆" />
-            </SelectTrigger>
-            <SelectContent>
-              {vehicles.map((v) => (
-                <SelectItem key={v.id} value={v.id}>
-                  {v.plateNo} · {v.driverName} · {v.capacity}人
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-          <DialogFooter>
-            <Button variant="outline" onClick={() => setAssignDialogFor(null)}>
-              取消
-            </Button>
-            <Button onClick={onAssign} disabled={!selectedVehicle}>
-              确认分配
-            </Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
+      <VehicleAssignDialog
+        open={!!assignDialogFor}
+        onClose={() => setAssignDialogFor(null)}
+        vehicles={vehicles}
+        selectedVehicle={selectedVehicle}
+        onSelect={setSelectedVehicle}
+        onConfirm={onAssign}
+      />
     </div>
+  );
+}
+
+const VEHICLE_TYPE_LABEL: Record<string, string> = {
+  SEDAN: '轿车',
+  MPV: '商务车',
+  BUS: '大巴',
+  OTHER: '其他',
+};
+
+function VehicleAssignDialog({
+  open,
+  onClose,
+  vehicles,
+  selectedVehicle,
+  onSelect,
+  onConfirm,
+}: {
+  open: boolean;
+  onClose: () => void;
+  vehicles: Vehicle[];
+  selectedVehicle: string;
+  onSelect: (id: string) => void;
+  onConfirm: () => void;
+}) {
+  const [search, setSearch] = useState('');
+
+  const filtered = useMemo(() => {
+    if (!search.trim()) return vehicles;
+    const q = search.toLowerCase();
+    return vehicles.filter(
+      (v) =>
+        v.plateNo.toLowerCase().includes(q) ||
+        v.driverName.toLowerCase().includes(q) ||
+        (v.belongs ?? '').toLowerCase().includes(q) ||
+        VEHICLE_TYPE_LABEL[v.type]?.includes(search),
+    );
+  }, [vehicles, search]);
+
+  return (
+    <Dialog open={open} onOpenChange={(o) => !o && onClose()}>
+      <DialogContent className="max-w-lg">
+        <DialogHeader>
+          <DialogTitle>分配车辆</DialogTitle>
+        </DialogHeader>
+
+        {/* Search */}
+        <Input
+          placeholder="搜索车牌 / 司机 / 车队 / 车型..."
+          value={search}
+          onChange={(e) => setSearch(e.target.value)}
+          className="mb-2"
+        />
+
+        {/* Vehicle list */}
+        <div className="max-h-80 overflow-y-auto space-y-1.5">
+          {filtered.length === 0 ? (
+            <p className="text-sm text-stone-400 text-center py-8">无匹配车辆</p>
+          ) : (
+            filtered.map((v) => (
+              <button
+                key={v.id}
+                onClick={() => onSelect(v.id)}
+                className={cn(
+                  'w-full text-left p-3 rounded-lg border transition-all',
+                  selectedVehicle === v.id
+                    ? 'border-stone-800 bg-stone-50 ring-1 ring-stone-800'
+                    : 'border-stone-200 hover:border-stone-300 hover:bg-stone-50',
+                )}
+              >
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-2">
+                    <span className="font-mono font-bold text-sm">{v.plateNo}</span>
+                    <Badge variant="outline" className="text-xs">
+                      {VEHICLE_TYPE_LABEL[v.type]}
+                    </Badge>
+                    <span className="text-xs text-stone-400">{v.capacity} 座</span>
+                  </div>
+                  {selectedVehicle === v.id && (
+                    <CheckCircle2 size={16} className="text-stone-800" />
+                  )}
+                </div>
+                <div className="flex items-center gap-3 mt-1.5 text-xs text-stone-500">
+                  <span>{v.driverName}</span>
+                  <span className="font-mono">{v.driverPhone}</span>
+                  {v.belongs && <span>· {v.belongs}</span>}
+                </div>
+              </button>
+            ))
+          )}
+        </div>
+
+        <DialogFooter>
+          <Button variant="outline" onClick={onClose}>
+            取消
+          </Button>
+          <Button onClick={onConfirm} disabled={!selectedVehicle}>
+            确认分配
+          </Button>
+        </DialogFooter>
+      </DialogContent>
+    </Dialog>
   );
 }
