@@ -19,9 +19,7 @@ export default async function StaffLayout({ children }: { children: React.ReactN
               C
             </div>
             <div>
-              <h1 className="font-bold text-sm leading-tight tracking-wide text-stone-900">
-                CMMS
-              </h1>
+              <h1 className="font-bold text-sm leading-tight tracking-wide text-stone-900">CMMS</h1>
               <p className="text-[11px] text-stone-400 leading-tight">会务管理系统</p>
             </div>
           </div>
@@ -46,10 +44,7 @@ export default async function StaffLayout({ children }: { children: React.ReactN
         </div>
       </aside>
 
-      <main
-        className="flex-1 overflow-auto p-6 lg:p-8"
-        style={{ background: 'var(--background)' }}
-      >
+      <main className="flex-1 overflow-auto p-6 lg:p-8" style={{ background: 'var(--background)' }}>
         {children}
       </main>
     </div>

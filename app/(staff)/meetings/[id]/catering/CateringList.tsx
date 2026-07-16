@@ -98,7 +98,7 @@ export function CateringList({ meetingId, orders, tables }: Props) {
   }
 
   return (
-    <div className="rounded-md border bg-white">
+    <div className="cmms-card overflow-hidden">
       <Table>
         <TableHeader>
           <TableRow>

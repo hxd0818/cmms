@@ -49,7 +49,7 @@ export default async function FeesPage({ params }: PageProps) {
       {/* Summary by category */}
       <div className="grid grid-cols-3 md:grid-cols-6 gap-3">
         {Object.entries(summary.byCategory).map(([cat, amount]) => (
-          <div key={cat} className="bg-white rounded-md border p-3">
+          <div key={cat} className="cmms-card p-3">
             <p className="text-xs text-slate-500">{CATEGORY_LABEL[cat] ?? cat}</p>
             <p className="text-lg font-bold">
               {Number(amount).toLocaleString('zh-CN', {

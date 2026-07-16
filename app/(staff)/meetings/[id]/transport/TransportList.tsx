@@ -122,7 +122,7 @@ export function TransportList({ meetingId, orders, vehicles }: Props) {
   }
 
   return (
-    <div className="rounded-md border bg-white">
+    <div className="cmms-card overflow-hidden">
       <Table>
         <TableHeader>
           <TableRow>

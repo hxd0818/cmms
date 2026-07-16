@@ -69,7 +69,7 @@ export function FeeList({ meetingId, records }: Props) {
   }
 
   return (
-    <div className="rounded-md border bg-white">
+    <div className="cmms-card overflow-hidden">
       <Table>
         <TableHeader>
           <TableRow>

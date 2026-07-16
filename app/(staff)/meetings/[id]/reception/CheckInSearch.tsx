@@ -50,7 +50,7 @@ export function CheckInSearch({ pending }: { pending: PendingGuest[] }) {
   }
 
   return (
-    <div className="bg-white rounded-md border p-4">
+    <div className="cmms-card p-4">
       <h2 className="text-lg font-semibold mb-3">搜索嘉宾签到</h2>
       <Input
         placeholder="输入姓名或单位搜索"

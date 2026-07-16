@@ -70,7 +70,7 @@ export function NewOrderForm({
   }
 
   return (
-    <form onSubmit={onSubmit} className="bg-white rounded-md border p-4 space-y-3 max-w-3xl">
+    <form onSubmit={onSubmit} className="cmms-card p-4 space-y-3 max-w-3xl">
       <h2 className="text-lg font-semibold">新增礼品订单</h2>
       <div className="grid grid-cols-3 gap-4">
         <div>

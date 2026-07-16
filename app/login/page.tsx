@@ -16,11 +16,7 @@ export default function LoginPage() {
 
         {/* Login card */}
         <div className="cmms-card p-7">
-          <Suspense
-            fallback={
-              <div className="text-center text-sm text-stone-400">加载中...</div>
-            }
-          >
+          <Suspense fallback={<div className="text-center text-sm text-stone-400">加载中...</div>}>
             <LoginForm />
           </Suspense>
         </div>

@@ -86,10 +86,7 @@ export function AgendaForm({ meetingId, speakerOptions: _ }: Props) {
   }
 
   return (
-    <form
-      onSubmit={handleSubmit(onSubmit)}
-      className="space-y-4 bg-white rounded-md border p-4 max-w-3xl"
-    >
+    <form onSubmit={handleSubmit(onSubmit)} className="space-y-4 cmms-card p-4 max-w-3xl">
       <h2 className="text-lg font-semibold">新增议程</h2>
       <div className="grid grid-cols-2 gap-4">
         <div className="col-span-2">

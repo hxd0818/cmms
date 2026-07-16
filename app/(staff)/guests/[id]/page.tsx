@@ -39,7 +39,7 @@ export default async function GuestDetailPage({ params }: PageProps) {
         </div>
       </div>
 
-      <div className="grid grid-cols-2 gap-4 bg-white rounded-md border p-6">
+      <div className="grid grid-cols-2 gap-4 cmms-card p-6">
         <Field label="等级">
           <Badge variant="secondary">{guest.level}</Badge>
         </Field>

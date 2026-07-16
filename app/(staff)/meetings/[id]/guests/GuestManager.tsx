@@ -161,7 +161,7 @@ export function GuestManager({ meetingId, meetingGuests }: Props) {
         </Dialog>
       </div>
 
-      <div className="rounded-md border bg-white">
+      <div className="cmms-card overflow-hidden">
         <Table>
           <TableHeader>
             <TableRow>

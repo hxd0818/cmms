@@ -47,16 +47,14 @@ export function AgendaTimeline({ items, meetingId }: Props) {
 
   if (items.length === 0) {
     return (
-      <div className="bg-white rounded-md border p-8 text-center text-slate-500">
-        暂无议程，请使用上方表单添加
-      </div>
+      <div className="cmms-card p-8 text-center text-slate-500">暂无议程，请使用上方表单添加</div>
     );
   }
 
   return (
     <div className="space-y-3">
       {items.map((item) => (
-        <div key={item.id} className="bg-white rounded-md border p-4 flex items-start gap-4">
+        <div key={item.id} className="cmms-card p-4 flex items-start gap-4">
           <div className="flex flex-col items-center text-xs text-slate-500 min-w-20">
             <span className="font-mono">
               {new Date(item.startAt).toLocaleTimeString('zh-CN', {

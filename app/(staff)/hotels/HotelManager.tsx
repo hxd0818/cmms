@@ -164,7 +164,7 @@ export function HotelManager({ initialHotels }: { initialHotels: HotelWithCount[
       </div>
 
       {/* Hotel list */}
-      <div className="rounded-md border bg-white">
+      <div className="cmms-card overflow-hidden">
         <Table>
           <TableHeader>
             <TableRow>
@@ -203,7 +203,7 @@ export function HotelManager({ initialHotels }: { initialHotels: HotelWithCount[
 
       {/* Expanded room panel */}
       {expandedHotel && (
-        <div className="bg-white rounded-md border p-4 space-y-3">
+        <div className="cmms-card p-4 space-y-3">
           <div className="flex items-center justify-between">
             <h3 className="text-sm font-semibold">房间列表</h3>
             <Button size="sm" variant="outline" onClick={() => setShowRoomForm(!showRoomForm)}>
@@ -212,10 +212,7 @@ export function HotelManager({ initialHotels }: { initialHotels: HotelWithCount[
           </div>
 
           {showRoomForm && (
-            <form
-              onSubmit={onAddRoom}
-              className="bg-slate-50 rounded-md border p-3 flex gap-3 items-end"
-            >
+            <form onSubmit={onAddRoom} className="cmms-card bg-stone-50 p-3 flex gap-3 items-end">
               <div>
                 <Label htmlFor="roomNumber">房号</Label>
                 <Input

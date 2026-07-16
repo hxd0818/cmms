@@ -27,7 +27,7 @@ export default async function AuditPage({
         <p className="text-sm text-slate-500">共 {result.total} 条记录</p>
       </div>
 
-      <div className="rounded-md border bg-white overflow-auto">
+      <div className="cmms-card overflow-auto">
         <table className="w-full text-sm">
           <thead className="bg-slate-50 border-b">
             <tr>
