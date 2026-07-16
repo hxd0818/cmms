@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, Fragment } from 'react';
 import { useRouter } from 'next/navigation';
 import type { MeetingGuest, Guest } from '@/lib/generated/prisma/client';
 import {
@@ -185,8 +185,8 @@ export function GuestManager({ meetingId, meetingGuests }: Props) {
               primaryGuests.map((mg) => {
                 const subs = subordinateByPrimary.get(mg.id) ?? [];
                 return (
-                  <>
-                    <TableRow key={mg.id}>
+                  <Fragment key={mg.id}>
+                    <TableRow>
                       <TableCell className="font-medium">{mg.guest.name}</TableCell>
                       <TableCell>
                         <Badge variant="secondary">
@@ -245,7 +245,7 @@ export function GuestManager({ meetingId, meetingGuests }: Props) {
                         </TableCell>
                       </TableRow>
                     ))}
-                  </>
+                  </Fragment>
                 );
               })
             )}
