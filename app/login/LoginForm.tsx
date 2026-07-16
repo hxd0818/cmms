@@ -61,11 +61,17 @@ export function LoginForm() {
           autoComplete="current-password"
         />
       </div>
-      {error && <p className="text-sm text-red-500">{error}</p>}
-      <Button type="submit" disabled={loading} className="w-full">
+      {error && (
+        <div className="rounded-lg bg-red-50 border border-red-100 px-3 py-2 text-sm text-red-600">
+          {error}
+        </div>
+      )}
+      <Button type="submit" disabled={loading} className="w-full h-10">
         {loading ? '登录中...' : '登录'}
       </Button>
-      <p className="text-xs text-gray-500 text-center">默认账号: admin@cmms.local / admin123</p>
+      <p className="text-xs text-stone-400 text-center mt-1">
+        默认账号 admin@cmms.local / admin123
+      </p>
     </form>
   );
 }

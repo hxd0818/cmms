@@ -2,31 +2,46 @@
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
+import {
+  LayoutDashboard,
+  Users,
+  CalendarDays,
+  Hotel,
+  Car,
+  ScrollText,
+  type LucideIcon,
+} from 'lucide-react';
+
+interface NavItem {
+  href: string;
+  label: string;
+  icon: LucideIcon;
+}
 
 interface NavGroup {
   label: string;
-  items: { href: string; label: string }[];
+  items: NavItem[];
 }
 
 const NAV_GROUPS: NavGroup[] = [
   {
-    label: '核心',
+    label: '核心业务',
     items: [
-      { href: '/dashboard', label: '控制台' },
-      { href: '/guests', label: '嘉宾库' },
-      { href: '/meetings', label: '会议管理' },
+      { href: '/dashboard', label: '控制台', icon: LayoutDashboard },
+      { href: '/guests', label: '嘉宾库', icon: Users },
+      { href: '/meetings', label: '会议管理', icon: CalendarDays },
     ],
   },
   {
-    label: '资源',
+    label: '资源管理',
     items: [
-      { href: '/hotels', label: '酒店管理' },
-      { href: '/vehicles', label: '车辆资源' },
+      { href: '/hotels', label: '酒店', icon: Hotel },
+      { href: '/vehicles', label: '车辆', icon: Car },
     ],
   },
   {
-    label: '管理',
-    items: [{ href: '/audit', label: '审计日志' }],
+    label: '系统',
+    items: [{ href: '/audit', label: '审计日志', icon: ScrollText }],
   },
 ];
 
@@ -39,25 +54,30 @@ export function StaffNav() {
   const pathname = usePathname();
 
   return (
-    <nav className="flex-1 px-2 overflow-y-auto">
+    <nav className="flex-1 px-3 overflow-y-auto pt-2">
       {NAV_GROUPS.map((group) => (
-        <div key={group.label} className="mb-4">
-          <p className="px-3 mb-1 text-[10px] font-semibold uppercase tracking-wider text-teal-300/40">
+        <div key={group.label} className="mb-5">
+          <p className="px-3 mb-1.5 text-[10px] font-semibold uppercase tracking-wider text-white/30">
             {group.label}
           </p>
           <div className="space-y-0.5">
             {group.items.map((item) => {
               const active = isPathActive(pathname, item.href);
+              const Icon = item.icon;
               return (
                 <Link
                   key={item.href}
                   href={item.href}
-                  className={`cmms-nav-item ${active ? 'active' : ''} flex items-center gap-2.5 px-3 py-2 rounded-lg text-[13px] font-medium`}
+                  className={`cmms-nav-item ${active ? 'active' : ''} flex items-center gap-3 px-3 py-2 rounded-lg text-[13px] font-medium`}
                   style={{
-                    color: active ? '#ffffff' : 'rgba(209, 218, 216, 0.85)',
+                    color: active ? '#ffffff' : 'rgba(255, 255, 255, 0.55)',
                   }}
                 >
-                  {active && <span className="w-1.5 h-1.5 rounded-full bg-teal-300 shrink-0" />}
+                  <Icon
+                    size={16}
+                    strokeWidth={active ? 2.25 : 1.75}
+                    style={{ opacity: active ? 1 : 0.65 }}
+                  />
                   {item.label}
                 </Link>
               );
