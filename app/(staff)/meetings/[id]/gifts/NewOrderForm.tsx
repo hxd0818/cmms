@@ -5,13 +5,7 @@ import { useRouter } from 'next/navigation';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@/components/ui/select';
+import { Select, SelectContent, SelectItem, SelectTrigger } from '@/components/ui/select';
 import { createGiftOrder } from '@/app/actions/gift.actions';
 import { toast } from 'sonner';
 
@@ -77,7 +71,11 @@ export function NewOrderForm({
           <Label htmlFor="guest">嘉宾 *</Label>
           <Select value={meetingGuestId} onValueChange={(v) => setMeetingGuestId(v ?? '')}>
             <SelectTrigger>
-              <SelectValue placeholder="选择会议嘉宾" />
+              <span className={meetingGuestId ? '' : 'text-stone-400'}>
+                {meetingGuestId
+                  ? (guests.find((g) => g.id === meetingGuestId)?.name ?? meetingGuestId)
+                  : '选择会议嘉宾'}
+              </span>
             </SelectTrigger>
             <SelectContent>
               {guests.map((g) => (
@@ -92,7 +90,14 @@ export function NewOrderForm({
           <Label htmlFor="gift">礼品 *</Label>
           <Select value={giftId} onValueChange={(v) => setGiftId(v ?? '')}>
             <SelectTrigger>
-              <SelectValue placeholder="选择礼品" />
+              <span className={giftId ? '' : 'text-stone-400'}>
+                {giftId
+                  ? (() => {
+                      const g = gifts.find((gf) => gf.id === giftId);
+                      return g ? `${g.name} (库存 ${g.stock})` : giftId;
+                    })()
+                  : '选择礼品'}
+              </span>
             </SelectTrigger>
             <SelectContent>
               {gifts.map((g) => (

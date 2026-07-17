@@ -16,13 +16,7 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@/components/ui/select';
+import { Select, SelectContent, SelectItem, SelectTrigger } from '@/components/ui/select';
 import {
   Dialog,
   DialogContent,
@@ -494,7 +488,10 @@ function GuestTaskCards({
       >
         {tasks.companions.map((c) => (
           <div key={c.id} className="text-xs text-stone-600">
-            {c.companion.name} <span className="text-stone-400">({c.assignmentScope})</span>
+            {c.companion.name}{' '}
+            <span className="text-stone-400">
+              ({dict.assignmentScope[c.assignmentScope] ?? c.assignmentScope})
+            </span>
           </div>
         ))}
       </TaskSection>
@@ -517,7 +514,7 @@ function GuestTaskCards({
           ),
         ).map(([cat, amount]) => (
           <div key={cat} className="text-xs flex justify-between">
-            <span className="text-stone-500">{cat}</span>
+            <span className="text-stone-500">{dict.feeCategory[cat] ?? cat}</span>
             <span className="text-stone-700 font-medium">{amount.toFixed(0)}</span>
           </div>
         ))}

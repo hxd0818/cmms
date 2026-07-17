@@ -13,13 +13,7 @@ import {
 } from '@/components/ui/table';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@/components/ui/select';
+import { Select, SelectContent, SelectItem, SelectTrigger } from '@/components/ui/select';
 import {
   Dialog,
   DialogContent,
@@ -177,7 +171,7 @@ export function TransportList({ meetingId, orders, vehicles }: Props) {
                     {(NEXT_STATUSES[o.status] ?? []).length > 0 && (
                       <Select value="" onValueChange={(v) => v && onStatusChange(o.id, v)}>
                         <SelectTrigger className="h-7 w-24 text-xs">
-                          <SelectValue placeholder="切换" />
+                          <span className="text-stone-400">切换</span>
                         </SelectTrigger>
                         <SelectContent>
                           {(NEXT_STATUSES[o.status] ?? []).map((s) => (

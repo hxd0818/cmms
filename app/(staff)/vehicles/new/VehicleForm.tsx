@@ -7,13 +7,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@/components/ui/select';
+import { Select, SelectContent, SelectItem, SelectTrigger } from '@/components/ui/select';
 import { vehicleCreateSchema } from '@/lib/shared/transport';
 import { createVehicle } from '@/app/actions/vehicle.actions';
 import { toast } from 'sonner';
@@ -76,7 +70,9 @@ export function VehicleForm() {
           <Label htmlFor="type">车辆类型 *</Label>
           <Select value={type} onValueChange={(v) => setValue('type', v ?? 'OTHER')}>
             <SelectTrigger>
-              <SelectValue />
+              <span className={type ? '' : 'text-stone-400'}>
+                {type ? (dict.vehicleType[type] ?? type) : '选择类型'}
+              </span>
             </SelectTrigger>
             <SelectContent>
               {Object.entries(dict.vehicleType).map(([v, l]) => (

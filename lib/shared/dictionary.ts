@@ -88,6 +88,7 @@ export const DICTIONARY = {
     AIRPORT: '机场',
     TRAINSTATION: '火车站',
     HOTEL: '酒店',
+    VENUE: '会议场地',
     OTHER: '其他',
   } as Record<string, string>,
 
@@ -156,6 +157,14 @@ export const DICTIONARY = {
     MEAL: '餐饮',
     GIFT: '礼品',
     OTHER: '其他',
+  } as Record<string, string>,
+
+  assignmentScope: {
+    FULL: '全程陪同',
+    MEETING: '会议期间',
+    DINING: '用餐期间',
+    TRANSPORT: '接送期间',
+    LODGING: '住宿期间',
   } as Record<string, string>,
 } as const;
 

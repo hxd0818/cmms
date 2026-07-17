@@ -5,23 +5,10 @@ import { useRouter } from 'next/navigation';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@/components/ui/select';
+import { Select, SelectContent, SelectItem, SelectTrigger } from '@/components/ui/select';
 import { assignCompanion } from '@/app/actions/companion.actions';
 import { toast } from 'sonner';
-
-const SCOPES = [
-  { value: 'FULL', label: '全程陪同' },
-  { value: 'MEETING', label: '会议期间' },
-  { value: 'DINING', label: '用餐期间' },
-  { value: 'TRANSPORT', label: '接送期间' },
-  { value: 'LODGING', label: '住宿期间' },
-];
+import { dict } from '@/lib/shared/dictionary';
 
 export function AssignForm({
   meetingId,
@@ -85,7 +72,11 @@ export function AssignForm({
           <Label htmlFor="guest">嘉宾 *</Label>
           <Select value={meetingGuestId} onValueChange={(v) => setMeetingGuestId(v ?? '')}>
             <SelectTrigger>
-              <SelectValue placeholder="选择会议嘉宾" />
+              <span className={meetingGuestId ? '' : 'text-stone-400'}>
+                {meetingGuestId
+                  ? (guests.find((g) => g.id === meetingGuestId)?.name ?? meetingGuestId)
+                  : '选择会议嘉宾'}
+              </span>
             </SelectTrigger>
             <SelectContent>
               {guests.map((g) => (
@@ -100,7 +91,14 @@ export function AssignForm({
           <Label htmlFor="companion">陪同人员 *</Label>
           <Select value={companionId} onValueChange={(v) => setCompanionId(v ?? '')}>
             <SelectTrigger>
-              <SelectValue placeholder="选择陪同" />
+              <span className={companionId ? '' : 'text-stone-400'}>
+                {companionId
+                  ? (() => {
+                      const c = companions.find((cp) => cp.id === companionId);
+                      return c ? `${c.name} (${c.role})` : companionId;
+                    })()
+                  : '选择陪同'}
+              </span>
             </SelectTrigger>
             <SelectContent>
               {companions.map((c) => (
@@ -115,12 +113,16 @@ export function AssignForm({
           <Label htmlFor="scope">陪同范围 *</Label>
           <Select value={assignmentScope} onValueChange={(v) => setAssignmentScope(v ?? 'FULL')}>
             <SelectTrigger>
-              <SelectValue />
+              <span className={assignmentScope ? '' : 'text-stone-400'}>
+                {assignmentScope
+                  ? (dict.assignmentScope[assignmentScope] ?? assignmentScope)
+                  : '选择范围'}
+              </span>
             </SelectTrigger>
             <SelectContent>
-              {SCOPES.map((s) => (
-                <SelectItem key={s.value} value={s.value}>
-                  {s.label}
+              {Object.entries(dict.assignmentScope).map(([v, l]) => (
+                <SelectItem key={v} value={v}>
+                  {l}
                 </SelectItem>
               ))}
             </SelectContent>

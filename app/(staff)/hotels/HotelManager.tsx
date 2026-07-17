@@ -14,13 +14,7 @@ import {
   TableRow,
 } from '@/components/ui/table';
 import { Badge } from '@/components/ui/badge';
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@/components/ui/select';
+import { Select, SelectContent, SelectItem, SelectTrigger } from '@/components/ui/select';
 import {
   Dialog,
   DialogContent,
@@ -214,7 +208,9 @@ export function HotelManager({ initialHotels }: { initialHotels: HotelWithCount[
                 <Label>房型</Label>
                 <Select value={roomType} onValueChange={(v) => setRoomType(v ?? 'SINGLE')}>
                   <SelectTrigger className="w-32">
-                    <SelectValue />
+                    <span className={roomType ? '' : 'text-stone-400'}>
+                      {roomType ? (dict.roomType[roomType] ?? roomType) : '选择房型'}
+                    </span>
                   </SelectTrigger>
                   <SelectContent>
                     {Object.entries(dict.roomType).map(([v, l]) => (

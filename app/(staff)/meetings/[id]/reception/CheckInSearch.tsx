@@ -7,6 +7,7 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { checkIn, markNoShow } from '@/app/actions/reception.actions';
 import { toast } from 'sonner';
+import { dict } from '@/lib/shared/dictionary';
 
 interface PendingGuest {
   id: string;
@@ -71,7 +72,7 @@ export function CheckInSearch({ pending }: { pending: PendingGuest[] }) {
             >
               <div className="flex items-center gap-2">
                 <span className="font-medium">{g.name}</span>
-                <Badge variant="outline">{g.level}</Badge>
+                <Badge variant="outline">{dict.guestLevel[g.level] ?? g.level}</Badge>
                 {g.company && <span className="text-xs text-slate-500">{g.company}</span>}
               </div>
               <div className="flex gap-1">

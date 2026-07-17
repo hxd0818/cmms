@@ -6,13 +6,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@/components/ui/select';
+import { Select, SelectContent, SelectItem, SelectTrigger } from '@/components/ui/select';
 import { createLodgingOrder } from '@/app/actions/lodging.actions';
 import { toast } from 'sonner';
 
@@ -79,7 +73,11 @@ export function NewOrderForm({
           <Label htmlFor="guest">嘉宾 *</Label>
           <Select value={meetingGuestId} onValueChange={(v) => setMeetingGuestId(v ?? '')}>
             <SelectTrigger>
-              <SelectValue placeholder="选择会议嘉宾" />
+              <span className={meetingGuestId ? '' : 'text-stone-400'}>
+                {meetingGuestId
+                  ? (guests.find((g) => g.id === meetingGuestId)?.name ?? meetingGuestId)
+                  : '选择会议嘉宾'}
+              </span>
             </SelectTrigger>
             <SelectContent>
               {guests.map((g) => (

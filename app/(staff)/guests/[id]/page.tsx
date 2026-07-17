@@ -195,7 +195,7 @@ export default async function GuestDetailPage({ params }: PageProps) {
                             className={cn('ml-1', getBadgeStyle(t.status))}
                             variant="secondary"
                           >
-                            {t.status}
+                            {dict.transportStatus[t.status] ?? t.status}
                           </Badge>
                         </div>
                       ))}
@@ -216,7 +216,7 @@ export default async function GuestDetailPage({ params }: PageProps) {
                                 ' ' +
                                 l.hotelRoom.roomNumber +
                                 ' (' +
-                                l.hotelRoom.roomType +
+                                (dict.roomType[l.hotelRoom.roomType] ?? l.hotelRoom.roomType) +
                                 ')'
                               : '待分配'}
                           </span>
@@ -229,7 +229,7 @@ export default async function GuestDetailPage({ params }: PageProps) {
                             className={cn('ml-1', getBadgeStyle(l.status))}
                             variant="secondary"
                           >
-                            {l.status}
+                            {dict.lodgingStatus[l.status] ?? l.status}
                           </Badge>
                         </div>
                       ))}
@@ -289,7 +289,9 @@ export default async function GuestDetailPage({ params }: PageProps) {
                       {m.companions.map((c) => (
                         <div key={c.id} className="text-xs">
                           <span className="text-stone-600">{c.companion.name}</span>
-                          <span className="text-stone-400 ml-1">({c.assignmentScope})</span>
+                          <span className="text-stone-400 ml-1">
+                            ({dict.assignmentScope[c.assignmentScope] ?? c.assignmentScope})
+                          </span>
                         </div>
                       ))}
                     </TaskCard>
@@ -312,7 +314,7 @@ export default async function GuestDetailPage({ params }: PageProps) {
                         ),
                       ).map(([cat, amount]) => (
                         <div key={cat} className="text-xs flex justify-between">
-                          <span className="text-stone-500">{cat}</span>
+                          <span className="text-stone-500">{dict.feeCategory[cat] ?? cat}</span>
                           <span className="text-stone-700 font-medium">{amount.toFixed(0)}</span>
                         </div>
                       ))}

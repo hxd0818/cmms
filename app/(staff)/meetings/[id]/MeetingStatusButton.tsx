@@ -3,13 +3,7 @@
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { Button } from '@/components/ui/button';
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@/components/ui/select';
+import { Select, SelectContent, SelectItem, SelectTrigger } from '@/components/ui/select';
 import { updateMeetingStatus } from '@/app/actions/meeting.actions';
 import { toast } from 'sonner';
 import type { MeetingStatus } from '@/lib/generated/prisma/enums';
@@ -62,7 +56,9 @@ export function MeetingStatusButton({
     <div className="flex gap-2 items-center">
       <Select value={target} onValueChange={(v) => setTarget(v ?? '')}>
         <SelectTrigger className="w-32">
-          <SelectValue placeholder="切换状态" />
+          <span className={target ? '' : 'text-stone-400'}>
+            {target ? (dict.meetingStatus[target] ?? target) : '切换状态'}
+          </span>
         </SelectTrigger>
         <SelectContent>
           {allowedTargets.map((s) => (

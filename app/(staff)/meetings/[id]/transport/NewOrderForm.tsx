@@ -5,22 +5,10 @@ import { useRouter } from 'next/navigation';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@/components/ui/select';
+import { Select, SelectContent, SelectItem, SelectTrigger } from '@/components/ui/select';
 import { createTransportOrder } from '@/app/actions/transport.actions';
 import { toast } from 'sonner';
-
-const PICKUP_TYPES = [
-  { value: 'AIRPORT', label: '机场' },
-  { value: 'TRAINSTATION', label: '火车站' },
-  { value: 'HOTEL', label: '酒店' },
-  { value: 'VENUE', label: '会议场地' },
-];
+import { dict } from '@/lib/shared/dictionary';
 
 export function NewOrderForm({
   meetingId,
@@ -86,7 +74,11 @@ export function NewOrderForm({
           <Label htmlFor="guest">嘉宾 *</Label>
           <Select value={meetingGuestId} onValueChange={(v) => setMeetingGuestId(v ?? '')}>
             <SelectTrigger>
-              <SelectValue placeholder="选择会议嘉宾" />
+              <span className={meetingGuestId ? '' : 'text-stone-400'}>
+                {meetingGuestId
+                  ? (guests.find((g) => g.id === meetingGuestId)?.name ?? meetingGuestId)
+                  : '选择会议嘉宾'}
+              </span>
             </SelectTrigger>
             <SelectContent>
               {guests.map((g) => (
@@ -101,12 +93,14 @@ export function NewOrderForm({
           <Label htmlFor="pickupType">接送类型 *</Label>
           <Select value={pickupType} onValueChange={(v) => setPickupType(v ?? 'AIRPORT')}>
             <SelectTrigger>
-              <SelectValue />
+              <span className={pickupType ? '' : 'text-stone-400'}>
+                {pickupType ? (dict.pickupType[pickupType] ?? pickupType) : '选择类型'}
+              </span>
             </SelectTrigger>
             <SelectContent>
-              {PICKUP_TYPES.map((t) => (
-                <SelectItem key={t.value} value={t.value}>
-                  {t.label}
+              {Object.entries(dict.pickupType).map(([v, l]) => (
+                <SelectItem key={v} value={v}>
+                  {l}
                 </SelectItem>
               ))}
             </SelectContent>

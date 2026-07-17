@@ -12,6 +12,7 @@ import {
 } from '@/components/ui/table';
 import { Badge } from '@/components/ui/badge';
 import { getBadgeStyle } from '@/lib/shared/badge-colors';
+import { dict } from '@/lib/shared/dictionary';
 
 interface Props {
   items: Guest[];
@@ -62,12 +63,12 @@ export function GuestList({ items, page, pageSize, total }: Props) {
                       {g.name}
                     </Link>
                   </TableCell>
-                  <TableCell>{g.gender ?? '-'}</TableCell>
+                  <TableCell>{g.gender ? (dict.gender[g.gender] ?? '-') : '-'}</TableCell>
                   <TableCell>{g.company ?? '-'}</TableCell>
                   <TableCell>{g.title ?? '-'}</TableCell>
                   <TableCell>
                     <Badge className={LEVEL_COLORS[g.level]} variant="secondary">
-                      {g.level}
+                      {dict.guestLevel[g.level] ?? g.level}
                     </Badge>
                   </TableCell>
                   <TableCell>

@@ -6,23 +6,10 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@/components/ui/select';
+import { Select, SelectContent, SelectItem, SelectTrigger } from '@/components/ui/select';
 import { createFeeRecord } from '@/app/actions/fee.actions';
 import { toast } from 'sonner';
-
-const CATEGORIES = [
-  { value: 'TRANSPORT', label: '交通' },
-  { value: 'LODGING', label: '住宿' },
-  { value: 'MEAL', label: '餐饮' },
-  { value: 'GIFT', label: '礼品' },
-  { value: 'OTHER', label: '其他' },
-];
+import { dict } from '@/lib/shared/dictionary';
 
 export function NewFeeForm({
   meetingId,
@@ -83,7 +70,11 @@ export function NewFeeForm({
           <Label htmlFor="guest">关联嘉宾</Label>
           <Select value={meetingGuestId} onValueChange={(v) => setMeetingGuestId(v ?? '')}>
             <SelectTrigger>
-              <SelectValue placeholder="可选" />
+              <span className={meetingGuestId ? '' : 'text-stone-400'}>
+                {meetingGuestId
+                  ? (guests.find((g) => g.id === meetingGuestId)?.name ?? meetingGuestId)
+                  : '可选'}
+              </span>
             </SelectTrigger>
             <SelectContent>
               {guests.map((g) => (
@@ -98,12 +89,14 @@ export function NewFeeForm({
           <Label htmlFor="category">费用类别 *</Label>
           <Select value={category} onValueChange={(v) => setCategory(v ?? 'OTHER')}>
             <SelectTrigger>
-              <SelectValue />
+              <span className={category ? '' : 'text-stone-400'}>
+                {category ? (dict.feeCategory[category] ?? category) : '选择类别'}
+              </span>
             </SelectTrigger>
             <SelectContent>
-              {CATEGORIES.map((c) => (
-                <SelectItem key={c.value} value={c.value}>
-                  {c.label}
+              {Object.entries(dict.feeCategory).map(([v, l]) => (
+                <SelectItem key={v} value={v}>
+                  {l}
                 </SelectItem>
               ))}
             </SelectContent>

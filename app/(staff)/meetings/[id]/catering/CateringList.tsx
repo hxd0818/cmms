@@ -18,13 +18,7 @@ import {
 } from '@/components/ui/table';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@/components/ui/select';
+import { Select, SelectContent, SelectItem, SelectTrigger } from '@/components/ui/select';
 import {
   Dialog,
   DialogContent,
@@ -152,12 +146,19 @@ export function CateringList({ meetingId, orders, tables }: Props) {
           </DialogHeader>
           <Select value={selectedTable} onValueChange={(v) => setSelectedTable(v ?? '')}>
             <SelectTrigger>
-              <SelectValue placeholder="选择餐桌" />
+              <span className={selectedTable ? '' : 'text-stone-400'}>
+                {selectedTable
+                  ? (() => {
+                      const t = tables.find((tb) => tb.id === selectedTable);
+                      return t ? `${t.name} (${t.capacity}人)` : selectedTable;
+                    })()
+                  : '选择餐桌'}
+              </span>
             </SelectTrigger>
             <SelectContent>
               {tables.map((t) => (
                 <SelectItem key={t.id} value={t.id}>
-                  {t.name} ({t.capacity}人 · {t.type})
+                  {t.name} ({t.capacity}人 · {dict.tableType[t.type] ?? t.type})
                 </SelectItem>
               ))}
             </SelectContent>

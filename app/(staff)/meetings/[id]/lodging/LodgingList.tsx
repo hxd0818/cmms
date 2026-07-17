@@ -19,13 +19,7 @@ import {
 } from '@/components/ui/table';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@/components/ui/select';
+import { Select, SelectContent, SelectItem, SelectTrigger } from '@/components/ui/select';
 import {
   Dialog,
   DialogContent,
@@ -139,7 +133,9 @@ export function LodgingList({ meetingId, orders, rooms }: Props) {
                   {o.hotelRoom ? (
                     <span className="text-sm">
                       {o.hotelRoom.hotel.name} - {o.hotelRoom.roomNumber}
-                      <span className="text-xs text-slate-500 ml-1">({o.hotelRoom.roomType})</span>
+                      <span className="text-xs text-slate-500 ml-1">
+                        ({dict.roomType[o.hotelRoom.roomType] ?? o.hotelRoom.roomType})
+                      </span>
                     </span>
                   ) : (
                     <Button size="sm" variant="outline" onClick={() => setAssignDialogFor(o.id)}>
@@ -157,7 +153,7 @@ export function LodgingList({ meetingId, orders, rooms }: Props) {
                     {(NEXT_STATUSES[o.status] ?? []).length > 0 && (
                       <Select value="" onValueChange={(v) => v && onStatusChange(o.id, v)}>
                         <SelectTrigger className="h-7 w-24 text-xs">
-                          <SelectValue placeholder="切换" />
+                          <span className="text-stone-400">切换</span>
                         </SelectTrigger>
                         <SelectContent>
                           {(NEXT_STATUSES[o.status] ?? []).map((s) => (
@@ -186,12 +182,19 @@ export function LodgingList({ meetingId, orders, rooms }: Props) {
           </DialogHeader>
           <Select value={selectedRoom} onValueChange={(v) => setSelectedRoom(v ?? '')}>
             <SelectTrigger>
-              <SelectValue placeholder="选择房间" />
+              <span className={selectedRoom ? '' : 'text-stone-400'}>
+                {selectedRoom
+                  ? (() => {
+                      const r = rooms.find((rm) => rm.id === selectedRoom);
+                      return r ? `${r.hotel.name} - ${r.roomNumber}` : selectedRoom;
+                    })()
+                  : '选择房间'}
+              </span>
             </SelectTrigger>
             <SelectContent>
               {rooms.map((r) => (
                 <SelectItem key={r.id} value={r.id}>
-                  {r.hotel.name} - {r.roomNumber} ({r.roomType})
+                  {r.hotel.name} - {r.roomNumber} ({dict.roomType[r.roomType] ?? r.roomType})
                 </SelectItem>
               ))}
             </SelectContent>

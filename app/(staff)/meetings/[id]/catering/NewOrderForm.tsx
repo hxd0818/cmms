@@ -6,23 +6,10 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@/components/ui/select';
+import { Select, SelectContent, SelectItem, SelectTrigger } from '@/components/ui/select';
 import { createCateringOrder } from '@/app/actions/catering.actions';
 import { toast } from 'sonner';
-
-const MEAL_TYPES = [
-  { value: 'WELCOME_BANQUET', label: '欢迎宴' },
-  { value: 'FAREWELL', label: '欢送宴' },
-  { value: 'LUNCH', label: '午餐' },
-  { value: 'DINNER', label: '晚餐' },
-  { value: 'BREAKFAST', label: '早餐' },
-];
+import { dict } from '@/lib/shared/dictionary';
 
 export function NewOrderForm({
   meetingId,
@@ -87,7 +74,11 @@ export function NewOrderForm({
           <Label htmlFor="guest">嘉宾 *</Label>
           <Select value={meetingGuestId} onValueChange={(v) => setMeetingGuestId(v ?? '')}>
             <SelectTrigger>
-              <SelectValue placeholder="选择会议嘉宾" />
+              <span className={meetingGuestId ? '' : 'text-stone-400'}>
+                {meetingGuestId
+                  ? (guests.find((g) => g.id === meetingGuestId)?.name ?? meetingGuestId)
+                  : '选择会议嘉宾'}
+              </span>
             </SelectTrigger>
             <SelectContent>
               {guests.map((g) => (
@@ -102,12 +93,14 @@ export function NewOrderForm({
           <Label htmlFor="mealType">餐类 *</Label>
           <Select value={mealType} onValueChange={(v) => setMealType(v ?? 'LUNCH')}>
             <SelectTrigger>
-              <SelectValue />
+              <span className={mealType ? '' : 'text-stone-400'}>
+                {mealType ? (dict.mealType[mealType] ?? mealType) : '选择餐类'}
+              </span>
             </SelectTrigger>
             <SelectContent>
-              {MEAL_TYPES.map((t) => (
-                <SelectItem key={t.value} value={t.value}>
-                  {t.label}
+              {Object.entries(dict.mealType).map(([v, l]) => (
+                <SelectItem key={v} value={v}>
+                  {l}
                 </SelectItem>
               ))}
             </SelectContent>
