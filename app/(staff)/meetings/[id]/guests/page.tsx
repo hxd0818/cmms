@@ -55,6 +55,13 @@ export default async function MeetingGuestsPage({ params }: PageProps) {
     prisma.feeRecord.findMany({ where: { meetingId: id } }),
   ]);
 
+  // Convert Decimal fields to numbers for client component serialization
+  const plainGifts = gifts.map((g) => ({
+    ...g,
+    gift: { ...g.gift, unitPrice: g.gift.unitPrice ? Number(g.gift.unitPrice) : null },
+  }));
+  const plainFees = fees.map((f) => ({ ...f, amount: Number(f.amount) }));
+
   // Build lookup maps
   const tasksByGuestId: Record<
     string,
@@ -62,9 +69,9 @@ export default async function MeetingGuestsPage({ params }: PageProps) {
       transport: typeof transport;
       lodging: typeof lodging;
       catering: typeof catering;
-      gifts: typeof gifts;
+      gifts: typeof plainGifts;
       companions: typeof companions;
-      fees: typeof fees;
+      fees: typeof plainFees;
     }
   > = {};
 
@@ -73,9 +80,9 @@ export default async function MeetingGuestsPage({ params }: PageProps) {
       transport: transport.filter((t) => t.meetingGuestId === mg.id),
       lodging: lodging.filter((l) => l.meetingGuestId === mg.id),
       catering: catering.filter((c) => c.meetingGuestId === mg.id),
-      gifts: gifts.filter((g) => g.meetingGuestId === mg.id),
+      gifts: plainGifts.filter((g) => g.meetingGuestId === mg.id),
       companions: companions.filter((c) => c.meetingGuestId === mg.id),
-      fees: fees.filter((f) => f.meetingGuestId === mg.id),
+      fees: plainFees.filter((f) => f.meetingGuestId === mg.id),
     };
   }
 
