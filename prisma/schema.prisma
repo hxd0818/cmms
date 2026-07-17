@@ -494,6 +494,23 @@ enum FeeCategory {
   OTHER
 }
 
+// ============ Dictionary (configurable labels) ============
+
+model DictionaryEntry {
+  id        String   @id @default(cuid())
+  category  String
+  key       String
+  label     String
+  sortOrder Int      @default(0)
+  isVisible Boolean  @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([category, key])
+  @@index([category])
+  @@map("dictionary_entries")
+}
+
 // ============ Audit Log ============
 
 model AuditLog {
