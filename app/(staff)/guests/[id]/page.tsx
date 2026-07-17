@@ -131,15 +131,7 @@ export default async function GuestDetailPage({ params }: PageProps) {
                         </Badge>
                       )}
                       <Badge className={getBadgeStyle(m.receptionStage)} variant="secondary">
-                        {m.receptionStage === 'NOT_ARRIVED'
-                          ? '未签到'
-                          : m.receptionStage === 'CHECKED_IN'
-                            ? '已签到'
-                            : m.receptionStage === 'IN_HOUSE'
-                              ? '在场'
-                              : m.receptionStage === 'DEPARTED'
-                                ? '已离场'
-                                : '未到'}
+                        {dict.receptionStage[m.receptionStage]}
                       </Badge>
                       <Badge className={getBadgeStyle(m.meeting.status)} variant="secondary">
                         {dict.meetingStatus[m.meeting.status] ?? m.meeting.status}
@@ -281,7 +273,7 @@ export default async function GuestDetailPage({ params }: PageProps) {
                             className={cn('ml-1', getBadgeStyle(g.status))}
                             variant="secondary"
                           >
-                            {g.status === 'PENDING' ? '待发' : '已发'}
+                            {dict.giftStatus[g.status]}
                           </Badge>
                         </div>
                       ))}

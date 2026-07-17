@@ -6,6 +6,7 @@ import type { MeetingGuest, Guest } from '@/lib/generated/prisma/client';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { markDeparted, promoteToInHouse } from '@/app/actions/reception.actions';
+import { dict } from '@/lib/shared/dictionary';
 import { toast } from 'sonner';
 
 type MG = MeetingGuest & { guest: Guest };
@@ -52,20 +53,20 @@ export function Kanban({ initial }: Props) {
     items: MG[];
     action?: { type: 'promote' | 'depart'; label: string };
   }> = [
-    { title: '待签到', color: 'bg-stone-50', items: initial.notArrived },
+    { title: dict.receptionStage.NOT_ARRIVED ?? 'NOT_ARRIVED', color: 'bg-stone-50', items: initial.notArrived },
     {
-      title: '已签到',
+      title: dict.receptionStage.CHECKED_IN ?? 'CHECKED_IN',
       color: 'bg-teal-50',
       items: initial.checkedIn,
       action: { type: 'promote', label: '入场' },
     },
     {
-      title: '在场',
+      title: dict.receptionStage.IN_HOUSE ?? 'IN_HOUSE',
       color: 'bg-green-50',
       items: initial.inHouse,
       action: { type: 'depart', label: '离场' },
     },
-    { title: '已离场 / 未到', color: 'bg-stone-50', items: initial.departed },
+    { title: (dict.receptionStage.DEPARTED ?? '') + ' / ' + (dict.receptionStage.NO_SHOW ?? ''), color: 'bg-stone-50', items: initial.departed },
   ];
 
   return (

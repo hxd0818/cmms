@@ -258,15 +258,7 @@ export function GuestManager({ meetingId, meetingGuests, tasksByGuestId }: Props
                       </TableCell>
                       <TableCell>
                         <Badge className={getBadgeStyle(mg.receptionStage)} variant="secondary">
-                          {mg.receptionStage === 'NOT_ARRIVED'
-                            ? '未签到'
-                            : mg.receptionStage === 'CHECKED_IN'
-                              ? '已签到'
-                              : mg.receptionStage === 'IN_HOUSE'
-                                ? '在场'
-                                : mg.receptionStage === 'DEPARTED'
-                                  ? '已离场'
-                                  : '未到'}
+                          {dict.receptionStage[mg.receptionStage]}
                         </Badge>
                       </TableCell>
                       <TableCell>
@@ -322,7 +314,7 @@ export function GuestManager({ meetingId, meetingGuests, tasksByGuestId }: Props
                             </Badge>
                           </TableCell>
                           <TableCell>
-                            <Badge variant="outline">{sub.receptionStage}</Badge>
+                            <Badge variant="outline">{dict.receptionStage[sub.receptionStage]}</Badge>
                           </TableCell>
                           <TableCell>
                             {subCount > 0 ? (
@@ -480,7 +472,7 @@ function GuestTaskCards({
               {g.gift.name} x{g.quantity}
             </span>
             <Badge className={getBadgeStyle(g.status)} variant="secondary">
-              {g.status === 'PENDING' ? '待发' : '已发'}
+              {dict.giftStatus[g.status]}
             </Badge>
           </div>
         ))}
