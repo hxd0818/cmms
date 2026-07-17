@@ -68,6 +68,12 @@ export const DICTIONARY = {
     BREAK: '茶歇',
     MEAL: '用餐',
     TOUR: '参观',
+    CLOSED_MEETING: '闭门会',
+    RESEARCH: '调研',
+    SALON: '沙龙',
+    REVIEW: '评审',
+    ROADSHOW: '路演',
+    DEFENSE: '答辩',
     OTHER: '其他',
   } as Record<string, string>,
 
