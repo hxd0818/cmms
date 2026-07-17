@@ -27,7 +27,7 @@ export async function issueGuestToken(
       return {
         ok: true,
         data: {
-          url: `/g/${existing.tokenHash}`,
+          url: `/guest/${existing.tokenHash}`,
         },
       };
     }
@@ -54,7 +54,7 @@ export async function issueGuestToken(
     });
 
     revalidatePath(`/meetings/${meetingId}/guests`);
-    return { ok: true, data: { url: `/g/${raw}` } };
+    return { ok: true, data: { url: `/guest/${raw}` } };
   } catch (e) {
     return handleError(e);
   }
