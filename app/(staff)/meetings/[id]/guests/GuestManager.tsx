@@ -555,23 +555,11 @@ function TaskSection({
   );
 }
 
-const ROLE_OPTIONS = [
-  { value: 'PRIMARY', label: '主嘉宾' },
-  { value: 'SECRETARY', label: '秘书' },
-  { value: 'SECURITY', label: '安保' },
-  { value: 'INTERPRETER', label: '翻译' },
-  { value: 'FAMILY', label: '家属' },
-  { value: 'AIDE', label: '助理' },
-  { value: 'DRIVER', label: '司机' },
-];
+const ROLE_OPTIONS = Object.entries(dict.entourageRole).map(([value, label]) => ({ value, label }));
 
 const LEVEL_OPTIONS = [
   { value: '', label: '使用默认' },
-  { value: 'VIP_A', label: 'VIP-A' },
-  { value: 'VIP_B', label: 'VIP-B' },
-  { value: 'A', label: 'A' },
-  { value: 'B', label: 'B' },
-  { value: 'C', label: 'C' },
+  ...Object.entries(dict.guestLevel).map(([value, label]) => ({ value, label })),
 ];
 
 function GuestEditForm({
