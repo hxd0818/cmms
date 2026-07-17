@@ -636,7 +636,9 @@ function GuestEditForm({
           <Label className="text-xs text-stone-400">随行角色</Label>
           <Select value={role} onValueChange={(v) => setRole(v ?? '')}>
             <SelectTrigger className="h-8 mt-1">
-              <SelectValue placeholder="选择角色" />
+              <span className={role ? '' : 'text-stone-400'}>
+                {role ? ROLE_OPTIONS.find((o) => o.value === role)?.label ?? role : '选择角色'}
+              </span>
             </SelectTrigger>
             <SelectContent>
               {ROLE_OPTIONS.map((o) => (
@@ -652,7 +654,9 @@ function GuestEditForm({
           <Label className="text-xs text-stone-400">等级覆盖</Label>
           <Select value={level} onValueChange={(v) => setLevel(v ?? '')}>
             <SelectTrigger className="h-8 mt-1">
-              <SelectValue placeholder="使用默认" />
+              <span className={level ? '' : 'text-stone-400'}>
+                {level ? LEVEL_OPTIONS.find((o) => o.value === level)?.label ?? level : '使用默认'}
+              </span>
             </SelectTrigger>
             <SelectContent>
               {LEVEL_OPTIONS.map((o) => (

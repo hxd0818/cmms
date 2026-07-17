@@ -92,7 +92,9 @@ export function GuestForm({ mode, guestId, defaultValues }: Props) {
           <Label htmlFor="gender">性别</Label>
           <Select value={gender ?? ''} onValueChange={(v) => setValue('gender', v ?? undefined)}>
             <SelectTrigger>
-              <SelectValue placeholder="请选择" />
+              <span className={gender ? '' : 'text-stone-400'}>
+                {gender ? { MALE: '男', FEMALE: '女', OTHER: '其他' }[gender] ?? gender : '请选择'}
+              </span>
             </SelectTrigger>
             <SelectContent>
               <SelectItem value="MALE">男</SelectItem>
@@ -123,7 +125,7 @@ export function GuestForm({ mode, guestId, defaultValues }: Props) {
           <Label htmlFor="level">等级</Label>
           <Select value={level} onValueChange={(v) => setValue('level', v ?? 'C')}>
             <SelectTrigger>
-              <SelectValue />
+              {level ?? 'C'}
             </SelectTrigger>
             <SelectContent>
               <SelectItem value="VIP_A">VIP-A</SelectItem>

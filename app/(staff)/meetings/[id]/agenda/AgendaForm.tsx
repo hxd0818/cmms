@@ -90,7 +90,9 @@ export function AgendaForm({ meetingId, speakerOptions: _ }: Props) {
           <Label htmlFor="type">类型 *</Label>
           <Select value={type} onValueChange={(v) => setValue('type', v ?? 'OTHER')}>
             <SelectTrigger>
-              <SelectValue />
+              <span className={type ? '' : 'text-stone-400'}>
+                {type ? dict.agendaType[type] ?? type : '选择类型'}
+              </span>
             </SelectTrigger>
             <SelectContent>
               {Object.entries(dict.agendaType).map(([v, l]) => (
