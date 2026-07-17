@@ -35,19 +35,11 @@ import {
 } from '@/components/ui/dialog';
 import { assignRoom, updateLodgingStatus, deleteLodgingOrder } from '@/app/actions/lodging.actions';
 import { toast } from 'sonner';
+import { dict } from '@/lib/shared/dictionary';
 
 type OrderWithRelations = LodgingOrder & {
   meetingGuest: MeetingGuest & { guest: Guest };
   hotelRoom: (HotelRoom & { hotel: Hotel }) | null;
-};
-
-const STATUS_LABEL: Record<string, string> = {
-  UNASSIGNED: '待分配',
-  RESERVED: '已预订',
-  CHECKED_IN: '已入住',
-  CHECKED_OUT: '已退房',
-  ROOM_CHANGED: '换房中',
-  CANCELED: '已取消',
 };
 
 const STATUS_COLOR: Record<string, string> = {
@@ -95,7 +87,7 @@ export function LodgingList({ meetingId, orders, rooms }: Props) {
   async function onStatusChange(orderId: string, status: string) {
     const r = await updateLodgingStatus(orderId, status as never, meetingId);
     if (r.ok) {
-      toast.success(`状态已切换: ${STATUS_LABEL[status]}`);
+      toast.success(`状态已切换: ${dict.lodgingStatus[status]}`);
       router.refresh();
     } else {
       toast.error(r.error?.message ?? '状态切换失败');
@@ -157,7 +149,7 @@ export function LodgingList({ meetingId, orders, rooms }: Props) {
                 </TableCell>
                 <TableCell>
                   <Badge className={STATUS_COLOR[o.status]} variant="secondary">
-                    {STATUS_LABEL[o.status]}
+                    {dict.lodgingStatus[o.status]}
                   </Badge>
                 </TableCell>
                 <TableCell>
@@ -170,7 +162,7 @@ export function LodgingList({ meetingId, orders, rooms }: Props) {
                         <SelectContent>
                           {(NEXT_STATUSES[o.status] ?? []).map((s) => (
                             <SelectItem key={s} value={s}>
-                              {STATUS_LABEL[s]}
+                              {dict.lodgingStatus[s]}
                             </SelectItem>
                           ))}
                         </SelectContent>

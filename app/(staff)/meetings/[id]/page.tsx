@@ -21,18 +21,11 @@ import {
   Pencil,
 } from 'lucide-react';
 import type { LucideIcon } from 'lucide-react';
+import { dict } from '@/lib/shared/dictionary';
 
 interface PageProps {
   params: Promise<{ id: string }>;
 }
-
-const STATUS_LABEL: Record<string, string> = {
-  DRAFT: '草稿',
-  PLANNING: '筹备中',
-  ONGOING: '进行中',
-  COMPLETED: '已结束',
-  CANCELED: '已取消',
-};
 
 export default async function MeetingDetailPage({ params }: PageProps) {
   const { id } = await params;
@@ -157,7 +150,7 @@ export default async function MeetingDetailPage({ params }: PageProps) {
           <div className="flex items-center gap-3">
             <h1 className="text-xl font-bold">{meeting.name}</h1>
             <Badge className={getBadgeStyle(meeting.status)} variant="secondary">
-              {STATUS_LABEL[meeting.status]}
+              {dict.meetingStatus[meeting.status]}
             </Badge>
           </div>
           <p className="text-sm text-stone-400 mt-0.5">

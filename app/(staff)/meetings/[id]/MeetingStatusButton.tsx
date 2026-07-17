@@ -13,6 +13,7 @@ import {
 import { updateMeetingStatus } from '@/app/actions/meeting.actions';
 import { toast } from 'sonner';
 import type { MeetingStatus } from '@/lib/generated/prisma/enums';
+import { dict } from '@/lib/shared/dictionary';
 
 const VALID_TRANSITIONS: Record<string, string[]> = {
   DRAFT: ['PLANNING', 'CANCELED'],
@@ -20,14 +21,6 @@ const VALID_TRANSITIONS: Record<string, string[]> = {
   ONGOING: ['COMPLETED', 'CANCELED'],
   COMPLETED: [],
   CANCELED: [],
-};
-
-const STATUS_LABEL: Record<string, string> = {
-  DRAFT: '草稿',
-  PLANNING: '筹备中',
-  ONGOING: '进行中',
-  COMPLETED: '已结束',
-  CANCELED: '已取消',
 };
 
 export function MeetingStatusButton({
@@ -49,7 +42,7 @@ export function MeetingStatusButton({
     const result = await updateMeetingStatus(meetingId, target as MeetingStatus);
     setUpdating(false);
     if (result.ok) {
-      toast.success(`已切换到「${STATUS_LABEL[target]}」`);
+      toast.success(`已切换到「${dict.meetingStatus[target]}」`);
       setTarget('');
       router.refresh();
     } else {
@@ -74,7 +67,7 @@ export function MeetingStatusButton({
         <SelectContent>
           {allowedTargets.map((s) => (
             <SelectItem key={s} value={s}>
-              {STATUS_LABEL[s]}
+              {dict.meetingStatus[s]}
             </SelectItem>
           ))}
         </SelectContent>

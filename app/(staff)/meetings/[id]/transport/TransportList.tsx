@@ -37,20 +37,11 @@ import {
   deleteTransportOrder,
 } from '@/app/actions/transport.actions';
 import { toast } from 'sonner';
+import { dict } from '@/lib/shared/dictionary';
 
 type OrderWithRelations = TransportOrder & {
   meetingGuest: MeetingGuest & { guest: Guest };
   vehicle: Vehicle | null;
-};
-
-const STATUS_LABEL: Record<string, string> = {
-  UNASSIGNED: '待分配',
-  ASSIGNED: '已分配',
-  EN_ROUTE: '前往中',
-  PICKED_UP: '已接到',
-  COMPLETED: '已完成',
-  REASSIGNED: '已改派',
-  CANCELED: '已取消',
 };
 
 const STATUS_COLOR: Record<string, string> = {
@@ -71,13 +62,6 @@ const NEXT_STATUSES: Record<string, string[]> = {
   COMPLETED: [],
   REASSIGNED: ['CANCELED'],
   CANCELED: [],
-};
-
-const PICKUP_LABEL: Record<string, string> = {
-  AIRPORT: '机场',
-  TRAINSTATION: '火车站',
-  HOTEL: '酒店',
-  VENUE: '会议场地',
 };
 
 interface Props {
@@ -110,7 +94,7 @@ export function TransportList({ meetingId, orders, vehicles }: Props) {
   async function onStatusChange(orderId: string, status: string) {
     const r = await updateTransportStatus(orderId, status as never, meetingId);
     if (r.ok) {
-      toast.success(`状态已切换: ${STATUS_LABEL[status]}`);
+      toast.success(`状态已切换: ${dict.transportStatus[status]}`);
       router.refresh();
     } else {
       toast.error(r.error?.message ?? '状态切换失败');
@@ -155,7 +139,7 @@ export function TransportList({ meetingId, orders, vehicles }: Props) {
             orders.map((o) => (
               <TableRow key={o.id}>
                 <TableCell className="font-medium">{o.meetingGuest.guest.name}</TableCell>
-                <TableCell className="text-sm">{PICKUP_LABEL[o.pickupType]}</TableCell>
+                <TableCell className="text-sm">{dict.pickupType[o.pickupType]}</TableCell>
                 <TableCell className="text-sm">{o.pickupLocation}</TableCell>
                 <TableCell className="text-sm">{o.dropoffLocation}</TableCell>
                 <TableCell className="text-sm">
@@ -185,7 +169,7 @@ export function TransportList({ meetingId, orders, vehicles }: Props) {
                 </TableCell>
                 <TableCell>
                   <Badge className={STATUS_COLOR[o.status]} variant="secondary">
-                    {STATUS_LABEL[o.status]}
+                    {dict.transportStatus[o.status]}
                   </Badge>
                 </TableCell>
                 <TableCell>
@@ -198,7 +182,7 @@ export function TransportList({ meetingId, orders, vehicles }: Props) {
                         <SelectContent>
                           {(NEXT_STATUSES[o.status] ?? []).map((s) => (
                             <SelectItem key={s} value={s}>
-                              {STATUS_LABEL[s]}
+                              {dict.transportStatus[s]}
                             </SelectItem>
                           ))}
                         </SelectContent>
@@ -227,13 +211,6 @@ export function TransportList({ meetingId, orders, vehicles }: Props) {
     </div>
   );
 }
-
-const VEHICLE_TYPE_LABEL: Record<string, string> = {
-  SEDAN: '轿车',
-  MPV: '商务车',
-  BUS: '大巴',
-  OTHER: '其他',
-};
 
 function VehicleAssignDialog({
   open,
@@ -294,7 +271,7 @@ function VehicleAssignDialog({
         v.plateNo.toLowerCase().includes(q) ||
         v.driverName.toLowerCase().includes(q) ||
         (v.belongs ?? '').toLowerCase().includes(q) ||
-        VEHICLE_TYPE_LABEL[v.type]?.includes(search),
+        dict.vehicleType[v.type]?.includes(search),
     );
   }, [vehicles, search]);
 
@@ -331,7 +308,7 @@ function VehicleAssignDialog({
                   <div className="flex items-center gap-2">
                     <span className="font-mono font-bold text-sm">{v.plateNo}</span>
                     <Badge variant="outline" className="text-xs">
-                      {VEHICLE_TYPE_LABEL[v.type]}
+                      {dict.vehicleType[v.type]}
                     </Badge>
                     <span className="text-xs text-stone-400">{v.capacity} 座</span>
                   </div>

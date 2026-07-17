@@ -34,25 +34,11 @@ import {
 } from '@/components/ui/dialog';
 import { assignTable, deleteCateringOrder } from '@/app/actions/catering.actions';
 import { toast } from 'sonner';
+import { dict } from '@/lib/shared/dictionary';
 
 type OrderWithRelations = CateringOrder & {
   meetingGuest: MeetingGuest & { guest: Guest };
   diningTable: DiningTable | null;
-};
-
-const MEAL_LABEL: Record<string, string> = {
-  WELCOME_BANQUET: '欢迎宴',
-  FAREWELL: '欢送宴',
-  LUNCH: '午餐',
-  DINNER: '晚餐',
-  BREAKFAST: '早餐',
-};
-
-const STATUS_LABEL: Record<string, string> = {
-  SCHEDULED: '已排期',
-  SEATED: '已入座',
-  FINISHED: '已完成',
-  CANCELED: '已取消',
 };
 
 const STATUS_COLOR: Record<string, string> = {
@@ -122,7 +108,7 @@ export function CateringList({ meetingId, orders, tables }: Props) {
             orders.map((o) => (
               <TableRow key={o.id}>
                 <TableCell className="font-medium">{o.meetingGuest.guest.name}</TableCell>
-                <TableCell className="text-sm">{MEAL_LABEL[o.mealType]}</TableCell>
+                <TableCell className="text-sm">{dict.mealType[o.mealType]}</TableCell>
                 <TableCell className="text-sm">
                   {new Date(o.mealTime).toLocaleString('zh-CN')}
                 </TableCell>
@@ -145,7 +131,7 @@ export function CateringList({ meetingId, orders, tables }: Props) {
                 </TableCell>
                 <TableCell>
                   <Badge className={STATUS_COLOR[o.status]} variant="secondary">
-                    {STATUS_LABEL[o.status]}
+                    {dict.cateringStatus[o.status]}
                   </Badge>
                 </TableCell>
                 <TableCell>

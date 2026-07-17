@@ -12,6 +12,7 @@ import {
 } from '@/components/ui/table';
 import { Badge } from '@/components/ui/badge';
 import { getBadgeStyle } from '@/lib/shared/badge-colors';
+import { dict } from '@/lib/shared/dictionary';
 
 interface Props {
   items: Meeting[];
@@ -19,14 +20,6 @@ interface Props {
   pageSize: number;
   total: number;
 }
-
-const STATUS_LABEL: Record<string, string> = {
-  DRAFT: '草稿',
-  PLANNING: '筹备中',
-  ONGOING: '进行中',
-  COMPLETED: '已结束',
-  CANCELED: '已取消',
-};
 
 export function MeetingList({ items, page, pageSize, total }: Props) {
   return (
@@ -64,7 +57,7 @@ export function MeetingList({ items, page, pageSize, total }: Props) {
                   <TableCell className="font-mono text-sm">{m.code}</TableCell>
                   <TableCell>
                     <Badge className={getBadgeStyle(m.status)} variant="secondary">
-                      {STATUS_LABEL[m.status]}
+                      {dict.meetingStatus[m.status]}
                     </Badge>
                   </TableCell>
                   <TableCell className="text-sm">

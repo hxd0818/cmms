@@ -30,6 +30,7 @@ import {
 } from '@/components/ui/dialog';
 import { createHotel, getHotelDetail, addHotelRoom } from '@/app/actions/hotel.actions';
 import { toast } from 'sonner';
+import { dict } from '@/lib/shared/dictionary';
 
 type HotelWithCount = {
   id: string;
@@ -44,19 +45,6 @@ type RoomInfo = {
   roomNumber: string;
   roomType: string;
   status: string;
-};
-
-const ROOM_TYPE_LABEL: Record<string, string> = {
-  SINGLE: '单人间',
-  DOUBLE: '双人间',
-  SUITE: '套房',
-};
-
-const ROOM_STATUS_LABEL: Record<string, string> = {
-  AVAILABLE: '可用',
-  RESERVED: '已预订',
-  OCCUPIED: '使用中',
-  MAINTENANCE: '维护中',
 };
 
 const ROOM_STATUS_COLOR: Record<string, string> = {
@@ -229,9 +217,11 @@ export function HotelManager({ initialHotels }: { initialHotels: HotelWithCount[
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="SINGLE">单人间</SelectItem>
-                    <SelectItem value="DOUBLE">双人间</SelectItem>
-                    <SelectItem value="SUITE">套房</SelectItem>
+                    {Object.entries(dict.roomType).map(([v, l]) => (
+                      <SelectItem key={v} value={v}>
+                        {l}
+                      </SelectItem>
+                    ))}
                   </SelectContent>
                 </Select>
               </div>
@@ -266,10 +256,10 @@ export function HotelManager({ initialHotels }: { initialHotels: HotelWithCount[
                 rooms.map((r) => (
                   <TableRow key={r.id}>
                     <TableCell className="font-mono text-sm">{r.roomNumber}</TableCell>
-                    <TableCell className="text-sm">{ROOM_TYPE_LABEL[r.roomType]}</TableCell>
+                    <TableCell className="text-sm">{dict.roomType[r.roomType]}</TableCell>
                     <TableCell>
                       <Badge className={ROOM_STATUS_COLOR[r.status]} variant="secondary">
-                        {ROOM_STATUS_LABEL[r.status]}
+                        {dict.roomStatus[r.status]}
                       </Badge>
                     </TableCell>
                   </TableRow>

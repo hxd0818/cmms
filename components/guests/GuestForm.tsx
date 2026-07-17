@@ -18,6 +18,7 @@ import {
 import { guestCreateSchema } from '@/lib/shared/guest';
 import { createGuest, updateGuest } from '@/app/actions/guest.actions';
 import { toast } from 'sonner';
+import { dict } from '@/lib/shared/dictionary';
 
 type FormValues = {
   name: string;
@@ -93,13 +94,15 @@ export function GuestForm({ mode, guestId, defaultValues }: Props) {
           <Select value={gender ?? ''} onValueChange={(v) => setValue('gender', v ?? undefined)}>
             <SelectTrigger>
               <span className={gender ? '' : 'text-stone-400'}>
-                {gender ? { MALE: '男', FEMALE: '女', OTHER: '其他' }[gender] ?? gender : '请选择'}
+                {gender ? (dict.gender[gender] ?? gender) : '请选择'}
               </span>
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="MALE">男</SelectItem>
-              <SelectItem value="FEMALE">女</SelectItem>
-              <SelectItem value="OTHER">其他</SelectItem>
+              {Object.entries(dict.gender).map(([v, l]) => (
+                <SelectItem key={v} value={v}>
+                  {l}
+                </SelectItem>
+              ))}
             </SelectContent>
           </Select>
         </div>
@@ -124,15 +127,13 @@ export function GuestForm({ mode, guestId, defaultValues }: Props) {
         <div>
           <Label htmlFor="level">等级</Label>
           <Select value={level} onValueChange={(v) => setValue('level', v ?? 'C')}>
-            <SelectTrigger>
-              {level ?? 'C'}
-            </SelectTrigger>
+            <SelectTrigger>{level ?? 'C'}</SelectTrigger>
             <SelectContent>
-              <SelectItem value="VIP_A">VIP-A</SelectItem>
-              <SelectItem value="VIP_B">VIP-B</SelectItem>
-              <SelectItem value="A">A</SelectItem>
-              <SelectItem value="B">B</SelectItem>
-              <SelectItem value="C">C</SelectItem>
+              {Object.entries(dict.guestLevel).map(([v, l]) => (
+                <SelectItem key={v} value={v}>
+                  {l}
+                </SelectItem>
+              ))}
             </SelectContent>
           </Select>
         </div>

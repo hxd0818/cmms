@@ -14,13 +14,7 @@ import { Button } from '@/components/ui/button';
 import { useRouter } from 'next/navigation';
 import { deleteVehicle } from '@/app/actions/vehicle.actions';
 import { toast } from 'sonner';
-
-const TYPE_LABEL: Record<string, string> = {
-  SEDAN: '轿车',
-  MPV: '商务车',
-  BUS: '大巴',
-  OTHER: '其他',
-};
+import { dict } from '@/lib/shared/dictionary';
 
 export function VehicleList({ items }: { items: Vehicle[] }) {
   const router = useRouter();
@@ -62,7 +56,7 @@ export function VehicleList({ items }: { items: Vehicle[] }) {
               <TableRow key={v.id}>
                 <TableCell className="font-mono font-medium">{v.plateNo}</TableCell>
                 <TableCell>
-                  <Badge variant="secondary">{TYPE_LABEL[v.type]}</Badge>
+                  <Badge variant="secondary">{dict.vehicleType[v.type]}</Badge>
                 </TableCell>
                 <TableCell>{v.capacity} 人</TableCell>
                 <TableCell>{v.driverName}</TableCell>

@@ -15,16 +15,11 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { deliverGiftOrder, deleteGiftOrder } from '@/app/actions/gift.actions';
 import { toast } from 'sonner';
+import { dict } from '@/lib/shared/dictionary';
 
 type OrderWithRelations = Omit<GiftOrder, 'gift'> & {
   gift: Omit<Gift, 'unitPrice'> & { unitPrice: number | null };
   meetingGuest: MeetingGuest & { guest: Guest };
-};
-
-const STATUS_LABEL: Record<string, string> = {
-  PENDING: '待发放',
-  DELIVERED: '已发放',
-  CANCELED: '已取消',
 };
 
 const STATUS_COLOR: Record<string, string> = {
@@ -94,7 +89,7 @@ export function GiftList({ meetingId, orders }: Props) {
                 <TableCell className="text-sm">{o.quantity}</TableCell>
                 <TableCell>
                   <Badge className={STATUS_COLOR[o.status]} variant="secondary">
-                    {STATUS_LABEL[o.status]}
+                    {dict.giftStatus[o.status]}
                   </Badge>
                 </TableCell>
                 <TableCell className="text-sm">

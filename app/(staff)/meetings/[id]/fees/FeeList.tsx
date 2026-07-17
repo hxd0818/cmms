@@ -15,6 +15,7 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { deleteFeeRecord } from '@/app/actions/fee.actions';
 import { toast } from 'sonner';
+import { dict } from '@/lib/shared/dictionary';
 
 type FeeRecordWithGuest = {
   id: string;
@@ -28,14 +29,6 @@ type FeeRecordWithGuest = {
   createdBy: string;
   createdAt: Date;
   meetingGuest: (MeetingGuest & { guest: Guest }) | null;
-};
-
-const CATEGORY_LABEL: Record<string, string> = {
-  TRANSPORT: '交通',
-  LODGING: '住宿',
-  MEAL: '餐饮',
-  GIFT: '礼品',
-  OTHER: '其他',
 };
 
 const CATEGORY_COLOR: Record<string, string> = {
@@ -94,7 +87,7 @@ export function FeeList({ meetingId, records }: Props) {
                 <TableCell className="font-medium">{r.meetingGuest?.guest.name ?? '-'}</TableCell>
                 <TableCell>
                   <Badge className={CATEGORY_COLOR[r.category]} variant="secondary">
-                    {CATEGORY_LABEL[r.category] ?? r.category}
+                    {dict.feeCategory[r.category] ?? r.category}
                   </Badge>
                 </TableCell>
                 <TableCell className="text-sm font-mono">

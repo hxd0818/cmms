@@ -41,6 +41,7 @@ import { getBadgeStyle } from '@/lib/shared/badge-colors';
 import { toast } from 'sonner';
 import { Car, Bed, UtensilsCrossed, Gift, UserCheck, Receipt } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import { dict } from '@/lib/shared/dictionary';
 
 type MeetingGuestWithGuest = MeetingGuest & { guest: Guest };
 
@@ -89,24 +90,6 @@ interface Props {
   meetingGuests: MeetingGuestWithGuest[];
   tasksByGuestId: Record<string, GuestTasks>;
 }
-
-const ROLE_LABEL: Record<string, string> = {
-  PRIMARY: '主嘉宾',
-  SECRETARY: '秘书',
-  SECURITY: '安保',
-  INTERPRETER: '翻译',
-  FAMILY: '家属',
-  AIDE: '助理',
-  DRIVER: '司机',
-};
-
-const MEAL_LABEL: Record<string, string> = {
-  WELCOME_BANQUET: '欢迎宴',
-  FAREWELL: '欢送宴',
-  LUNCH: '午餐',
-  DINNER: '晚餐',
-  BREAKFAST: '早餐',
-};
 
 export function GuestManager({ meetingId, meetingGuests, tasksByGuestId }: Props) {
   const router = useRouter();
@@ -259,7 +242,7 @@ export function GuestManager({ meetingId, meetingGuests, tasksByGuestId }: Props
                       <TableCell className="font-medium text-stone-800">{mg.guest.name}</TableCell>
                       <TableCell>
                         <Badge variant="secondary">
-                          {mg.entourageRole ? ROLE_LABEL[mg.entourageRole] : '-'}
+                          {mg.entourageRole ? dict.entourageRole[mg.entourageRole] : '-'}
                         </Badge>
                       </TableCell>
                       <TableCell className="text-sm text-stone-500">
@@ -327,7 +310,7 @@ export function GuestManager({ meetingId, meetingGuests, tasksByGuestId }: Props
                           </TableCell>
                           <TableCell>
                             <Badge variant="outline" className="text-xs">
-                              {sub.entourageRole ? ROLE_LABEL[sub.entourageRole] : '-'}
+                              {sub.entourageRole ? dict.entourageRole[sub.entourageRole] : '-'}
                             </Badge>
                           </TableCell>
                           <TableCell className="text-sm text-stone-400">
@@ -384,7 +367,7 @@ export function GuestManager({ meetingId, meetingGuests, tasksByGuestId }: Props
                   </Badge>
                   {selectedGuest.entourageRole && (
                     <Badge variant="outline" className="text-xs">
-                      {ROLE_LABEL[selectedGuest.entourageRole]}
+                      {dict.entourageRole[selectedGuest.entourageRole]}
                     </Badge>
                   )}
                 </SheetTitle>
@@ -474,7 +457,7 @@ function GuestTaskCards({
         {tasks.catering.map((c) => (
           <div key={c.id} className="text-xs">
             <span className="text-stone-600">
-              {MEAL_LABEL[c.mealType] ?? c.mealType}
+              {dict.mealType[c.mealType] ?? c.mealType}
               {c.diningTable ? ' · ' + c.diningTable.name : ''}
             </span>
             {c.specialDietary.length > 0 && (
@@ -637,7 +620,7 @@ function GuestEditForm({
           <Select value={role} onValueChange={(v) => setRole(v ?? '')}>
             <SelectTrigger className="h-8 mt-1">
               <span className={role ? '' : 'text-stone-400'}>
-                {role ? ROLE_OPTIONS.find((o) => o.value === role)?.label ?? role : '选择角色'}
+                {role ? (ROLE_OPTIONS.find((o) => o.value === role)?.label ?? role) : '选择角色'}
               </span>
             </SelectTrigger>
             <SelectContent>
@@ -655,7 +638,9 @@ function GuestEditForm({
           <Select value={level} onValueChange={(v) => setLevel(v ?? '')}>
             <SelectTrigger className="h-8 mt-1">
               <span className={level ? '' : 'text-stone-400'}>
-                {level ? LEVEL_OPTIONS.find((o) => o.value === level)?.label ?? level : '使用默认'}
+                {level
+                  ? (LEVEL_OPTIONS.find((o) => o.value === level)?.label ?? level)
+                  : '使用默认'}
               </span>
             </SelectTrigger>
             <SelectContent>

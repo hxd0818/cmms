@@ -17,6 +17,7 @@ import {
 import { vehicleCreateSchema } from '@/lib/shared/transport';
 import { createVehicle } from '@/app/actions/vehicle.actions';
 import { toast } from 'sonner';
+import { dict } from '@/lib/shared/dictionary';
 
 type FormValues = {
   plateNo: string;
@@ -25,13 +26,6 @@ type FormValues = {
   driverName: string;
   driverPhone: string;
   belongs?: string;
-};
-
-const TYPE_LABEL: Record<string, string> = {
-  SEDAN: '轿车',
-  MPV: '商务车',
-  BUS: '大巴',
-  OTHER: '其他',
 };
 
 export function VehicleForm() {
@@ -85,7 +79,7 @@ export function VehicleForm() {
               <SelectValue />
             </SelectTrigger>
             <SelectContent>
-              {Object.entries(TYPE_LABEL).map(([v, l]) => (
+              {Object.entries(dict.vehicleType).map(([v, l]) => (
                 <SelectItem key={v} value={v}>
                   {l}
                 </SelectItem>

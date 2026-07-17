@@ -9,14 +9,7 @@ import { buttonVariants } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
 import Link from 'next/link';
 import { Users, CalendarDays, Activity, Plus, ChevronRight } from 'lucide-react';
-
-const STATUS_LABEL: Record<string, string> = {
-  DRAFT: '草稿',
-  PLANNING: '筹备中',
-  ONGOING: '进行中',
-  COMPLETED: '已结束',
-  CANCELED: '已取消',
-};
+import { dict } from '@/lib/shared/dictionary';
 
 export default async function DashboardPage() {
   const session = await auth();
@@ -95,7 +88,7 @@ export default async function DashboardPage() {
                   </div>
                   <div className="flex items-center gap-2">
                     <Badge className={getBadgeStyle(m.status)} variant="secondary">
-                      {STATUS_LABEL[m.status]}
+                      {dict.meetingStatus[m.status]}
                     </Badge>
                     <ChevronRight
                       size={15}

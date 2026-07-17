@@ -10,36 +10,11 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { DeleteGuestButton } from '@/components/guests/DeleteGuestButton';
 import { getBadgeStyle } from '@/lib/shared/badge-colors';
 import { Car, Bed, Utensils, Gift, Users, Receipt } from 'lucide-react';
+import { dict } from '@/lib/shared/dictionary';
 
 interface PageProps {
   params: Promise<{ id: string }>;
 }
-
-const ROLE_LABEL: Record<string, string> = {
-  PRIMARY: '主嘉宾',
-  SECRETARY: '秘书',
-  SECURITY: '安保',
-  INTERPRETER: '翻译',
-  FAMILY: '家属',
-  AIDE: '助理',
-  DRIVER: '司机',
-};
-
-const MEETING_STATUS_LABEL: Record<string, string> = {
-  DRAFT: '草稿',
-  PLANNING: '筹备中',
-  ONGOING: '进行中',
-  COMPLETED: '已结束',
-  CANCELED: '已取消',
-};
-
-const MEAL_LABEL: Record<string, string> = {
-  WELCOME_BANQUET: '欢迎宴',
-  FAREWELL: '欢送宴',
-  LUNCH: '午餐',
-  DINNER: '晚餐',
-  BREAKFAST: '早餐',
-};
 
 export default async function GuestDetailPage({ params }: PageProps) {
   const { id } = await params;
@@ -152,7 +127,7 @@ export default async function GuestDetailPage({ params }: PageProps) {
                     <div className="flex items-center gap-2">
                       {m.entourageRole && (
                         <Badge variant="outline" className="text-xs">
-                          {ROLE_LABEL[m.entourageRole] ?? m.entourageRole}
+                          {dict.entourageRole[m.entourageRole] ?? m.entourageRole}
                         </Badge>
                       )}
                       <Badge className={getBadgeStyle(m.receptionStage)} variant="secondary">
@@ -167,7 +142,7 @@ export default async function GuestDetailPage({ params }: PageProps) {
                                 : '未到'}
                       </Badge>
                       <Badge className={getBadgeStyle(m.meeting.status)} variant="secondary">
-                        {MEETING_STATUS_LABEL[m.meeting.status] ?? m.meeting.status}
+                        {dict.meetingStatus[m.meeting.status] ?? m.meeting.status}
                       </Badge>
                     </div>
                   </div>
@@ -278,7 +253,7 @@ export default async function GuestDetailPage({ params }: PageProps) {
                       {m.catering.map((c) => (
                         <div key={c.id} className="text-xs">
                           <span className="text-stone-600">
-                            {MEAL_LABEL[c.mealType] ?? c.mealType}
+                            {dict.mealType[c.mealType] ?? c.mealType}
                             {c.diningTable ? ' · ' + c.diningTable.name : ''}
                           </span>
                           {c.specialDietary.length > 0 && (

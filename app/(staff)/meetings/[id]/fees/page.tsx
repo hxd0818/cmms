@@ -5,18 +5,11 @@ import { notFound } from 'next/navigation';
 import { FeeList } from './FeeList';
 import { NewFeeForm } from './NewFeeForm';
 import { MeetingTabs } from '@/components/layout/MeetingTabs';
+import { dict } from '@/lib/shared/dictionary';
 
 interface PageProps {
   params: Promise<{ id: string }>;
 }
-
-const CATEGORY_LABEL: Record<string, string> = {
-  TRANSPORT: '交通',
-  LODGING: '住宿',
-  MEAL: '餐饮',
-  GIFT: '礼品',
-  OTHER: '其他',
-};
 
 export default async function FeesPage({ params }: PageProps) {
   const { id } = await params;
@@ -52,7 +45,7 @@ export default async function FeesPage({ params }: PageProps) {
       <div className="grid grid-cols-3 md:grid-cols-6 gap-3">
         {Object.entries(summary.byCategory).map(([cat, amount]) => (
           <div key={cat} className="cmms-card p-3">
-            <p className="text-xs text-slate-500">{CATEGORY_LABEL[cat] ?? cat}</p>
+            <p className="text-xs text-slate-500">{dict.feeCategory[cat] ?? cat}</p>
             <p className="text-lg font-bold">
               {Number(amount).toLocaleString('zh-CN', {
                 style: 'currency',
