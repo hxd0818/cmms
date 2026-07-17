@@ -14,6 +14,14 @@ import {
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
 import {
   Dialog,
   DialogContent,
@@ -27,6 +35,7 @@ import {
   addGuestToMeeting,
   removeGuestFromMeeting,
   searchGuestsForMeeting,
+  updateMeetingGuest,
 } from '@/app/actions/meeting-guest.actions';
 import { getBadgeStyle } from '@/lib/shared/badge-colors';
 import { toast } from 'sonner';
@@ -391,6 +400,8 @@ export function GuestManager({ meetingId, meetingGuests, tasksByGuestId }: Props
                 </Link>
               </SheetHeader>
 
+              <GuestEditForm meetingId={meetingId} meetingGuest={selectedGuest} />
+
               <GuestTaskCards meetingId={meetingId} tasks={tasksByGuestId[selectedGuest.id]} />
             </>
           )}
@@ -558,6 +569,137 @@ function TaskSection({
         <div className="space-y-1">{children}</div>
       )}
     </Link>
+  );
+}
+
+const ROLE_OPTIONS = [
+  { value: 'PRIMARY', label: '主嘉宾' },
+  { value: 'SECRETARY', label: '秘书' },
+  { value: 'SECURITY', label: '安保' },
+  { value: 'INTERPRETER', label: '翻译' },
+  { value: 'FAMILY', label: '家属' },
+  { value: 'AIDE', label: '助理' },
+  { value: 'DRIVER', label: '司机' },
+];
+
+const LEVEL_OPTIONS = [
+  { value: '', label: '使用默认' },
+  { value: 'VIP_A', label: 'VIP-A' },
+  { value: 'VIP_B', label: 'VIP-B' },
+  { value: 'A', label: 'A' },
+  { value: 'B', label: 'B' },
+  { value: 'C', label: 'C' },
+];
+
+function GuestEditForm({
+  meetingId,
+  meetingGuest,
+}: {
+  meetingId: string;
+  meetingGuest: MeetingGuestWithGuest;
+}) {
+  const router = useRouter();
+  const [role, setRole] = useState(meetingGuest.entourageRole ?? '');
+  const [level, setLevel] = useState(meetingGuest.levelOverride ?? '');
+  const [inheritTransport, setInheritTransport] = useState(meetingGuest.inheritTransport);
+  const [inheritLodging, setInheritLodging] = useState(meetingGuest.inheritLodging);
+  const [tags, setTags] = useState((meetingGuest.groupTags ?? []).join(', '));
+  const [saving, setSaving] = useState(false);
+
+  async function onSave() {
+    setSaving(true);
+    const r = await updateMeetingGuest(meetingGuest.id, meetingId, {
+      entourageRole: role || null,
+      levelOverride: level || null,
+      inheritTransport,
+      inheritLodging,
+      groupTags: tags
+        .split(',')
+        .map((t) => t.trim())
+        .filter(Boolean),
+    });
+    setSaving(false);
+    if (r.ok) {
+      toast.success('已保存');
+      router.refresh();
+    } else {
+      toast.error(r.error?.message ?? '保存失败');
+    }
+  }
+
+  return (
+    <div className="mt-4 cmms-card p-4 space-y-3">
+      <p className="text-xs font-semibold text-stone-500">会议嘉宾设置</p>
+
+      <div className="grid grid-cols-2 gap-3">
+        <div>
+          <Label className="text-xs text-stone-400">随行角色</Label>
+          <Select value={role} onValueChange={(v) => setRole(v ?? '')}>
+            <SelectTrigger className="h-8 mt-1">
+              <SelectValue placeholder="选择角色" />
+            </SelectTrigger>
+            <SelectContent>
+              {ROLE_OPTIONS.map((o) => (
+                <SelectItem key={o.value} value={o.value}>
+                  {o.label}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        </div>
+
+        <div>
+          <Label className="text-xs text-stone-400">等级覆盖</Label>
+          <Select value={level} onValueChange={(v) => setLevel(v ?? '')}>
+            <SelectTrigger className="h-8 mt-1">
+              <SelectValue placeholder="使用默认" />
+            </SelectTrigger>
+            <SelectContent>
+              {LEVEL_OPTIONS.map((o) => (
+                <SelectItem key={o.value} value={o.value}>
+                  {o.label}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        </div>
+      </div>
+
+      <div className="flex items-center gap-4">
+        <label className="flex items-center gap-1.5 text-xs text-stone-600 cursor-pointer">
+          <input
+            type="checkbox"
+            checked={inheritTransport}
+            onChange={(e) => setInheritTransport(e.target.checked)}
+            className="rounded"
+          />
+          继承主嘉宾接送
+        </label>
+        <label className="flex items-center gap-1.5 text-xs text-stone-600 cursor-pointer">
+          <input
+            type="checkbox"
+            checked={inheritLodging}
+            onChange={(e) => setInheritLodging(e.target.checked)}
+            className="rounded"
+          />
+          继承主嘉宾住宿
+        </label>
+      </div>
+
+      <div>
+        <Label className="text-xs text-stone-400">分组标签（逗号分隔）</Label>
+        <Input
+          className="h-8 mt-1"
+          value={tags}
+          onChange={(e) => setTags(e.target.value)}
+          placeholder="VIP, SPEAKER"
+        />
+      </div>
+
+      <Button size="sm" onClick={onSave} disabled={saving} className="w-full">
+        {saving ? '保存中...' : '保存设置'}
+      </Button>
+    </div>
   );
 }
 

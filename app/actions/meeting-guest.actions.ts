@@ -3,9 +3,10 @@
 import { writeFile, mkdir } from 'fs/promises';
 import path from 'path';
 import { randomUUID } from 'crypto';
-import { getContext, handleError, type ActionResult } from '@/lib/actions/utils';
+import { getContext, handleError, assertAuthorized, type ActionResult } from '@/lib/actions/utils';
 import { meetingGuestImportQueue } from '@/lib/queue/meeting-guest-import.queue';
 import { meetingGuestService } from '@/lib/domain/meeting-guest/service';
+import { meetingGuestRepository } from '@/lib/domain/meeting-guest/repository';
 import { guestService } from '@/lib/domain/guest/service';
 import { revalidatePath } from 'next/cache';
 import type { EntourageRole, GuestLevel } from '@/lib/generated/prisma/enums';
@@ -77,6 +78,34 @@ export async function removeGuestFromMeeting(
       return { ok: false, error: { code: 'FORBIDDEN', message: '无权删除会议嘉宾' } };
     }
     await meetingGuestService.delete(meetingGuestId);
+    revalidatePath(`/meetings/${meetingId}/guests`);
+    return { ok: true, data: { id: meetingGuestId } };
+  } catch (e) {
+    return handleError(e);
+  }
+}
+
+export async function updateMeetingGuest(
+  meetingGuestId: string,
+  meetingId: string,
+  input: {
+    entourageRole?: string | null;
+    levelOverride?: string | null;
+    inheritTransport?: boolean;
+    inheritLodging?: boolean;
+    groupTags?: string[];
+  },
+): Promise<ActionResult<{ id: string }>> {
+  try {
+    const { ability } = await getContext();
+    assertAuthorized(ability, 'update', 'MeetingGuest');
+    await meetingGuestRepository.update(meetingGuestId, {
+      entourageRole: (input.entourageRole || null) as never,
+      levelOverride: (input.levelOverride || null) as never,
+      inheritTransport: input.inheritTransport,
+      inheritLodging: input.inheritLodging,
+      groupTags: input.groupTags,
+    });
     revalidatePath(`/meetings/${meetingId}/guests`);
     return { ok: true, data: { id: meetingGuestId } };
   } catch (e) {
