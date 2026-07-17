@@ -1,10 +1,23 @@
 import { auth } from '@/lib/auth/index';
 import { redirect } from 'next/navigation';
 import { StaffNav } from './StaffNav';
+import { DictProvider } from '@/components/providers/DictProvider';
+import { DICTIONARY, type DictKey } from '@/lib/shared/dictionary';
+import { dictionaryService } from '@/lib/domain/dictionary/service';
 
 export default async function StaffLayout({ children }: { children: React.ReactNode }) {
   const session = await auth();
   if (!session) redirect('/login');
+
+  // Load all dictionary labels from DB (with 1-min cache in service)
+  const labels: Record<string, Record<string, string>> = {};
+  for (const category of Object.keys(DICTIONARY) as DictKey[]) {
+    try {
+      labels[category] = await dictionaryService.getLabels(category);
+    } catch {
+      labels[category] = DICTIONARY[category];
+    }
+  }
 
   return (
     <div className="flex min-h-screen" style={{ background: 'var(--background)' }}>
@@ -67,7 +80,7 @@ export default async function StaffLayout({ children }: { children: React.ReactN
       </aside>
 
       <main className="flex-1 overflow-auto p-6 lg:p-8" style={{ background: 'var(--background)' }}>
-        {children}
+        <DictProvider labels={labels}>{children}</DictProvider>
       </main>
     </div>
   );

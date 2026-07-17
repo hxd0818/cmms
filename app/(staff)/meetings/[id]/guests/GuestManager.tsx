@@ -2,6 +2,7 @@
 
 import { useState, Fragment } from 'react';
 import { useRouter } from 'next/navigation';
+import { useDbDict } from '@/components/providers/DictProvider';
 import type { MeetingGuest, Guest } from '@/lib/generated/prisma/client';
 import {
   Table,
@@ -41,7 +42,7 @@ import { getBadgeStyle } from '@/lib/shared/badge-colors';
 import { toast } from 'sonner';
 import { Car, Bed, UtensilsCrossed, Gift, UserCheck, Receipt } from 'lucide-react';
 import { cn } from '@/lib/utils';
-import { dict } from '@/lib/shared/dictionary';
+import { dict as staticDict } from '@/lib/shared/dictionary';
 
 type MeetingGuestWithGuest = MeetingGuest & { guest: Guest };
 
@@ -92,6 +93,7 @@ interface Props {
 }
 
 export function GuestManager({ meetingId, meetingGuests, tasksByGuestId }: Props) {
+  const dict = useDbDict();
   const router = useRouter();
   const [searchQuery, setSearchQuery] = useState('');
   const [searchResults, setSearchResults] = useState<
@@ -253,7 +255,9 @@ export function GuestManager({ meetingId, meetingGuests, tasksByGuestId }: Props
                           className={getBadgeStyle(mg.levelOverride ?? mg.guest.level)}
                           variant="secondary"
                         >
-                          {dict.guestLevel[mg.levelOverride ?? mg.guest.level] ?? (mg.levelOverride ?? mg.guest.level)}
+                          {dict.guestLevel[mg.levelOverride ?? mg.guest.level] ??
+                            mg.levelOverride ??
+                            mg.guest.level}
                         </Badge>
                       </TableCell>
                       <TableCell>
@@ -314,7 +318,9 @@ export function GuestManager({ meetingId, meetingGuests, tasksByGuestId }: Props
                             </Badge>
                           </TableCell>
                           <TableCell>
-                            <Badge variant="outline">{dict.receptionStage[sub.receptionStage]}</Badge>
+                            <Badge variant="outline">
+                              {dict.receptionStage[sub.receptionStage]}
+                            </Badge>
                           </TableCell>
                           <TableCell>
                             {subCount > 0 ? (
@@ -393,6 +399,7 @@ function GuestTaskCards({
   meetingId: string;
   tasks: GuestTasks | undefined;
 }) {
+  const dict = useDbDict();
   if (!tasks) {
     return <p className="text-sm text-stone-400 mt-4">暂无接待任务</p>;
   }
@@ -547,13 +554,6 @@ function TaskSection({
   );
 }
 
-const ROLE_OPTIONS = Object.entries(dict.entourageRole).map(([value, label]) => ({ value, label }));
-
-const LEVEL_OPTIONS = [
-  { value: '', label: '使用默认' },
-  ...Object.entries(dict.guestLevel).map(([value, label]) => ({ value, label })),
-];
-
 function GuestEditForm({
   meetingId,
   meetingGuest,
@@ -561,7 +561,16 @@ function GuestEditForm({
   meetingId: string;
   meetingGuest: MeetingGuestWithGuest;
 }) {
+  const dict = useDbDict();
   const router = useRouter();
+  const ROLE_OPTIONS = Object.entries(dict.entourageRole).map(([value, label]) => ({
+    value,
+    label,
+  }));
+  const LEVEL_OPTIONS = [
+    { value: '', label: '使用默认' },
+    ...Object.entries(dict.guestLevel).map(([value, label]) => ({ value, label })),
+  ];
   const [role, setRole] = useState(meetingGuest.entourageRole ?? '');
   const [level, setLevel] = useState(meetingGuest.levelOverride ?? '');
   const [inheritTransport, setInheritTransport] = useState(meetingGuest.inheritTransport);

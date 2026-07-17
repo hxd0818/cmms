@@ -53,7 +53,11 @@ export function Kanban({ initial }: Props) {
     items: MG[];
     action?: { type: 'promote' | 'depart'; label: string };
   }> = [
-    { title: dict.receptionStage.NOT_ARRIVED ?? 'NOT_ARRIVED', color: 'bg-stone-50', items: initial.notArrived },
+    {
+      title: dict.receptionStage.NOT_ARRIVED ?? 'NOT_ARRIVED',
+      color: 'bg-stone-50',
+      items: initial.notArrived,
+    },
     {
       title: dict.receptionStage.CHECKED_IN ?? 'CHECKED_IN',
       color: 'bg-teal-50',
@@ -66,7 +70,11 @@ export function Kanban({ initial }: Props) {
       items: initial.inHouse,
       action: { type: 'depart', label: '离场' },
     },
-    { title: (dict.receptionStage.DEPARTED ?? '') + ' / ' + (dict.receptionStage.NO_SHOW ?? ''), color: 'bg-stone-50', items: initial.departed },
+    {
+      title: (dict.receptionStage.DEPARTED ?? '') + ' / ' + (dict.receptionStage.NO_SHOW ?? ''),
+      color: 'bg-stone-50',
+      items: initial.departed,
+    },
   ];
 
   return (

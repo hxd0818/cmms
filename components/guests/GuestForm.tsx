@@ -127,9 +127,7 @@ export function GuestForm({ mode, guestId, defaultValues }: Props) {
         <div>
           <Label htmlFor="level">等级</Label>
           <Select value={level} onValueChange={(v) => setValue('level', v ?? 'C')}>
-            <SelectTrigger>
-              {dict.guestLevel[level ?? 'C'] ?? level}
-            </SelectTrigger>
+            <SelectTrigger>{dict.guestLevel[level ?? 'C'] ?? level}</SelectTrigger>
             <SelectContent>
               {Object.entries(dict.guestLevel).map(([v, l]) => (
                 <SelectItem key={v} value={v}>
