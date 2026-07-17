@@ -91,6 +91,7 @@ export async function updateMeetingGuest(
   input: {
     entourageRole?: string | null;
     levelOverride?: string | null;
+    primaryMeetingGuestId?: string | null;
     inheritTransport?: boolean;
     inheritLodging?: boolean;
     groupTags?: string[];
@@ -102,6 +103,7 @@ export async function updateMeetingGuest(
     await meetingGuestRepository.update(meetingGuestId, {
       entourageRole: (input.entourageRole || null) as never,
       levelOverride: (input.levelOverride || null) as never,
+      primaryMeetingGuestId: input.primaryMeetingGuestId || null,
       inheritTransport: input.inheritTransport,
       inheritLodging: input.inheritLodging,
       groupTags: input.groupTags,

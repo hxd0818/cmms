@@ -378,7 +378,13 @@ export function GuestManager({ meetingId, meetingGuests, tasksByGuestId }: Props
 
               <ShareLinkButton meetingGuestId={selectedGuest.id} meetingId={meetingId} />
 
-              <GuestEditForm meetingId={meetingId} meetingGuest={selectedGuest} />
+              <GuestEditForm
+                meetingId={meetingId}
+                meetingGuest={selectedGuest}
+                primaryGuestOptions={primaryGuests
+                  .filter((pg) => pg.id !== selectedGuest.id)
+                  .map((pg) => ({ id: pg.id, name: pg.guest.name }))}
+              />
 
               <GuestTaskCards meetingId={meetingId} tasks={tasksByGuestId[selectedGuest.id]} />
             </>
@@ -557,9 +563,11 @@ function TaskSection({
 function GuestEditForm({
   meetingId,
   meetingGuest,
+  primaryGuestOptions,
 }: {
   meetingId: string;
   meetingGuest: MeetingGuestWithGuest;
+  primaryGuestOptions: Array<{ id: string; name: string }>;
 }) {
   const dict = useDbDict();
   const router = useRouter();
@@ -573,6 +581,7 @@ function GuestEditForm({
   ];
   const [role, setRole] = useState(meetingGuest.entourageRole ?? '');
   const [level, setLevel] = useState(meetingGuest.levelOverride ?? '');
+  const [primaryId, setPrimaryId] = useState(meetingGuest.primaryMeetingGuestId ?? '');
   const [inheritTransport, setInheritTransport] = useState(meetingGuest.inheritTransport);
   const [inheritLodging, setInheritLodging] = useState(meetingGuest.inheritLodging);
   const [tags, setTags] = useState((meetingGuest.groupTags ?? []).join(', '));
@@ -583,6 +592,7 @@ function GuestEditForm({
     const r = await updateMeetingGuest(meetingGuest.id, meetingId, {
       entourageRole: role || null,
       levelOverride: level || null,
+      primaryMeetingGuestId: primaryId || null,
       inheritTransport,
       inheritLodging,
       groupTags: tags
@@ -641,6 +651,28 @@ function GuestEditForm({
             </SelectContent>
           </Select>
         </div>
+      </div>
+
+      {/* Primary guest selector */}
+      <div>
+        <Label className="text-xs text-stone-400">所属主嘉宾</Label>
+        <Select value={primaryId} onValueChange={(v) => setPrimaryId(v ?? '')}>
+          <SelectTrigger className="h-8 mt-1">
+            <span className={primaryId ? '' : 'text-stone-400'}>
+              {primaryId
+                ? (primaryGuestOptions.find((o) => o.id === primaryId)?.name ?? primaryId)
+                : '无（本身是主嘉宾）'}
+            </span>
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="">无（本身是主嘉宾）</SelectItem>
+            {primaryGuestOptions.map((o) => (
+              <SelectItem key={o.id} value={o.id}>
+                {o.name}
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
       </div>
 
       <div className="flex items-center gap-4">

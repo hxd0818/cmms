@@ -11,6 +11,7 @@ export async function GET() {
     { header: '分组标签', key: 'groupTags', width: 20 },
     { header: '随行角色', key: 'entourageRole', width: 12 },
     { header: '主嘉宾手机', key: 'primaryPhone', width: 18 },
+    { header: '等级覆盖', key: 'levelOverride', width: 12 },
   ];
 
   // Example: main guest
@@ -20,6 +21,7 @@ export async function GET() {
     groupTags: 'VIP,演讲',
     entourageRole: '主嘉宾',
     primaryPhone: '',
+    levelOverride: 'VIP-A',
   });
 
   // Example: subordinate (must come after primary in same file)
@@ -29,6 +31,7 @@ export async function GET() {
     groupTags: '',
     entourageRole: '秘书',
     primaryPhone: '13812345678',
+    levelOverride: '',
   });
 
   sheet.getRow(1).font = { bold: true };

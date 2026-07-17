@@ -10,6 +10,7 @@ const COLUMN_MAP = {
   分组标签: 'groupTags',
   随行角色: 'entourageRole',
   主嘉宾手机: 'primaryPhone',
+  等级覆盖: 'levelOverride',
 } as const;
 
 const ROLE_MAP: Record<string, EntourageRole> = {
@@ -149,12 +150,17 @@ export async function processMeetingGuestImport(data: {
             .filter(Boolean)
         : [];
 
+      const levelOverride = record.levelOverride
+        ? (record.levelOverride as 'VIP_A' | 'VIP_B' | 'A' | 'B' | 'C')
+        : undefined;
+
       const mg = await meetingGuestRepository.create({
         meetingId: data.meetingId,
         guestId: guest.id,
         groupTags,
         primaryMeetingGuestId,
         entourageRole,
+        levelOverride,
       });
       if (phone) primaryCache.set(phone, mg.id);
       result.created++;
