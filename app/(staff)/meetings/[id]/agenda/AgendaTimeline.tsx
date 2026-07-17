@@ -5,6 +5,7 @@ import type { AgendaItem } from '@/lib/generated/prisma/client';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { deleteAgendaItem } from '@/app/actions/agenda.actions';
+import { dict } from '@/lib/shared/dictionary';
 import { toast } from 'sonner';
 
 interface Props {
@@ -12,15 +13,6 @@ interface Props {
   meetingId: string;
   speakerOptions: Array<{ id: string; label: string }>;
 }
-
-const TYPE_LABEL: Record<string, string> = {
-  KEYNOTE: '主旨演讲',
-  PANEL: '座谈',
-  BREAK: '茶歇',
-  MEAL: '用餐',
-  TOUR: '参观',
-  OTHER: '其他',
-};
 
 const TYPE_COLOR: Record<string, string> = {
   KEYNOTE: 'bg-red-100 text-red-800',
@@ -74,7 +66,7 @@ export function AgendaTimeline({ items, meetingId }: Props) {
             <div className="flex items-center gap-2 mb-1">
               <h3 className="font-medium">{item.title}</h3>
               <Badge className={TYPE_COLOR[item.type]} variant="secondary">
-                {TYPE_LABEL[item.type]}
+                {dict.agendaType[item.type] ?? item.type}
               </Badge>
             </div>
             <div className="text-sm text-slate-500">

@@ -17,6 +17,7 @@ import {
 } from '@/components/ui/select';
 import { agendaFormSchema } from '@/lib/shared/agenda';
 import { createAgendaItem } from '@/app/actions/agenda.actions';
+import { dict } from '@/lib/shared/dictionary';
 import { toast } from 'sonner';
 
 type FormValues = {
@@ -26,15 +27,6 @@ type FormValues = {
   endAt: string;
   venue?: string;
   notes?: string;
-};
-
-const TYPE_LABEL: Record<string, string> = {
-  KEYNOTE: '主旨演讲',
-  PANEL: '座谈',
-  BREAK: '茶歇',
-  MEAL: '用餐',
-  TOUR: '参观',
-  OTHER: '其他',
 };
 
 interface Props {
@@ -101,7 +93,7 @@ export function AgendaForm({ meetingId, speakerOptions: _ }: Props) {
               <SelectValue />
             </SelectTrigger>
             <SelectContent>
-              {Object.entries(TYPE_LABEL).map(([v, l]) => (
+              {Object.entries(dict.agendaType).map(([v, l]) => (
                 <SelectItem key={v} value={v}>
                   {l}
                 </SelectItem>
