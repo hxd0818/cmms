@@ -32,6 +32,7 @@ import {
   searchGuestsForMeeting,
   updateMeetingGuest,
 } from '@/app/actions/meeting-guest.actions';
+import { issueGuestToken } from '@/app/actions/token.actions';
 import { getBadgeStyle } from '@/lib/shared/badge-colors';
 import { toast } from 'sonner';
 import { Car, Bed, UtensilsCrossed, Gift, UserCheck, Receipt } from 'lucide-react';
@@ -375,6 +376,8 @@ export function GuestManager({ meetingId, meetingGuests, tasksByGuestId }: Props
                 </Link>
               </SheetHeader>
 
+              <ShareLinkButton meetingGuestId={selectedGuest.id} meetingId={meetingId} />
+
               <GuestEditForm meetingId={meetingId} meetingGuest={selectedGuest} />
 
               <GuestTaskCards meetingId={meetingId} tasks={tasksByGuestId[selectedGuest.id]} />
@@ -674,6 +677,67 @@ function GuestEditForm({
       <Button size="sm" onClick={onSave} disabled={saving} className="w-full">
         {saving ? '保存中...' : '保存设置'}
       </Button>
+    </div>
+  );
+}
+
+function ShareLinkButton({
+  meetingGuestId,
+  meetingId,
+}: {
+  meetingGuestId: string;
+  meetingId: string;
+}) {
+  const [url, setUrl] = useState('');
+  const [loading, setLoading] = useState(false);
+  const [copied, setCopied] = useState(false);
+
+  async function onGenerate() {
+    setLoading(true);
+    const r = await issueGuestToken(meetingGuestId, meetingId);
+    setLoading(false);
+    if (r.ok && r.data) {
+      const fullUrl = window.location.origin + r.data.url;
+      setUrl(fullUrl);
+    } else {
+      toast.error(r.error?.message ?? '生成失败');
+    }
+  }
+
+  async function onCopy() {
+    await navigator.clipboard.writeText(url);
+    setCopied(true);
+    setTimeout(() => setCopied(false), 2000);
+  }
+
+  return (
+    <div className="mt-3 cmms-card p-3 space-y-2">
+      <p className="text-xs font-semibold text-stone-500">分享行程给嘉宾</p>
+      {!url ? (
+        <Button
+          size="sm"
+          variant="outline"
+          className="w-full"
+          onClick={onGenerate}
+          disabled={loading}
+        >
+          {loading ? '生成中...' : '生成分享链接'}
+        </Button>
+      ) : (
+        <div className="space-y-2">
+          <div className="flex items-center gap-1">
+            <input
+              readOnly
+              value={url}
+              className="flex-1 text-xs border rounded px-2 py-1 bg-stone-50 text-stone-600 truncate"
+            />
+            <Button size="sm" variant="outline" onClick={onCopy}>
+              {copied ? '已复制' : '复制'}
+            </Button>
+          </div>
+          <p className="text-[10px] text-stone-400">链接 30 天有效，嘉宾无需登录即可查看行程</p>
+        </div>
+      )}
     </div>
   );
 }
