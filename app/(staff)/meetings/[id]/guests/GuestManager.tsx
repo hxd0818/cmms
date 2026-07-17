@@ -253,7 +253,7 @@ export function GuestManager({ meetingId, meetingGuests, tasksByGuestId }: Props
                           className={getBadgeStyle(mg.levelOverride ?? mg.guest.level)}
                           variant="secondary"
                         >
-                          {mg.levelOverride ?? mg.guest.level}
+                          {dict.guestLevel[mg.levelOverride ?? mg.guest.level] ?? (mg.levelOverride ?? mg.guest.level)}
                         </Badge>
                       </TableCell>
                       <TableCell>
@@ -310,7 +310,7 @@ export function GuestManager({ meetingId, meetingGuests, tasksByGuestId }: Props
                           </TableCell>
                           <TableCell>
                             <Badge className={getBadgeStyle(sub.guest.level)} variant="secondary">
-                              {sub.guest.level}
+                              {dict.guestLevel[sub.guest.level] ?? sub.guest.level}
                             </Badge>
                           </TableCell>
                           <TableCell>
@@ -355,7 +355,7 @@ export function GuestManager({ meetingId, meetingGuests, tasksByGuestId }: Props
                 <SheetTitle className="flex items-center gap-2">
                   {selectedGuest.guest.name}
                   <Badge className={getBadgeStyle(selectedGuest.guest.level)} variant="secondary">
-                    {selectedGuest.guest.level}
+                    {dict.guestLevel[selectedGuest.guest.level] ?? selectedGuest.guest.level}
                   </Badge>
                   {selectedGuest.entourageRole && (
                     <Badge variant="outline" className="text-xs">
@@ -414,7 +414,7 @@ function GuestTaskCards({
               {t.pickupLocation} {'->'} {t.dropoffLocation}
             </span>
             <Badge className={getBadgeStyle(t.status)} variant="secondary">
-              {t.status}
+              {dict.transportStatus[t.status]}
             </Badge>
           </div>
         ))}
@@ -433,7 +433,7 @@ function GuestTaskCards({
               {l.hotelRoom ? l.hotelRoom.hotel.name + ' ' + l.hotelRoom.roomNumber : '待分配'}
             </span>
             <Badge className={getBadgeStyle(l.status)} variant="secondary">
-              {l.status}
+              {dict.lodgingStatus[l.status]}
             </Badge>
           </div>
         ))}
