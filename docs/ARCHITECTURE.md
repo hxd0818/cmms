@@ -9,9 +9,10 @@
 │           Next.js 16 (App Router) 全栈单体                │
 │                                                          │
 │  ┌─────────────────┐  ┌──────────────────────────────┐   │
-│  │ 工作人员端       │  │ 嘉宾/陪同端     司机端        │   │
-│  │ PC + 移动响应式  │  │ (扫码 token)    (链接 token)  │   │
-│  │ NextAuth 登录    │  │ 公开路由        公开路由      │   │
+│  │ 工作人员端       │  │ 嘉宾端           司机端      │   │
+│  │ PC + 移动响应式  │  │ /guest/[token]   /driver/[token]│   │
+│  │ NextAuth 登录    │  │ 行程分享(30天)   任务状态更新│   │
+│  │ DictProvider ctx │  │ 公开路由          公开路由   │   │
 │  └────────┬────────┘  └───────────┬──────────────────┘   │
 │           │                       │                      │
 │           ▼                       ▼                      │
@@ -23,13 +24,16 @@
 │  ┌────────────────────▼───────────────────────────────┐  │
 │  │   lib/auth/    CASL 权限 + NextAuth session         │  │
 │  │   lib/actions/ utils.ts (auth + validation + error) │  │
+│  │   lib/shared/dictionary.ts (19 枚举分类统一字典)    │  │
 │  └────────────────────┬───────────────────────────────┘  │
 │                       │                                  │
 │  ┌────────────────────▼───────────────────────────────┐  │
-│  │   lib/domain/<module>/  8 个领域模块                │  │
+│  │   lib/domain/<module>/  领域模块（三层架构）        │  │
 │  │   guest | meeting | agenda | reception              │  │
 │  │   transport | lodging | catering | gift             │  │
+│  │   companion | fee | report | dictionary             │  │
 │  │   每个: types.ts + repository.ts + service.ts       │  │
+│  │   Vehicle/Hotel/DiningTable 绑定到 Meeting (独立池) │  │
 │  └────────────────────┬───────────────────────────────┘  │
 │                       │                                  │
 │  ┌────────────────────▼───────────────────────────────┐  │

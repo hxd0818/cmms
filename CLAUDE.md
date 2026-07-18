@@ -13,7 +13,7 @@ This file provides project-specific guidance to Claude Code when working in this
 
 CMMS（会务管理系统）是单组织内部使用的、以接待运营为核心的通用会务管理平台。Next.js 16 全栈单体，非 monorepo。
 
-**当前进度**：Phase 0-2 完成（v0.3.0-phase2），Phase 3 进行中（Lodging/Catering/Gift/Fee）。
+**当前进度**：Phase 0-4 全部完成（v1.0.0）。含字典管理、嘉宾端门户、会议独立资源池、导航标签页。
 
 ## Critical Project Rules
 
@@ -89,6 +89,10 @@ pnpm lint && pnpm typecheck && pnpm format:check && pnpm test && pnpm build
 - **2026-07-15 pnpm 安装方式**：Windows corepack 因权限失败，改用 `npm install -g pnpm`，效果一致。
 - **2026-07-15 端口冲突**：3000（cdep）/ 3001（ccidscan dev）/ 5432-5433 / 6379 都被占用，CMMS 改用 3010 / 5434 / 6381。
 - **2026-07-15 文档归位**：爸爸指出工程文档应统一放 `docs/` 目录，不应堆在根目录。已移动 ARCHITECTURE/DEVELOPMENT/DEPLOYMENT/SECURITY/TESTING/CONTRIBUTING 到 `docs/`。保留根目录的仅 4 份：`README.md`（GitHub 门面）、`LICENSE`（法律惯例）、`CLAUDE.md`（Claude Code 必需）、`CHANGELOG.md`（GitHub Release 兼容）。**新增文档默认放 docs/，不要堆根目录**。
+- **2026-07-17 资源独立**：爸爸指出车辆和酒店必须是每场会议独立的资源池，不能全局共享。Vehicle 和 Hotel 已加 `meetingId`，全局 `/vehicles` 和 `/hotels` 页面已删除，改为会议内标签页管理。
+- **2026-07-17 字典系统**：所有枚举标签集中到 `lib/shared/dictionary.ts`（代码层）+ `DictionaryEntry` 数据库表（后台可配置）。客户端组件通过 `DictProvider` + `useDbDict()` hook 获取 DB 标签。
+- **2026-07-17 SelectValue 问题**：base-ui 的 `<SelectValue />` 显示原始枚举值（非中文），全项目已替换为手动 `<span>` 映射。**严禁使用 `<SelectValue />`**。
+- **2026-07-17 导航标签页**：会议所有子页面用 `<MeetingTabs>` 组件做横向标签页导航，不再有死胡同。
 
 ## Architecture Quick Reference
 
@@ -135,6 +139,31 @@ pnpm lint && pnpm typecheck && pnpm format:check && pnpm test && pnpm build
 - 可吊销（revokedAt 字段）
 - 自动过期（expiresAt）
 - 审计（lastAccessedAt, accessCount）
+- 嘉宾端页面：`app/guest/[token]/page.tsx`（行程展示，无需登录）
+- 司机端页面：`app/driver/[token]/page.tsx`（任务详情 + 状态更新）
+
+### 字典系统（DictProvider）
+
+- **代码层**：`lib/shared/dictionary.ts` — `DICTIONARY` 常量，19 个枚举分类
+- **数据库层**：`DictionaryEntry` 表 — 管理员可在后台修改标签，无需改代码
+- **服务层**：`lib/domain/dictionary/service.ts` — 1 分钟缓存，DB 优先代码兜底
+- **客户端注入**：`DictProvider`（React Context）+ `useDbDict()` hook
+- **后台管理**：`/admin/dictionary`（仅 SUPER_ADMIN）
+- **使用规则**：客户端组件用 `useDbDict()` 替代静态 `dict` import；`<SelectValue />` 已废弃，用手动 `<span>` 映射
+
+### 会议资源池（Per-Meeting）
+
+- **Vehicle** 和 **Hotel** 都有 `meetingId` — 每场会议独立管理
+- 不再有全局 `/vehicles` 和 `/hotels` 页面
+- 接送标签页内含 `NewVehicleForm`（为本会议添加车辆）
+- 住宿标签页内含 `HotelManager`（为本会议添加酒店+房间）
+- `DiningTable` 本来就是 per-meeting
+
+### 导航架构
+
+- **MeetingTabs**：会议所有子页面顶部横向标签（详情/嘉宾/议程/签到/接送/住宿/餐饮/礼品/陪同/费用）
+- **Breadcrumbs**：非会议页面用面包屑（嘉宾详情等）
+- **StaffNav**：侧边栏分两组（核心业务 + 系统），资源管理已移入会议内
 
 ## Key Files
 
@@ -142,13 +171,15 @@ pnpm lint && pnpm typecheck && pnpm format:check && pnpm test && pnpm build
 | ------------------------------------------------------- | --------------------------------------------------- |
 | `docs/plans/2026-07-15-cmms-design.md`                  | 完整设计（800+ 行）                                 |
 | `docs/plans/2026-07-15-cmms-foundation.md`              | Phase 0+1 实施计划（3900+ 行）                      |
-| `docs/plans/2026-07-15-cmms-phase2.md`                  | Phase 2 实施计划                                    |
-| `docs/plans/2026-07-15-cmms-phase3.md`                  | Phase 3 实施计划                                    |
-| `docs/plans/2026-07-15-cmms-phase4.md`                  | Phase 4 实施计划                                    |
-| `prisma/schema.prisma`                                  | 数据模型                                            |
+| `docs/plans/2026-07-17-navigation-redesign.md`          | 导航重构设计                                        |
+| `prisma/schema.prisma`                                  | 数据模型（含 meetingId 绑定的 Vehicle/Hotel）       |
 | `proxy.ts`                                              | Next.js 16 Edge middleware（路由保护）              |
 | `lib/auth/{config,index}.ts`                            | Dual NextAuth config                                |
 | `lib/db/{client,prisma-extensions,field-encryption}.ts` | Prisma + 加密                                       |
+| `lib/shared/dictionary.ts`                              | 字典常量（19 个枚举分类，唯一数据源）               |
+| `lib/domain/dictionary/service.ts`                      | 字典 DB 服务（1 分钟缓存 + 后台可配置）             |
+| `components/providers/DictProvider.tsx`                 | React Context 注入 DB 标签给客户端组件              |
+| `components/layout/MeetingTabs.tsx`                     | 会议标签页导航组件                                  |
 | `lib/domain/guest/`                                     | 参考实现（Repository + Service + Importer）         |
 | `lib/actions/utils.ts`                                  | Server Action 通用工具（auth + validation + error） |
 | `docker/docker-compose.yml`                             | 独立的 PostgreSQL + Redis                           |

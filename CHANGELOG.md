@@ -6,13 +6,32 @@
 
 ---
 
-## [Unreleased]
+## [Unreleased] — 2026-07-17/18 迭代改进
 
-### 进行中
+### Changed — 架构级变更
 
-- **Phase 3 - 深度接待**：Lodging + Catering + Gift + Fee + Guest 360° 视图
+- **资源池独立化**：Vehicle 和 Hotel 从全局共享改为每场会议独立（加 `meetingId`）。删除全局 `/vehicles` `/hotels` 页面，改为会议内标签页管理。
+- **字典系统统一**：消除全项目 24 个硬编码 `_LABEL` map，统一到 `lib/shared/dictionary.ts`。管理员可在 `/admin/dictionary` 后台修改枚举标签。客户端组件通过 `DictProvider` + `useDbDict()` 获取 DB 标签。
+- **导航重构**：会议子页面全部改为标签页导航（`MeetingTabs`），消除死胡同。非会议页面加面包屑。根路径 `/` 自动跳转。
+- **SelectValue 废弃**：base-ui 的 `<SelectValue />` 显示原始枚举值，全项目替换为手动 `<span>` 映射 dict 标签。
 
-### 计划中
+### Added — 新功能
+
+- **嘉宾端门户**（`app/guest/[token]/page.tsx`）：Token 链接分享行程（接送/住宿/餐饮/议程/礼品/陪同），30 天有效，无需登录。
+- **分享链接按钮**：会议嘉宾管理 Sheet 面板内「生成分享链接」+ 复制到剪贴板。
+- **字典管理后台**（`/admin/dictionary`）：SUPER_ADMIN 可编辑 19 个分类 90 个标签，1 分钟缓存生效。
+- **会议嘉宾设置编辑**：Sheet 面板内编辑随行角色/等级覆盖/所属主嘉宾/继承标志/分组标签。
+- **拼车支持**：接送车辆分配从硬性时间冲突改为容量检测，支持多人拼车 + 确认提示。
+- **议程类型扩展**：新增闭门会/调研/沙龙/评审/路演/答辩 6 种。
+- **内联资源管理**：接送标签页内添加车辆，住宿标签页内添加酒店+房间。
+
+### Fixed
+
+- Prisma Decimal 序列化错误（礼品单价/费用金额转 number 后再传客户端组件）
+- GuestManager Fragment key 警告
+- `/api/health` 被 auth 中间件拦截（加入 PUBLIC_PATHS）
+- 嘉宾端 404（路由 `/g/` 改为 `/guest/` 匹配实际文件夹）
+- CI 失败（FIELD_ENCRYPTION_KEY YAML 整数解析，加引号修复）
 
 - **Phase 4 - 运营优化**：报表 + 通知中心 + 审计日志 + 生产硬化
 
