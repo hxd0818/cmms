@@ -15,6 +15,7 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { unassignCompanion } from '@/app/actions/companion.actions';
 import { toast } from 'sonner';
+import { Share2 } from 'lucide-react';
 
 type AssignmentWithRelations = {
   id: string;
@@ -92,14 +93,28 @@ export function CompanionList({ meetingId, assignments }: Props) {
                   </Badge>
                 </TableCell>
                 <TableCell>
-                  <Button
-                    size="sm"
-                    variant="ghost"
-                    onClick={() => onUnassign(a.id)}
-                    disabled={unassigning === a.id}
+                  <div className="flex items-center gap-1">
+                    <Button
+                      size="sm"
+                      variant="ghost"
+                      title="分享接待任务链接"
+                      onClick={async () => {
+                        const url = window.location.origin + '/companion/' + a.companion.id;
+                        await navigator.clipboard.writeText(url);
+                        toast.success('链接已复制：' + a.companion.name + ' 的接待任务');
+                      }}
+                    >
+                      <Share2 size={13} />
+                    </Button>
+                    <Button
+                      size="sm"
+                      variant="ghost"
+                      onClick={() => onUnassign(a.id)}
+                      disabled={unassigning === a.id}
                   >
                     {unassigning === a.id ? '取消中...' : '取消分配'}
                   </Button>
+                  </div>
                 </TableCell>
               </TableRow>
             ))
