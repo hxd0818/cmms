@@ -1,5 +1,8 @@
 import { guestService } from '@/lib/domain/guest/service';
 import { reportService } from '@/lib/domain/report/service';
+import { auth } from '@/lib/auth/index';
+import { shouldMaskFields } from '@/lib/actions/utils';
+import { maskGuestFields } from '@/lib/shared/field-masking';
 import { notFound } from 'next/navigation';
 import Link from 'next/link';
 import { Breadcrumbs } from '@/components/layout/Breadcrumbs';
@@ -24,6 +27,11 @@ export default async function GuestDetailPage({ params }: PageProps) {
   } catch {
     notFound();
   }
+
+  // Mask sensitive fields for VIEWER role
+  const session = await auth();
+  const mask = shouldMaskFields(session?.user?.role);
+  guest = maskGuestFields(guest, mask);
 
   const profile = await reportService.getGuestFullProfile(id);
 

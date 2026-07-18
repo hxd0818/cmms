@@ -36,6 +36,14 @@ export function validate<T>(schema: ZodSchema<T>, input: unknown): T {
   return schema.parse(input);
 }
 
+/**
+ * Returns true when the given role should see masked sensitive fields
+ * (currently: VIEWER). SUPER_ADMIN and meeting-level staff see full values.
+ */
+export function shouldMaskFields(role?: string | null): boolean {
+  return role === 'VIEWER';
+}
+
 export function handleError(error: unknown): ActionResult<never> {
   if (error instanceof ZodError) {
     return {

@@ -7,6 +7,17 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 
+/**
+ * Map known NextAuth error codes to user-facing Chinese messages.
+ * Falls back to a generic invalid-credentials message for unknown codes.
+ */
+function resolveLoginErrorMessage(code: string | undefined): string {
+  if (code === 'rate_limited') {
+    return '登录尝试过多，请 5 分钟后再试';
+  }
+  return '邮箱或密码错误';
+}
+
 export function LoginForm() {
   const router = useRouter();
   const params = useSearchParams();
@@ -27,7 +38,7 @@ export function LoginForm() {
     });
 
     if (result?.error) {
-      setError('邮箱或密码错误');
+      setError(resolveLoginErrorMessage(result.code));
       setLoading(false);
       return;
     }

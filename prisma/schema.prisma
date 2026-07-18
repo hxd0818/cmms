@@ -601,4 +601,38 @@ enum ActorType {
   SYSTEM
 }
 
+// ============ Notifications ============
+
+model NotificationTemplate {
+  id        String   @id @default(cuid())
+  code      String   @unique
+  name      String
+  channel   String   @default("SMS")
+  content   String
+  enabled   Boolean  @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  logs NotificationLog[]
+
+  @@map("notification_templates")
+}
+
+model NotificationLog {
+  id          String    @id @default(cuid())
+  templateId  String?
+  meetingId   String?
+  recipient   String
+  channel     String
+  content     String
+  status      String    @default("PENDING")
+  sentAt      DateTime?
+  createdAt   DateTime  @default(now())
+
+  template NotificationTemplate? @relation(fields: [templateId], references: [id])
+
+  @@index([meetingId])
+  @@index([status, createdAt])
+  @@map("notification_logs")
+}
 
