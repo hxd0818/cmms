@@ -1,6 +1,7 @@
 import { prisma } from '@/lib/db/client';
 import { notFound } from 'next/navigation';
 import { dict } from '@/lib/shared/dictionary';
+import { GuestShareButton } from './GuestShareButton';
 import { Phone, Globe, Clock, MapPin, Car, Bed, UtensilsCrossed, Star, AlertCircle } from 'lucide-react';
 import type { LucideIcon } from 'lucide-react';
 
@@ -159,6 +160,9 @@ export default async function CompanionPortalPage({ params }: Props) {
                     </div>
                   )}
                 </div>
+
+                {/* Share guest portal link */}
+                <GuestShareButton meetingGuestId={a.meetingGuestId} />
 
                 {/* Transport */}
                 {data.transport.length > 0 && (
