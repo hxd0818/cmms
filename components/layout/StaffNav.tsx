@@ -9,6 +9,7 @@ import {
   ScrollText,
   BookOpen,
   UserCog,
+  ClipboardList,
   type LucideIcon,
 } from 'lucide-react';
 
@@ -28,6 +29,7 @@ const NAV_GROUPS: NavGroup[] = [
     label: '核心业务',
     items: [
       { href: '/dashboard', label: '控制台', icon: LayoutDashboard },
+      { href: '/my-tasks', label: '我的任务', icon: ClipboardList },
       { href: '/guests', label: '嘉宾库', icon: Users },
       { href: '/meetings', label: '会议管理', icon: CalendarDays },
     ],
