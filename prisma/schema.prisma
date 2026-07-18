@@ -25,6 +25,7 @@ model User {
   assignedLodgingOrders   LodgingOrder[]   @relation("LodgingAssignee")
   assignedCateringOrders  CateringOrder[]  @relation("CateringAssignee")
   assignedGiftOrders      GiftOrder[]      @relation("GiftAssignee")
+  meetingStaff            MeetingStaff[]
 
   @@map("users")
 }
@@ -32,6 +33,36 @@ model User {
 enum SystemRole {
   SUPER_ADMIN
   VIEWER
+}
+
+// ============ Meeting Staff ============
+
+model MeetingStaff {
+  id        String      @id @default(cuid())
+  meetingId String
+  userId    String
+  role      MeetingRole @default(STAFF)
+  createdAt DateTime    @default(now())
+  updatedAt DateTime    @updatedAt
+
+  meeting Meeting @relation(fields: [meetingId], references: [id], onDelete: Cascade)
+  user    User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([meetingId, userId])
+  @@map("meeting_staff")
+}
+
+enum MeetingRole {
+  OWNER
+  RECEPTION_LEAD
+  RECEPTION_STAFF
+  TRANSPORT_LEAD
+  TRANSPORT_STAFF
+  LODGING_LEAD
+  CATERING_LEAD
+  GIFT_LEAD
+  FINANCE
+  STAFF
 }
 
 // ============ Guest ============
@@ -93,6 +124,7 @@ model Meeting {
   vehicles      Vehicle[]
   hotels        Hotel[]
   diningTables  DiningTable[]
+  meetingStaff  MeetingStaff[]
 
   @@index([status, startAt])
   @@map("meetings")

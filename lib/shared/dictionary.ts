@@ -30,6 +30,19 @@ export const DICTIONARY = {
     VIEWER: '只读用户',
   } as Record<string, string>,
 
+  meetingRole: {
+    OWNER: '负责人',
+    RECEPTION_LEAD: '签到主管',
+    RECEPTION_STAFF: '签到员',
+    TRANSPORT_LEAD: '接送主管',
+    TRANSPORT_STAFF: '接送员',
+    LODGING_LEAD: '住宿主管',
+    CATERING_LEAD: '餐饮主管',
+    GIFT_LEAD: '礼品主管',
+    FINANCE: '财务',
+    STAFF: '工作人员',
+  } as Record<string, string>,
+
   meetingStatus: {
     DRAFT: '草稿',
     PLANNING: '筹备中',
