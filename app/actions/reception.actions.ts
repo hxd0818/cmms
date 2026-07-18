@@ -25,6 +25,29 @@ export async function checkIn(meetingGuestId: string): Promise<ActionResult<{ id
   }
 }
 
+export async function batchCheckIn(
+  meetingGuestIds: string[],
+  meetingId: string,
+): Promise<ActionResult<{ count: number }>> {
+  try {
+    const session = await assertCanManageMeeting();
+    let count = 0;
+    for (const id of meetingGuestIds) {
+      try {
+        await receptionService.checkIn(id);
+        await auditLog(session, 'checkIn', 'MeetingGuest', id);
+        count++;
+      } catch {
+        // Skip guests who can't be checked in (wrong state)
+      }
+    }
+    revalidatePath(`/meetings/${meetingId}/reception`);
+    return { ok: true, data: { count } };
+  } catch (e) {
+    return handleError(e);
+  }
+}
+
 export async function markNoShow(meetingGuestId: string): Promise<ActionResult<{ id: string }>> {
   try {
     const session = await assertCanManageMeeting();

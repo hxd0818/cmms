@@ -10,7 +10,7 @@ import { meetingGuestRepository } from '@/lib/domain/meeting-guest/repository';
 import { guestService } from '@/lib/domain/guest/service';
 import { auditLog } from '@/lib/audit/logger';
 import { revalidatePath } from 'next/cache';
-import type { EntourageRole, GuestLevel } from '@/lib/generated/prisma/enums';
+import type { EntourageRole, GuestLevel, RsvpStatus } from '@/lib/generated/prisma/enums';
 
 export async function uploadMeetingGuestImport(
   meetingId: string,
@@ -112,6 +112,25 @@ export async function updateMeetingGuest(
       groupTags: input.groupTags,
     });
     await auditLog(session, 'update', 'MeetingGuest', meetingGuestId, { after: input });
+    revalidatePath(`/meetings/${meetingId}/guests`);
+    return { ok: true, data: { id: meetingGuestId } };
+  } catch (e) {
+    return handleError(e);
+  }
+}
+
+export async function updateRsvpStatus(
+  meetingGuestId: string,
+  status: RsvpStatus,
+  meetingId: string,
+): Promise<ActionResult<{ id: string }>> {
+  try {
+    const { session, ability } = await getContext();
+    assertAuthorized(ability, 'update', 'MeetingGuest');
+    await meetingGuestRepository.update(meetingGuestId, { rsvpStatus: status });
+    await auditLog(session, 'update', 'MeetingGuest', meetingGuestId, {
+      after: { rsvpStatus: status },
+    });
     revalidatePath(`/meetings/${meetingId}/guests`);
     return { ok: true, data: { id: meetingGuestId } };
   } catch (e) {

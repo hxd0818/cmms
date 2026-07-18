@@ -1,5 +1,5 @@
 import type { MeetingGuest } from '@/lib/generated/prisma/client';
-import type { EntourageRole, GuestLevel, ReceptionStage } from '@/lib/generated/prisma/enums';
+import type { EntourageRole, GuestLevel, ReceptionStage, RsvpStatus } from '@/lib/generated/prisma/enums';
 
 export type MeetingGuestEntity = MeetingGuest;
 
@@ -17,6 +17,7 @@ export interface MeetingGuestCreateData {
 export interface MeetingGuestUpdateData {
   groupTags?: string[];
   receptionStage?: ReceptionStage;
+  rsvpStatus?: RsvpStatus;
   primaryMeetingGuestId?: string | null;
   entourageRole?: EntourageRole | null;
   levelOverride?: GuestLevel | null;
