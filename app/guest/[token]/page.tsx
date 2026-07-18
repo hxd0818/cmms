@@ -1,4 +1,5 @@
 import { prisma } from '@/lib/db/client';
+import { hashToken } from '@/lib/auth/tokens';
 import { notFound } from 'next/navigation';
 import { dict } from '@/lib/shared/dictionary';
 import { Car, Bed, UtensilsCrossed, Gift, CalendarDays, MapPin, Clock } from 'lucide-react';
@@ -11,10 +12,11 @@ interface Props {
 export default async function GuestPortalPage({ params }: Props) {
   const { token } = await params;
 
-  // Validate token (HMAC hash lookup)
+  // Validate token: hash the raw token then compare against stored hash
+  const tokenHash = hashToken(token);
   const tokenRecord = await prisma.guestAccessToken.findFirst({
     where: {
-      tokenHash: token,
+      tokenHash,
       revokedAt: null,
       expiresAt: { gt: new Date() },
     },
