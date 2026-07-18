@@ -266,7 +266,7 @@ export default async function GuestPortalPage({ params }: Props) {
 
         {/* Companions */}
         {companions.length > 0 && (
-          <Section icon={MapPin} title="陪同人员">
+          <Section icon={MapPin} title="接待人员">
             {companions.map((c) => (
               <Card key={c.id}>
                 <p className="text-sm font-medium text-stone-700">{c.companion.name}</p>

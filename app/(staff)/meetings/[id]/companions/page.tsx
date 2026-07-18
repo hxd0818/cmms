@@ -30,8 +30,8 @@ export default async function CompanionsPage({ params }: PageProps) {
     <div className="space-y-6">
       <MeetingTabs meetingId={id} meetingName={meeting.name} />
       <div>
-        <h1 className="text-xl font-bold">陪同管理</h1>
-        <p className="text-sm text-slate-500">共 {assignments.length} 个陪同分配</p>
+        <h1 className="text-xl font-bold">接待管理</h1>
+        <p className="text-sm text-slate-500">共 {assignments.length} 个接待分配</p>
       </div>
 
       <AssignForm

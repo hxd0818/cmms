@@ -514,7 +514,7 @@ function GuestTaskCards({
       {/* Companion */}
       <TaskSection
         icon={<UserCheck size={14} />}
-        title="陪同"
+        title="接待"
         href={'/meetings/' + meetingId + '/companions'}
         empty={tasks.companions.length === 0}
       >

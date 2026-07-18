@@ -173,7 +173,7 @@ export const DICTIONARY = {
   } as Record<string, string>,
 
   assignmentScope: {
-    FULL: '全程陪同',
+    FULL: '全程接待',
     MEETING: '会议期间',
     DINING: '用餐期间',
     TRANSPORT: '接送期间',

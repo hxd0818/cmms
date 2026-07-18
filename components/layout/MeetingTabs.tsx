@@ -13,7 +13,7 @@ const TABS = [
   { key: 'lodging', label: '住宿', path: '/lodging' },
   { key: 'catering', label: '餐饮', path: '/catering' },
   { key: 'gifts', label: '礼品', path: '/gifts' },
-  { key: 'companions', label: '陪同', path: '/companions' },
+  { key: 'companions', label: '接待', path: '/companions' },
   { key: 'fees', label: '费用', path: '/fees' },
   { key: 'staff', label: '人员', path: '/staff' },
   { key: 'resources', label: '资源', path: '/resources' },

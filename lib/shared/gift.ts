@@ -34,7 +34,7 @@ export const companionAssignSchema = z.object({
   meetingId: z.string().cuid(),
   meetingGuestId: z.string().cuid(),
   companionId: z.string().cuid(),
-  assignmentScope: z.string().min(1, '陪同范围必填').max(100),
+  assignmentScope: z.string().min(1, '接待范围必填').max(100),
 });
 export type CompanionAssignInput = z.infer<typeof companionAssignSchema>;
 

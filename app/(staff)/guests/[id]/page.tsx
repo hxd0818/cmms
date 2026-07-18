@@ -290,7 +290,7 @@ export default async function GuestDetailPage({ params }: PageProps) {
                     {/* Companion */}
                     <TaskCard
                       icon={<Users size={14} />}
-                      title="陪同"
+                      title="接待"
                       href={'/meetings/' + m.meeting.id + '/companions'}
                       empty={m.companions.length === 0}
                     >

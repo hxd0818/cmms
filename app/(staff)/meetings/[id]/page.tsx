@@ -129,9 +129,9 @@ export default async function MeetingDetailPage({ params }: PageProps) {
     },
     {
       icon: UserCheck,
-      title: '陪同',
+      title: '接待',
       href: `/meetings/${id}/companions`,
-      stats: [{ label: '陪同安排', value: String(companionCount) }],
+      stats: [{ label: '接待安排', value: String(companionCount) }],
     },
     {
       icon: Receipt,

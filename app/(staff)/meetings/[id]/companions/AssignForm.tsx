@@ -39,12 +39,12 @@ export function AssignForm({
   async function onAssign(e: React.FormEvent) {
     e.preventDefault();
     if (!meetingGuestId) { toast.error('请选择嘉宾'); return; }
-    if (!companionId) { toast.error('请选择陪同人员'); return; }
+    if (!companionId) { toast.error('请选择接待人员'); return; }
     setSubmitting(true);
     const r = await assignCompanion({ meetingId, meetingGuestId, companionId, assignmentScope });
     setSubmitting(false);
     if (r.ok) {
-      toast.success('陪同已分配');
+      toast.success('接待已分配');
       setAssignOpen(false);
       setMeetingGuestId(''); setCompanionId(''); setAssignmentScope('FULL');
       router.refresh();
@@ -65,7 +65,7 @@ export function AssignForm({
     });
     setSubmitting(false);
     if (r.ok) {
-      toast.success('陪同人员已添加');
+      toast.success('接待人员已添加');
       setCreateOpen(false);
       setNewName(''); setNewPhone(''); setNewRole('翻译'); setNewLanguages('');
       router.refresh();
@@ -78,17 +78,17 @@ export function AssignForm({
     <div className="space-y-3">
       <div className="flex gap-2">
         <Button onClick={() => { setAssignOpen(!assignOpen); setCreateOpen(false); }} variant="outline">
-          分配陪同
+          分配接待
         </Button>
         <Button onClick={() => { setCreateOpen(!createOpen); setAssignOpen(false); }} variant="outline">
-          <UserPlus size={14} className="mr-1" /> 新增陪同人员
+          <UserPlus size={14} className="mr-1" /> 新增接待人员
         </Button>
       </div>
 
       {/* Create companion form */}
       {createOpen && (
         <form onSubmit={onCreate} className="cmms-card p-4 space-y-3 max-w-3xl">
-          <h3 className="text-sm font-semibold text-stone-700">新增陪同人员（全局可用）</h3>
+          <h3 className="text-sm font-semibold text-stone-700">新增接待人员（全局可用）</h3>
           <div className="grid grid-cols-4 gap-3">
             <div>
               <Label className="text-xs text-stone-400">姓名 *</Label>
@@ -117,7 +117,7 @@ export function AssignForm({
       {/* Assign companion form */}
       {assignOpen && (
         <form onSubmit={onAssign} className="cmms-card p-4 space-y-3 max-w-3xl">
-          <h3 className="text-sm font-semibold text-stone-700">分配陪同到嘉宾</h3>
+          <h3 className="text-sm font-semibold text-stone-700">分配接待到嘉宾</h3>
           <div className="grid grid-cols-3 gap-4">
             <div>
               <Label htmlFor="guest">嘉宾 *</Label>
@@ -137,7 +137,7 @@ export function AssignForm({
               </Select>
             </div>
             <div>
-              <Label htmlFor="companion">陪同人员 *</Label>
+              <Label htmlFor="companion">接待人员 *</Label>
               <Select value={companionId} onValueChange={(v) => setCompanionId(v ?? '')}>
                 <SelectTrigger>
                   <span className={companionId ? '' : 'text-stone-400'}>
@@ -146,12 +146,12 @@ export function AssignForm({
                           const c = companions.find((cp) => cp.id === companionId);
                           return c ? c.name + ' (' + c.role + ')' : companionId;
                         })()
-                      : '选择陪同'}
+                      : '选择接待'}
                   </span>
                 </SelectTrigger>
                 <SelectContent>
                   {companions.length === 0 ? (
-                    <SelectItem value="" disabled>请先新增陪同人员</SelectItem>
+                    <SelectItem value="" disabled>请先新增接待人员</SelectItem>
                   ) : (
                     companions.map((c) => (
                       <SelectItem key={c.id} value={c.id}>{c.name} ({c.role})</SelectItem>
@@ -161,7 +161,7 @@ export function AssignForm({
               </Select>
             </div>
             <div>
-              <Label htmlFor="scope">陪同范围 *</Label>
+              <Label htmlFor="scope">接待范围 *</Label>
               <Select value={assignmentScope} onValueChange={(v) => setAssignmentScope(v ?? 'FULL')}>
                 <SelectTrigger>
                   <span>{dict.assignmentScope[assignmentScope] ?? assignmentScope}</span>
@@ -179,7 +179,7 @@ export function AssignForm({
             <Button size="sm" type="button" variant="outline" onClick={() => setAssignOpen(false)}>取消</Button>
           </div>
           {companions.length === 0 && (
-            <p className="text-xs text-amber-600">陪同人员库为空，请先点击「新增陪同人员」添加</p>
+            <p className="text-xs text-amber-600">接待人员库为空，请先点击「新增接待人员」添加</p>
           )}
         </form>
       )}

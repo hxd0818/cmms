@@ -28,7 +28,7 @@ type AssignmentWithRelations = {
 };
 
 const SCOPE_LABEL: Record<string, string> = {
-  FULL: '全程陪同',
+  FULL: '全程接待',
   MEETING: '会议期间',
   DINING: '用餐期间',
   TRANSPORT: '接送期间',
@@ -45,7 +45,7 @@ export function CompanionList({ meetingId, assignments }: Props) {
   const [unassigning, setUnassigning] = useState<string | null>(null);
 
   async function onUnassign(assignmentId: string) {
-    if (!confirm('确认取消该陪同分配？')) return;
+    if (!confirm('确认取消该接待分配？')) return;
     setUnassigning(assignmentId);
     const r = await unassignCompanion(assignmentId, meetingId);
     setUnassigning(null);
@@ -63,10 +63,10 @@ export function CompanionList({ meetingId, assignments }: Props) {
         <TableHeader>
           <TableRow>
             <TableHead>嘉宾</TableHead>
-            <TableHead>陪同人员</TableHead>
+            <TableHead>接待人员</TableHead>
             <TableHead>角色</TableHead>
             <TableHead>语言</TableHead>
-            <TableHead>陪同范围</TableHead>
+            <TableHead>接待范围</TableHead>
             <TableHead></TableHead>
           </TableRow>
         </TableHeader>
@@ -74,7 +74,7 @@ export function CompanionList({ meetingId, assignments }: Props) {
           {assignments.length === 0 ? (
             <TableRow>
               <TableCell colSpan={6} className="text-center text-slate-500 py-8">
-                暂无陪同分配
+                暂无接待分配
               </TableCell>
             </TableRow>
           ) : (
