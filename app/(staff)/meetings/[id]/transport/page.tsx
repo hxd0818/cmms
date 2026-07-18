@@ -1,10 +1,11 @@
 import { meetingService } from '@/lib/domain/meeting/service';
 import { transportService } from '@/lib/domain/transport/service';
-import { vehicleService } from '@/lib/domain/vehicle/service';
+import { vehicleRepository } from '@/lib/domain/vehicle/repository';
 import { meetingGuestService } from '@/lib/domain/meeting-guest/service';
 import { notFound } from 'next/navigation';
 import { TransportList } from './TransportList';
 import { NewOrderForm } from './NewOrderForm';
+import { NewVehicleForm } from './NewVehicleForm';
 import { MeetingTabs } from '@/components/layout/MeetingTabs';
 
 interface PageProps {
@@ -23,7 +24,7 @@ export default async function TransportPage({ params }: PageProps) {
 
   const [orders, vehicles, meetingGuests] = await Promise.all([
     transportService.listByMeeting(id),
-    vehicleService.list({ pageSize: 200 }),
+    vehicleRepository.listByMeeting(id),
     meetingGuestService.listByMeeting({ meetingId: id, pageSize: 500 }),
   ]);
 
@@ -33,7 +34,7 @@ export default async function TransportPage({ params }: PageProps) {
       <div>
         <h1 className="text-xl font-bold">接送调度</h1>
         <p className="text-sm text-stone-400">
-          共 {orders.length} 个接送任务 · 可用车辆 {vehicles.total}
+          共 {orders.length} 个接送任务 · 可用车辆 {vehicles.length}
         </p>
       </div>
 
@@ -45,7 +46,9 @@ export default async function TransportPage({ params }: PageProps) {
         }))}
       />
 
-      <TransportList meetingId={id} orders={orders} vehicles={vehicles.items} />
+      <NewVehicleForm meetingId={id} />
+
+      <TransportList meetingId={id} orders={orders} vehicles={vehicles} />
     </div>
   );
 }

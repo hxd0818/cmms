@@ -85,6 +85,9 @@ model Meeting {
 
   meetingGuests MeetingGuest[]
   agendaItems   AgendaItem[]
+  vehicles      Vehicle[]
+  hotels        Hotel[]
+  diningTables  DiningTable[]
 
   @@index([status, startAt])
   @@map("meetings")
@@ -197,7 +200,8 @@ enum AgendaType {
 
 model Vehicle {
   id          String      @id @default(cuid())
-  plateNo     String      @unique
+  meetingId   String
+  plateNo     String
   type        VehicleType
   capacity    Int
   driverName  String
@@ -206,8 +210,10 @@ model Vehicle {
   createdAt   DateTime    @default(now())
   updatedAt   DateTime    @updatedAt
 
+  meeting         Meeting         @relation(fields: [meetingId], references: [id], onDelete: Cascade)
   transportOrders TransportOrder[]
 
+  @@unique([meetingId, plateNo])
   @@map("vehicles")
 }
 
@@ -291,14 +297,18 @@ model DriverAccessToken {
 // ============ Lodging ============
 
 model Hotel {
-  id          String      @id @default(cuid())
-  name        String
-  address     String
+  id           String      @id @default(cuid())
+  meetingId    String
+  name         String
+  address      String
   contactPhone String?
-  rooms       HotelRoom[]
-  createdAt   DateTime    @default(now())
-  updatedAt   DateTime    @updatedAt
+  rooms        HotelRoom[]
+  createdAt    DateTime    @default(now())
+  updatedAt    DateTime    @updatedAt
 
+  meeting Meeting @relation(fields: [meetingId], references: [id], onDelete: Cascade)
+
+  @@unique([meetingId, name])
   @@map("hotels")
 }
 
@@ -368,6 +378,7 @@ model DiningTable {
   name           String
   capacity       Int
   type           TableType
+  meeting        Meeting         @relation(fields: [meetingId], references: [id], onDelete: Cascade)
   cateringOrders CateringOrder[]
 
   @@map("dining_tables")

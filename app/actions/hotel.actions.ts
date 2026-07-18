@@ -6,6 +6,7 @@ import { assertAuthorized, getContext, handleError, type ActionResult } from '@/
 import { revalidatePath } from 'next/cache';
 
 export async function createHotel(input: {
+  meetingId: string;
   name: string;
   address: string;
   contactPhone?: string;
@@ -13,16 +14,23 @@ export async function createHotel(input: {
   try {
     const { ability } = await getContext();
     assertAuthorized(ability, 'create', 'Hotel');
-    const data = hotelCreateSchema.parse(input);
-    const hotel = await hotelService.create(data);
-    revalidatePath('/hotels');
+    const data = hotelCreateSchema.parse({
+      name: input.name,
+      address: input.address,
+      contactPhone: input.contactPhone,
+    });
+    const hotel = await hotelService.create({ ...data, meetingId: input.meetingId });
+    revalidatePath(`/meetings/${input.meetingId}/lodging`);
     return { ok: true, data: { id: hotel.id } };
   } catch (e) {
     return handleError(e);
   }
 }
 
-export async function getHotelDetail(id: string): Promise<
+export async function getHotelDetail(
+  id: string,
+  meetingId: string,
+): Promise<
   ActionResult<{
     id: string;
     name: string;
@@ -39,6 +47,7 @@ export async function getHotelDetail(id: string): Promise<
     const { ability } = await getContext();
     assertAuthorized(ability, 'read', 'Hotel');
     const hotel = await hotelService.findById(id);
+    void meetingId;
     return {
       ok: true,
       data: {
@@ -62,13 +71,18 @@ export async function addHotelRoom(input: {
   hotelId: string;
   roomNumber: string;
   roomType: string;
+  meetingId: string;
 }): Promise<ActionResult<{ id: string }>> {
   try {
     const { ability } = await getContext();
     assertAuthorized(ability, 'create', 'Hotel');
-    const data = hotelRoomCreateSchema.parse(input);
+    const data = hotelRoomCreateSchema.parse({
+      hotelId: input.hotelId,
+      roomNumber: input.roomNumber,
+      roomType: input.roomType,
+    });
     const room = await hotelService.addRoom(data.hotelId, data.roomNumber, data.roomType as never);
-    revalidatePath('/hotels');
+    revalidatePath(`/meetings/${input.meetingId}/lodging`);
     return { ok: true, data: { id: room.id } };
   } catch (e) {
     return handleError(e);

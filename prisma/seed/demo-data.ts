@@ -75,10 +75,17 @@ async function main() {
   console.log('Meeting guests:', meetingGuests.length);
 
   // 4. Create hotel + rooms
-  let hotel = await prisma.hotel.findFirst({ where: { name: '国际大酒店' } });
+  let hotel = await prisma.hotel.findFirst({
+    where: { meetingId: meeting.id, name: '国际大酒店' },
+  });
   if (!hotel) {
     hotel = await prisma.hotel.create({
-      data: { name: '国际大酒店', address: '会议中心路 1 号', contactPhone: '010-88888888' },
+      data: {
+        meetingId: meeting.id,
+        name: '国际大酒店',
+        address: '会议中心路 1 号',
+        contactPhone: '010-88888888',
+      },
     });
     console.log('Created hotel:', hotel.name);
   }

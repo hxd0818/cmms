@@ -6,8 +6,6 @@ import {
   LayoutDashboard,
   Users,
   CalendarDays,
-  Hotel,
-  Car,
   ScrollText,
   BookOpen,
   type LucideIcon,
@@ -31,13 +29,6 @@ const NAV_GROUPS: NavGroup[] = [
       { href: '/dashboard', label: '控制台', icon: LayoutDashboard },
       { href: '/guests', label: '嘉宾库', icon: Users },
       { href: '/meetings', label: '会议管理', icon: CalendarDays },
-    ],
-  },
-  {
-    label: '资源管理',
-    items: [
-      { href: '/hotels', label: '酒店', icon: Hotel },
-      { href: '/vehicles', label: '车辆', icon: Car },
     ],
   },
   {

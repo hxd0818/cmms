@@ -1,25 +1,10 @@
 import { vehicleRepository } from './repository';
-import { ConflictError, NotFoundError } from '@/lib/shared/errors';
-import type { VehicleCreateData, VehicleListParams, VehicleUpdateData } from './types';
+import { NotFoundError } from '@/lib/shared/errors';
+import type { VehicleCreateData } from './types';
 
 export const vehicleService = {
-  async create(data: VehicleCreateData) {
-    const existing = await vehicleRepository.findByPlateNo(data.plateNo);
-    if (existing) {
-      throw new ConflictError(`车辆 ${data.plateNo} 已存在`);
-    }
+  async create(data: VehicleCreateData & { meetingId: string }) {
     return vehicleRepository.create(data);
-  },
-
-  async update(id: string, data: VehicleUpdateData) {
-    const existing = await vehicleRepository.findById(id);
-    if (!existing) throw new NotFoundError('Vehicle', id);
-
-    if (data.plateNo && data.plateNo !== existing.plateNo) {
-      const dupe = await vehicleRepository.findByPlateNo(data.plateNo);
-      if (dupe) throw new ConflictError(`车牌 ${data.plateNo} 已被使用`);
-    }
-    return vehicleRepository.update(id, data);
   },
 
   async findById(id: string) {
@@ -28,8 +13,8 @@ export const vehicleService = {
     return v;
   },
 
-  async list(params: VehicleListParams) {
-    return vehicleRepository.list(params);
+  async listByMeeting(meetingId: string) {
+    return vehicleRepository.listByMeeting(meetingId);
   },
 
   async delete(id: string) {

@@ -3,7 +3,7 @@ import { NotFoundError } from '@/lib/shared/errors';
 import type { RoomType } from '@/lib/generated/prisma/enums';
 
 export const hotelService = {
-  async create(data: { name: string; address: string; contactPhone?: string }) {
+  async create(data: { meetingId: string; name: string; address: string; contactPhone?: string }) {
     return hotelRepository.create(data);
   },
 
@@ -13,16 +13,16 @@ export const hotelService = {
     return hotel;
   },
 
-  async list() {
-    return hotelRepository.list();
+  async listByMeeting(meetingId: string) {
+    return hotelRepository.listByMeeting(meetingId);
+  },
+
+  async findRoomsByMeeting(meetingId: string) {
+    return hotelRepository.findRoomsByMeeting(meetingId);
   },
 
   async addRoom(hotelId: string, roomNumber: string, roomType: RoomType) {
     await this.findById(hotelId);
     return hotelRepository.addRoom(hotelId, roomNumber, roomType);
-  },
-
-  async findAvailableRooms() {
-    return hotelRepository.findAvailableRooms();
   },
 };

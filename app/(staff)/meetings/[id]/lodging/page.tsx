@@ -1,10 +1,11 @@
 import { meetingService } from '@/lib/domain/meeting/service';
 import { lodgingService } from '@/lib/domain/lodging/service';
-import { hotelService } from '@/lib/domain/hotel/service';
+import { hotelRepository } from '@/lib/domain/hotel/repository';
 import { meetingGuestService } from '@/lib/domain/meeting-guest/service';
 import { notFound } from 'next/navigation';
 import { LodgingList } from './LodgingList';
 import { NewOrderForm } from './NewOrderForm';
+import { HotelManager } from './HotelManager';
 import { MeetingTabs } from '@/components/layout/MeetingTabs';
 
 interface PageProps {
@@ -21,9 +22,10 @@ export default async function LodgingPage({ params }: PageProps) {
     notFound();
   }
 
-  const [orders, availableRooms, meetingGuests] = await Promise.all([
+  const [orders, rooms, hotels, meetingGuests] = await Promise.all([
     lodgingService.listByMeeting(id),
-    hotelService.findAvailableRooms(),
+    hotelRepository.findRoomsByMeeting(id),
+    hotelRepository.listByMeeting(id),
     meetingGuestService.listByMeeting({ meetingId: id, pageSize: 500 }),
   ]);
 
@@ -32,7 +34,9 @@ export default async function LodgingPage({ params }: PageProps) {
       <MeetingTabs meetingId={id} meetingName={meeting.name} />
       <div>
         <h1 className="text-xl font-bold">住宿管理</h1>
-        <p className="text-sm text-slate-500">共 {orders.length} 个住宿订单</p>
+        <p className="text-sm text-slate-500">
+          共 {orders.length} 个住宿订单 · {hotels.length} 家酒店 · {rooms.length} 间房
+        </p>
       </div>
 
       <NewOrderForm
@@ -43,7 +47,9 @@ export default async function LodgingPage({ params }: PageProps) {
         }))}
       />
 
-      <LodgingList meetingId={id} orders={orders} rooms={availableRooms} />
+      <HotelManager meetingId={id} initialHotels={hotels} />
+
+      <LodgingList meetingId={id} orders={orders} rooms={rooms} />
     </div>
   );
 }

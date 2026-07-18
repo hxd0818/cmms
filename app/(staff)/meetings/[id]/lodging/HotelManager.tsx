@@ -48,7 +48,13 @@ const ROOM_STATUS_COLOR: Record<string, string> = {
   MAINTENANCE: 'bg-red-100 text-red-800',
 };
 
-export function HotelManager({ initialHotels }: { initialHotels: HotelWithCount[] }) {
+export function HotelManager({
+  meetingId,
+  initialHotels,
+}: {
+  meetingId: string;
+  initialHotels: HotelWithCount[];
+}) {
   const router = useRouter();
   const [showHotelForm, setShowHotelForm] = useState(false);
   const [expandedHotel, setExpandedHotel] = useState<string | null>(null);
@@ -75,6 +81,7 @@ export function HotelManager({ initialHotels }: { initialHotels: HotelWithCount[
     }
     setSubmittingHotel(true);
     const r = await createHotel({
+      meetingId,
       name: hotelName,
       address: hotelAddress,
       contactPhone: hotelPhone || undefined,
@@ -99,7 +106,7 @@ export function HotelManager({ initialHotels }: { initialHotels: HotelWithCount[
     }
     setExpandedHotel(hotelId);
     setLoadingRooms(true);
-    const r = await getHotelDetail(hotelId);
+    const r = await getHotelDetail(hotelId, meetingId);
     setLoadingRooms(false);
     if (r.ok && r.data) {
       setRooms(r.data.rooms);
@@ -119,6 +126,7 @@ export function HotelManager({ initialHotels }: { initialHotels: HotelWithCount[
       hotelId: expandedHotel,
       roomNumber,
       roomType,
+      meetingId,
     });
     setSubmittingRoom(false);
     if (r.ok) {
@@ -126,8 +134,7 @@ export function HotelManager({ initialHotels }: { initialHotels: HotelWithCount[
       setShowRoomForm(false);
       setRoomNumber('');
       setRoomType('SINGLE');
-      // Reload rooms for this hotel
-      const detail = await getHotelDetail(expandedHotel);
+      const detail = await getHotelDetail(expandedHotel, meetingId);
       if (detail.ok && detail.data) {
         setRooms(detail.data.rooms);
       }
@@ -139,13 +146,13 @@ export function HotelManager({ initialHotels }: { initialHotels: HotelWithCount[
 
   return (
     <div className="space-y-4">
-      <div className="flex justify-end">
-        <Button onClick={() => setShowHotelForm(true)} variant="outline">
+      <div className="flex items-center justify-between">
+        <h2 className="text-sm font-semibold">酒店与房间</h2>
+        <Button onClick={() => setShowHotelForm(true)} variant="outline" size="sm">
           新增酒店
         </Button>
       </div>
 
-      {/* Hotel list */}
       <div className="cmms-card overflow-hidden">
         <Table>
           <TableHeader>
@@ -161,7 +168,7 @@ export function HotelManager({ initialHotels }: { initialHotels: HotelWithCount[
             {initialHotels.length === 0 ? (
               <TableRow>
                 <TableCell colSpan={5} className="text-center text-slate-500 py-8">
-                  暂无酒店
+                  暂无酒店，请先新增酒店
                 </TableCell>
               </TableRow>
             ) : (
@@ -183,7 +190,6 @@ export function HotelManager({ initialHotels }: { initialHotels: HotelWithCount[
         </Table>
       </div>
 
-      {/* Expanded room panel */}
       {expandedHotel && (
         <div className="cmms-card p-4 space-y-3">
           <div className="flex items-center justify-between">
@@ -266,7 +272,6 @@ export function HotelManager({ initialHotels }: { initialHotels: HotelWithCount[
         </div>
       )}
 
-      {/* Hotel create dialog */}
       <Dialog open={showHotelForm} onOpenChange={setShowHotelForm}>
         <DialogContent>
           <DialogHeader>
