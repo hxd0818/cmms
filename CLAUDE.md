@@ -155,13 +155,15 @@ pnpm lint && pnpm typecheck && pnpm format:check && pnpm test && pnpm build
 
 - **Vehicle** 和 **Hotel** 都有 `meetingId` — 每场会议独立管理
 - 不再有全局 `/vehicles` 和 `/hotels` 页面
-- 接送标签页内含 `NewVehicleForm`（为本会议添加车辆）
-- 住宿标签页内含 `HotelManager`（为本会议添加酒店+房间）
-- `DiningTable` 本来就是 per-meeting
+- **资源管理页面**：`/meetings/[id]/resources` — 集中管理车辆、酒店房间、餐桌
+  - `VehicleManager`：车辆列表 + 内联添加 + 删除
+  - `HotelRoomManager`：酒店列表 + 添加酒店 + 按酒店添加房间
+  - `DiningTableManager`：餐桌列表 + 内联添加 + 删除
+- MeetingTabs 新增「资源」标签（接送/住宿/餐饮标签页内也保留各自的添加表单）
 
 ### 导航架构
 
-- **MeetingTabs**：会议所有子页面顶部横向标签（详情/嘉宾/议程/签到/接送/住宿/餐饮/礼品/陪同/费用）
+- **MeetingTabs**：会议所有子页面顶部横向标签（详情/嘉宾/议程/签到/接送/住宿/餐饮/礼品/陪同/费用/资源）
 - **Breadcrumbs**：非会议页面用面包屑（嘉宾详情等）
 - **StaffNav**：侧边栏分两组（核心业务 + 系统），资源管理已移入会议内
 
