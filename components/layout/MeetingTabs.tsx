@@ -15,6 +15,7 @@ const TABS = [
   { key: 'gifts', label: '礼品', path: '/gifts' },
   { key: 'companions', label: '陪同', path: '/companions' },
   { key: 'fees', label: '费用', path: '/fees' },
+  { key: 'resources', label: '资源', path: '/resources' },
 ] as const;
 
 export function MeetingTabs({

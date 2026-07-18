@@ -57,7 +57,51 @@ export async function deleteCateringOrder(
     assertAuthorized(ability, 'delete', 'CateringOrder');
     await cateringService.delete(orderId);
     revalidatePath(`/meetings/${meetingId}/catering`);
+    revalidatePath(`/meetings/${meetingId}/resources`);
     return { ok: true, data: { id: orderId } };
+  } catch (e) {
+    return handleError(e);
+  }
+}
+
+export async function createDiningTable(input: {
+  meetingId: string;
+  name: string;
+  capacity: number;
+  type: string;
+}): Promise<ActionResult<{ id: string }>> {
+  try {
+    const { ability } = await getContext();
+    assertAuthorized(ability, 'create', 'CateringOrder');
+    const { prisma } = await import('@/lib/db/client');
+    const table = await prisma.diningTable.create({
+      data: {
+        meetingId: input.meetingId,
+        name: input.name,
+        capacity: input.capacity,
+        type: input.type as never,
+      },
+    });
+    revalidatePath(`/meetings/${input.meetingId}/resources`);
+    revalidatePath(`/meetings/${input.meetingId}/catering`);
+    return { ok: true, data: { id: table.id } };
+  } catch (e) {
+    return handleError(e);
+  }
+}
+
+export async function deleteDiningTable(
+  tableId: string,
+  meetingId: string,
+): Promise<ActionResult<{ id: string }>> {
+  try {
+    const { ability } = await getContext();
+    assertAuthorized(ability, 'delete', 'CateringOrder');
+    const { prisma } = await import('@/lib/db/client');
+    await prisma.diningTable.delete({ where: { id: tableId } });
+    revalidatePath(`/meetings/${meetingId}/resources`);
+    revalidatePath(`/meetings/${meetingId}/catering`);
+    return { ok: true, data: { id: tableId } };
   } catch (e) {
     return handleError(e);
   }
