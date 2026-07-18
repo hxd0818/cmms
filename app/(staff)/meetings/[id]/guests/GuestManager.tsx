@@ -31,6 +31,7 @@ import {
   removeGuestFromMeeting,
   searchGuestsForMeeting,
   updateMeetingGuest,
+  updateRsvpStatus,
 } from '@/app/actions/meeting-guest.actions';
 import { issueGuestToken } from '@/app/actions/token.actions';
 import { getBadgeStyle } from '@/lib/shared/badge-colors';
@@ -40,6 +41,16 @@ import { cn } from '@/lib/utils';
 import { dict as staticDict } from '@/lib/shared/dictionary';
 
 type MeetingGuestWithGuest = MeetingGuest & { guest: Guest };
+
+const RSVP_STYLE: Record<string, string> = {
+  PENDING: 'bg-amber-100 text-amber-800',
+  CONFIRMED: 'bg-green-100 text-green-800',
+  DECLINED: 'bg-red-100 text-red-800',
+};
+
+function getRsvpStyle(status: string): string {
+  return RSVP_STYLE[status] ?? 'bg-stone-100 text-stone-700';
+}
 
 interface GuestTasks {
   transport: Array<{
@@ -208,6 +219,7 @@ export function GuestManager({ meetingId, meetingGuests, tasksByGuestId }: Props
               <TableHead>角色</TableHead>
               <TableHead>单位</TableHead>
               <TableHead>等级</TableHead>
+              <TableHead>参会</TableHead>
               <TableHead>签到状态</TableHead>
               <TableHead>接待</TableHead>
               <TableHead></TableHead>
@@ -216,7 +228,7 @@ export function GuestManager({ meetingId, meetingGuests, tasksByGuestId }: Props
           <TableBody>
             {primaryGuests.length === 0 ? (
               <TableRow>
-                <TableCell colSpan={7} className="text-center text-stone-400 py-8">
+                <TableCell colSpan={8} className="text-center text-stone-400 py-8">
                   暂无嘉宾，点击右上角添加
                 </TableCell>
               </TableRow>
@@ -253,6 +265,11 @@ export function GuestManager({ meetingId, meetingGuests, tasksByGuestId }: Props
                           {dict.guestLevel[mg.levelOverride ?? mg.guest.level] ??
                             mg.levelOverride ??
                             mg.guest.level}
+                        </Badge>
+                      </TableCell>
+                      <TableCell>
+                        <Badge className={getRsvpStyle(mg.rsvpStatus)} variant="secondary">
+                          {dict.rsvpStatus[mg.rsvpStatus] ?? mg.rsvpStatus}
                         </Badge>
                       </TableCell>
                       <TableCell>
@@ -310,6 +327,11 @@ export function GuestManager({ meetingId, meetingGuests, tasksByGuestId }: Props
                           <TableCell>
                             <Badge className={getBadgeStyle(sub.guest.level)} variant="secondary">
                               {dict.guestLevel[sub.guest.level] ?? sub.guest.level}
+                            </Badge>
+                          </TableCell>
+                          <TableCell>
+                            <Badge className={getRsvpStyle(sub.rsvpStatus)} variant="secondary">
+                              {dict.rsvpStatus[sub.rsvpStatus] ?? sub.rsvpStatus}
                             </Badge>
                           </TableCell>
                           <TableCell>
@@ -579,12 +601,18 @@ function GuestEditForm({
     { value: '', label: '使用默认' },
     ...Object.entries(dict.guestLevel).map(([value, label]) => ({ value, label })),
   ];
+  const RSVP_OPTIONS = Object.entries(dict.rsvpStatus).map(([value, label]) => ({
+    value,
+    label,
+  }));
   const [role, setRole] = useState(meetingGuest.entourageRole ?? '');
   const [level, setLevel] = useState(meetingGuest.levelOverride ?? '');
+  const [rsvp, setRsvp] = useState<string>(meetingGuest.rsvpStatus ?? 'PENDING');
   const [primaryId, setPrimaryId] = useState(meetingGuest.primaryMeetingGuestId ?? '');
   const [inheritTransport, setInheritTransport] = useState(meetingGuest.inheritTransport);
   const [inheritLodging, setInheritLodging] = useState(meetingGuest.inheritLodging);
   const [tags, setTags] = useState((meetingGuest.groupTags ?? []).join(', '));
+  const [savingRsvp, setSavingRsvp] = useState(false);
   const [saving, setSaving] = useState(false);
 
   async function onSave() {
@@ -606,6 +634,19 @@ function GuestEditForm({
       router.refresh();
     } else {
       toast.error(r.error?.message ?? '保存失败');
+    }
+  }
+
+  async function onRsvpSave(next: string) {
+    setSavingRsvp(true);
+    const r = await updateRsvpStatus(meetingGuest.id, next as never, meetingId);
+    setSavingRsvp(false);
+    if (r.ok) {
+      setRsvp(next);
+      toast.success('参会状态已更新');
+      router.refresh();
+    } else {
+      toast.error(r.error?.message ?? '更新失败');
     }
   }
 
@@ -651,6 +692,25 @@ function GuestEditForm({
             </SelectContent>
           </Select>
         </div>
+      </div>
+
+      {/* RSVP status */}
+      <div>
+        <Label className="text-xs text-stone-400">参会状态 (RSVP)</Label>
+        <Select value={rsvp} onValueChange={(v) => v && onRsvpSave(v)} disabled={savingRsvp}>
+          <SelectTrigger className="h-8 mt-1">
+            <span className={rsvp ? '' : 'text-stone-400'}>
+              {rsvp ? (RSVP_OPTIONS.find((o) => o.value === rsvp)?.label ?? rsvp) : '选择状态'}
+            </span>
+          </SelectTrigger>
+          <SelectContent>
+            {RSVP_OPTIONS.map((o) => (
+              <SelectItem key={o.value} value={o.value}>
+                {o.label}
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
       </div>
 
       {/* Primary guest selector */}

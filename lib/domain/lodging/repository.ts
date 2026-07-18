@@ -43,6 +43,9 @@ export const lodgingRepository = {
   async updateStatus(id: string, status: LodgingStatus) {
     return prisma.lodgingOrder.update({ where: { id }, data: { status } });
   },
+  async updateRoommateIds(id: string, roommateIds: string[]) {
+    return prisma.lodgingOrder.update({ where: { id }, data: { roommateIds } });
+  },
   async delete(id: string) {
     return prisma.lodgingOrder.delete({ where: { id } });
   },

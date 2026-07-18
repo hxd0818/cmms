@@ -43,14 +43,16 @@ export const giftService = {
 
     // Auto-generate fee for gift delivery
     const unitPrice = order.gift.unitPrice ? Number(order.gift.unitPrice) : 0;
-    await feeService.create({
-      meetingId: order.meetingId,
-      meetingGuestId: order.meetingGuestId,
-      category: 'GIFT',
-      amount: unitPrice * order.quantity,
-      notes: 'Gift auto-fee: ' + order.gift.name + ' x' + order.quantity,
-      createdBy: 'system',
-    }).catch(() => {});
+    await feeService
+      .create({
+        meetingId: order.meetingId,
+        meetingGuestId: order.meetingGuestId,
+        category: 'GIFT',
+        amount: unitPrice * order.quantity,
+        notes: 'Gift auto-fee: ' + order.gift.name + ' x' + order.quantity,
+        createdBy: 'system',
+      })
+      .catch(() => {});
 
     return order;
   },

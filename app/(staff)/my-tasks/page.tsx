@@ -13,7 +13,8 @@ export default async function MyTasksPage() {
   if (!session) redirect('/login');
 
   const tasks = await getMyTasks();
-  const total = tasks.transport.length + tasks.lodging.length + tasks.catering.length + tasks.gifts.length;
+  const total =
+    tasks.transport.length + tasks.lodging.length + tasks.catering.length + tasks.gifts.length;
 
   return (
     <div className="space-y-6 max-w-4xl">
@@ -31,59 +32,87 @@ export default async function MyTasksPage() {
       )}
 
       {tasks.transport.length > 0 && (
-        <TaskSection icon={Car} title="接送" items={tasks.transport.map((t) => ({
-          id: t.id,
-          meetingId: t.meetingId,
-          meetingName: t.meetingName,
-          guestName: t.meetingGuest.guest.name,
-          status: t.status,
-          info: `${t.pickupLocation} -> ${t.dropoffLocation}`,
-          subInfo: new Date(t.pickupTime).toLocaleString('zh-CN', { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' }),
-          statusType: 'transportStatus',
-          path: 'transport',
-        }))} />
+        <TaskSection
+          icon={Car}
+          title="接送"
+          items={tasks.transport.map((t) => ({
+            id: t.id,
+            meetingId: t.meetingId,
+            meetingName: t.meetingName,
+            guestName: t.meetingGuest.guest.name,
+            status: t.status,
+            info: `${t.pickupLocation} -> ${t.dropoffLocation}`,
+            subInfo: new Date(t.pickupTime).toLocaleString('zh-CN', {
+              month: 'short',
+              day: 'numeric',
+              hour: '2-digit',
+              minute: '2-digit',
+            }),
+            statusType: 'transportStatus',
+            path: 'transport',
+          }))}
+        />
       )}
 
       {tasks.lodging.length > 0 && (
-        <TaskSection icon={Bed} title="住宿" items={tasks.lodging.map((l) => ({
-          id: l.id,
-          meetingId: l.meetingId,
-          meetingName: l.meetingName,
-          guestName: l.meetingGuest.guest.name,
-          status: l.status,
-          info: l.hotelRoom ? `${l.hotelRoom.hotel.name} ${l.hotelRoom.roomNumber}` : '待分配房间',
-          subInfo: `${new Date(l.checkInAt).toLocaleDateString('zh-CN')} - ${new Date(l.checkOutAt).toLocaleDateString('zh-CN')}`,
-          statusType: 'lodgingStatus',
-          path: 'lodging',
-        }))} />
+        <TaskSection
+          icon={Bed}
+          title="住宿"
+          items={tasks.lodging.map((l) => ({
+            id: l.id,
+            meetingId: l.meetingId,
+            meetingName: l.meetingName,
+            guestName: l.meetingGuest.guest.name,
+            status: l.status,
+            info: l.hotelRoom
+              ? `${l.hotelRoom.hotel.name} ${l.hotelRoom.roomNumber}`
+              : '待分配房间',
+            subInfo: `${new Date(l.checkInAt).toLocaleDateString('zh-CN')} - ${new Date(l.checkOutAt).toLocaleDateString('zh-CN')}`,
+            statusType: 'lodgingStatus',
+            path: 'lodging',
+          }))}
+        />
       )}
 
       {tasks.catering.length > 0 && (
-        <TaskSection icon={UtensilsCrossed} title="餐饮" items={tasks.catering.map((c) => ({
-          id: c.id,
-          meetingId: c.meetingId,
-          meetingName: c.meetingName,
-          guestName: c.meetingGuest.guest.name,
-          status: c.status,
-          info: dict.mealType[c.mealType] ?? c.mealType,
-          subInfo: new Date(c.mealTime).toLocaleString('zh-CN', { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' }),
-          statusType: 'cateringStatus',
-          path: 'catering',
-        }))} />
+        <TaskSection
+          icon={UtensilsCrossed}
+          title="餐饮"
+          items={tasks.catering.map((c) => ({
+            id: c.id,
+            meetingId: c.meetingId,
+            meetingName: c.meetingName,
+            guestName: c.meetingGuest.guest.name,
+            status: c.status,
+            info: dict.mealType[c.mealType] ?? c.mealType,
+            subInfo: new Date(c.mealTime).toLocaleString('zh-CN', {
+              month: 'short',
+              day: 'numeric',
+              hour: '2-digit',
+              minute: '2-digit',
+            }),
+            statusType: 'cateringStatus',
+            path: 'catering',
+          }))}
+        />
       )}
 
       {tasks.gifts.length > 0 && (
-        <TaskSection icon={Gift} title="礼品" items={tasks.gifts.map((g) => ({
-          id: g.id,
-          meetingId: g.meetingId,
-          meetingName: g.meetingName,
-          guestName: g.meetingGuest.guest.name,
-          status: g.status,
-          info: `${g.gift.name} x${g.quantity}`,
-          subInfo: '',
-          statusType: 'giftStatus',
-          path: 'gifts',
-        }))} />
+        <TaskSection
+          icon={Gift}
+          title="礼品"
+          items={tasks.gifts.map((g) => ({
+            id: g.id,
+            meetingId: g.meetingId,
+            meetingName: g.meetingName,
+            guestName: g.meetingGuest.guest.name,
+            status: g.status,
+            info: `${g.gift.name} x${g.quantity}`,
+            subInfo: '',
+            statusType: 'giftStatus',
+            path: 'gifts',
+          }))}
+        />
       )}
     </div>
   );
@@ -101,7 +130,15 @@ interface TaskItem {
   path: string;
 }
 
-function TaskSection({ icon: Icon, title, items }: { icon: LucideIcon; title: string; items: TaskItem[] }) {
+function TaskSection({
+  icon: Icon,
+  title,
+  items,
+}: {
+  icon: LucideIcon;
+  title: string;
+  items: TaskItem[];
+}) {
   return (
     <div>
       <div className="flex items-center gap-2 mb-2">

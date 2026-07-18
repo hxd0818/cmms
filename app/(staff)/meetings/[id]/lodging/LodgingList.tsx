@@ -27,7 +27,12 @@ import {
   DialogTitle,
   DialogFooter,
 } from '@/components/ui/dialog';
-import { assignRoom, updateLodgingStatus, deleteLodgingOrder } from '@/app/actions/lodging.actions';
+import {
+  assignRoom,
+  assignRoommates,
+  updateLodgingStatus,
+  deleteLodgingOrder,
+} from '@/app/actions/lodging.actions';
 import { toast } from 'sonner';
 import { dict } from '@/lib/shared/dictionary';
 
@@ -64,6 +69,12 @@ export function LodgingList({ meetingId, orders, rooms }: Props) {
   const router = useRouter();
   const [assignDialogFor, setAssignDialogFor] = useState<string | null>(null);
   const [selectedRoom, setSelectedRoom] = useState('');
+
+  // Build candidate list (other lodging orders in same meeting, for roommate picker)
+  const candidates = orders.map((o) => ({
+    id: o.id,
+    name: o.meetingGuest.guest.name,
+  }));
 
   async function onAssign() {
     if (!assignDialogFor || !selectedRoom) return;
@@ -108,6 +119,7 @@ export function LodgingList({ meetingId, orders, rooms }: Props) {
             <TableHead>入住时间</TableHead>
             <TableHead>退房时间</TableHead>
             <TableHead>房间</TableHead>
+            <TableHead>室友</TableHead>
             <TableHead>状态</TableHead>
             <TableHead></TableHead>
           </TableRow>
@@ -115,7 +127,7 @@ export function LodgingList({ meetingId, orders, rooms }: Props) {
         <TableBody>
           {orders.length === 0 ? (
             <TableRow>
-              <TableCell colSpan={6} className="text-center text-slate-500 py-8">
+              <TableCell colSpan={7} className="text-center text-slate-500 py-8">
                 暂无住宿订单
               </TableCell>
             </TableRow>
@@ -142,6 +154,14 @@ export function LodgingList({ meetingId, orders, rooms }: Props) {
                       分配房间
                     </Button>
                   )}
+                </TableCell>
+                <TableCell>
+                  <RoommateCell
+                    meetingId={meetingId}
+                    orderId={o.id}
+                    initialRoommateIds={o.roommateIds}
+                    candidates={candidates.filter((c) => c.id !== o.id)}
+                  />
                 </TableCell>
                 <TableCell>
                   <Badge className={STATUS_COLOR[o.status]} variant="secondary">
@@ -210,5 +230,102 @@ export function LodgingList({ meetingId, orders, rooms }: Props) {
         </DialogContent>
       </Dialog>
     </div>
+  );
+}
+
+/**
+ * Roommate cell: click to open a multi-select dialog. Persists via assignRoommates action.
+ * roommateIds reference other LodgingOrder IDs in the same meeting.
+ */
+function RoommateCell({
+  meetingId,
+  orderId,
+  initialRoommateIds,
+  candidates,
+}: {
+  meetingId: string;
+  orderId: string;
+  initialRoommateIds: string[];
+  candidates: Array<{ id: string; name: string }>;
+}) {
+  const router = useRouter();
+  const [open, setOpen] = useState(false);
+  const [selected, setSelected] = useState<Set<string>>(new Set(initialRoommateIds));
+  const [saving, setSaving] = useState(false);
+
+  const selectedNames = candidates.filter((c) => selected.has(c.id)).map((c) => c.name);
+
+  function toggle(id: string) {
+    setSelected((prev) => {
+      const next = new Set(prev);
+      if (next.has(id)) next.delete(id);
+      else next.add(id);
+      return next;
+    });
+  }
+
+  async function onSave() {
+    setSaving(true);
+    const r = await assignRoommates(orderId, Array.from(selected), meetingId);
+    setSaving(false);
+    if (r.ok) {
+      toast.success('室友已更新');
+      setOpen(false);
+      router.refresh();
+    } else {
+      toast.error(r.error?.message ?? '保存失败');
+    }
+  }
+
+  return (
+    <>
+      <button
+        type="button"
+        onClick={() => setOpen(true)}
+        className="text-xs text-stone-600 hover:text-stone-900 underline-offset-2 hover:underline min-h-[20px]"
+      >
+        {selectedNames.length > 0 ? selectedNames.join('、') : '点击选择'}
+      </button>
+      <Dialog open={open} onOpenChange={(o) => !o && setOpen(false)}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>选择室友</DialogTitle>
+          </DialogHeader>
+          <div className="max-h-72 overflow-auto space-y-1">
+            {candidates.length === 0 ? (
+              <p className="text-sm text-slate-400 text-center py-4">
+                无可选嘉宾（需先创建住宿订单）
+              </p>
+            ) : (
+              candidates.map((c) => {
+                const checked = selected.has(c.id);
+                return (
+                  <label
+                    key={c.id}
+                    className="flex items-center gap-2 p-2 rounded border hover:bg-slate-50 cursor-pointer"
+                  >
+                    <input
+                      type="checkbox"
+                      checked={checked}
+                      onChange={() => toggle(c.id)}
+                      className="rounded"
+                    />
+                    <span className="text-sm">{c.name}</span>
+                  </label>
+                );
+              })
+            )}
+          </div>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setOpen(false)}>
+              取消
+            </Button>
+            <Button onClick={onSave} disabled={saving}>
+              {saving ? '保存中...' : '保存'}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+    </>
   );
 }

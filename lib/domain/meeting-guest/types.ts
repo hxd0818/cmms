@@ -1,5 +1,10 @@
 import type { MeetingGuest } from '@/lib/generated/prisma/client';
-import type { EntourageRole, GuestLevel, ReceptionStage, RsvpStatus } from '@/lib/generated/prisma/enums';
+import type {
+  EntourageRole,
+  GuestLevel,
+  ReceptionStage,
+  RsvpStatus,
+} from '@/lib/generated/prisma/enums';
 
 export type MeetingGuestEntity = MeetingGuest;
 

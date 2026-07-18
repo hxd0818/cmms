@@ -111,7 +111,12 @@ export function Kanban({ meetingId, initial }: Props) {
           <Button size="sm" onClick={onBatchCheckIn} disabled={batching} className="ml-auto">
             {batching ? '签到中...' : '批量签到'}
           </Button>
-          <Button size="sm" variant="ghost" onClick={() => setSelected(new Set())} className="text-white/70">
+          <Button
+            size="sm"
+            variant="ghost"
+            onClick={() => setSelected(new Set())}
+            className="text-white/70"
+          >
             取消
           </Button>
         </div>
@@ -147,10 +152,14 @@ export function Kanban({ meetingId, initial }: Props) {
                           <span className="font-medium text-sm">{mg.guest.name}</span>
                         </div>
                         <Badge variant="outline" className="text-xs">
-                          {dict.guestLevel[mg.levelOverride ?? mg.guest.level] ?? (mg.levelOverride ?? mg.guest.level)}
+                          {dict.guestLevel[mg.levelOverride ?? mg.guest.level] ??
+                            mg.levelOverride ??
+                            mg.guest.level}
                         </Badge>
                       </div>
-                      {mg.guest.company && <p className="text-xs text-slate-500">{mg.guest.company}</p>}
+                      {mg.guest.company && (
+                        <p className="text-xs text-slate-500">{mg.guest.company}</p>
+                      )}
                       {col.action && (
                         <Button
                           size="sm"

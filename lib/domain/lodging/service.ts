@@ -46,14 +46,16 @@ export const lodgingService = {
 
     // Auto-generate fee when checked out
     if (target === 'CHECKED_OUT') {
-      await feeService.create({
-        meetingId: order.meetingId,
-        meetingGuestId: order.meetingGuestId,
-        category: 'LODGING',
-        amount: 0,
-        notes: 'Lodging auto-fee',
-        createdBy: 'system',
-      }).catch(() => {});
+      await feeService
+        .create({
+          meetingId: order.meetingId,
+          meetingGuestId: order.meetingGuestId,
+          category: 'LODGING',
+          amount: 0,
+          notes: 'Lodging auto-fee',
+          createdBy: 'system',
+        })
+        .catch(() => {});
     }
 
     return updated;
@@ -73,5 +75,13 @@ export const lodgingService = {
     const existing = await lodgingRepository.findById(id);
     if (!existing) throw new NotFoundError('LodgingOrder', id);
     return lodgingRepository.delete(id);
+  },
+
+  async assignRoommates(orderId: string, roommateIds: string[]) {
+    const order = await lodgingRepository.findById(orderId);
+    if (!order) throw new NotFoundError('LodgingOrder', orderId);
+    // Deduplicate + remove self just in case
+    const unique = Array.from(new Set(roommateIds)).filter((id) => id !== orderId);
+    return lodgingRepository.updateRoommateIds(orderId, unique);
   },
 };

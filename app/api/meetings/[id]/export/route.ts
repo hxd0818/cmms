@@ -133,17 +133,18 @@ async function exportFees(workbook: ExcelJS.Workbook, meetingId: string) {
 
   // Batch load guest names
   const guestIds = [...new Set(fees.map((f) => f.meetingGuestId).filter(Boolean))] as string[];
-  const guests = guestIds.length > 0
-    ? await prisma.meetingGuest.findMany({
-        where: { id: { in: guestIds } },
-        include: { guest: true },
-      })
-    : [];
+  const guests =
+    guestIds.length > 0
+      ? await prisma.meetingGuest.findMany({
+          where: { id: { in: guestIds } },
+          include: { guest: true },
+        })
+      : [];
   const guestMap = new Map(guests.map((mg) => [mg.id, mg.guest.name]));
 
   for (const f of fees) {
     sheet.addRow({
-      guest: f.meetingGuestId ? guestMap.get(f.meetingGuestId) ?? '-' : '-',
+      guest: f.meetingGuestId ? (guestMap.get(f.meetingGuestId) ?? '-') : '-',
       category: f.category,
       amount: Number(f.amount),
       notes: f.notes ?? '-',

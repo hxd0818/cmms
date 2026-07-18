@@ -108,6 +108,12 @@ export default async function GuestPortalPage({ params }: Props) {
               </span>
             )}
           </div>
+          <div className="mt-3">
+            <span className="text-xs text-stone-400">参会状态:</span>{' '}
+            <span className={'text-xs font-medium ' + getRsvpTextColor(mg.rsvpStatus)}>
+              {dict.rsvpStatus[mg.rsvpStatus] ?? mg.rsvpStatus}
+            </span>
+          </div>
         </div>
 
         {/* Transport */}
@@ -310,4 +316,10 @@ function StatusBadge({ status, type }: { status: string; type: string }) {
   return (
     <span className="text-xs px-2 py-0.5 rounded-full bg-stone-100 text-stone-600">{label}</span>
   );
+}
+
+function getRsvpTextColor(status: string): string {
+  if (status === 'CONFIRMED') return 'text-green-700';
+  if (status === 'DECLINED') return 'text-red-600';
+  return 'text-amber-600';
 }

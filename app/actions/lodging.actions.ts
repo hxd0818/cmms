@@ -84,3 +84,22 @@ export async function deleteLodgingOrder(
     return handleError(e);
   }
 }
+
+export async function assignRoommates(
+  orderId: string,
+  roommateIds: string[],
+  meetingId: string,
+): Promise<ActionResult<{ id: string }>> {
+  try {
+    const { session, ability } = await getContext();
+    assertAuthorized(ability, 'update', 'LodgingOrder');
+    await lodgingService.assignRoommates(orderId, roommateIds);
+    await auditLog(session, 'update', 'LodgingOrder', orderId, {
+      after: { roommateIds },
+    });
+    revalidatePath(`/meetings/${meetingId}/lodging`);
+    return { ok: true, data: { id: orderId } };
+  } catch (e) {
+    return handleError(e);
+  }
+}

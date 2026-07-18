@@ -24,9 +24,11 @@ export async function assignTask(
 
     const mapping = ENTITY_MAP[entityType];
     const updateFn = {
-      transport: () => prisma.transportOrder.update({ where: { id: entityId }, data: { assigneeId } }),
+      transport: () =>
+        prisma.transportOrder.update({ where: { id: entityId }, data: { assigneeId } }),
       lodging: () => prisma.lodgingOrder.update({ where: { id: entityId }, data: { assigneeId } }),
-      catering: () => prisma.cateringOrder.update({ where: { id: entityId }, data: { assigneeId } }),
+      catering: () =>
+        prisma.cateringOrder.update({ where: { id: entityId }, data: { assigneeId } }),
       gift: () => prisma.giftOrder.update({ where: { id: entityId }, data: { assigneeId } }),
     }[entityType];
     await updateFn();

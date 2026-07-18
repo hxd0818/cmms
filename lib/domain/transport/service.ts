@@ -78,14 +78,16 @@ export const transportService = {
 
     // Auto-generate fee when transport completes
     if (target === 'COMPLETED') {
-      await feeService.create({
-        meetingId: order.meetingId,
-        meetingGuestId: order.meetingGuestId,
-        category: 'TRANSPORT',
-        amount: 0, // actual cost recorded by finance later
-        notes: 'Transport auto-fee: ' + order.pickupLocation + ' -> ' + order.dropoffLocation,
-        createdBy: 'system',
-      }).catch(() => {}); // fire-and-forget, don't block on fee errors
+      await feeService
+        .create({
+          meetingId: order.meetingId,
+          meetingGuestId: order.meetingGuestId,
+          category: 'TRANSPORT',
+          amount: 0, // actual cost recorded by finance later
+          notes: 'Transport auto-fee: ' + order.pickupLocation + ' -> ' + order.dropoffLocation,
+          createdBy: 'system',
+        })
+        .catch(() => {}); // fire-and-forget, don't block on fee errors
     }
 
     return updated;
@@ -99,6 +101,10 @@ export const transportService = {
 
   async listByMeeting(meetingId: string) {
     return transportRepository.findByMeeting(meetingId);
+  },
+
+  async listByVehicleOnSameDay(vehicleId: string, pickupTime: Date) {
+    return transportRepository.findByVehicleOnSameDay(vehicleId, pickupTime);
   },
 
   async delete(id: string) {

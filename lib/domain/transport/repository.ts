@@ -50,6 +50,29 @@ export const transportRepository = {
     });
   },
 
+  /**
+   * Find all orders for a vehicle on the same calendar day as the given pickupTime.
+   * Used by the driver portal to show a daily task list. Excludes CANCELED.
+   * Includes meetingGuest + guest for display.
+   */
+  async findByVehicleOnSameDay(vehicleId: string, pickupTime: Date) {
+    const dayStart = new Date(pickupTime);
+    dayStart.setHours(0, 0, 0, 0);
+    const dayEnd = new Date(pickupTime);
+    dayEnd.setHours(23, 59, 59, 999);
+    return prisma.transportOrder.findMany({
+      where: {
+        vehicleId,
+        status: { notIn: ['CANCELED'] },
+        pickupTime: { gte: dayStart, lte: dayEnd },
+      },
+      include: {
+        meetingGuest: { include: { guest: true } },
+      },
+      orderBy: { pickupTime: 'asc' },
+    });
+  },
+
   async updateStatus(id: string, status: TransportStatus) {
     return prisma.transportOrder.update({ where: { id }, data: { status } });
   },
