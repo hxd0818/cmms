@@ -8,6 +8,7 @@ import {
   CalendarDays,
   ScrollText,
   BookOpen,
+  UserCog,
   type LucideIcon,
 } from 'lucide-react';
 
@@ -34,6 +35,7 @@ const NAV_GROUPS: NavGroup[] = [
   {
     label: '系统',
     items: [
+      { href: '/admin/users', label: '用户管理', icon: UserCog },
       { href: '/audit', label: '审计日志', icon: ScrollText },
       { href: '/admin/dictionary', label: '字典管理', icon: BookOpen },
     ],
