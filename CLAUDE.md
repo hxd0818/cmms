@@ -13,7 +13,7 @@ This file provides project-specific guidance to Claude Code when working in this
 
 CMMS（会务管理系统）是单组织内部使用的、以接待运营为核心的通用会务管理平台。Next.js 16 全栈单体，非 monorepo。
 
-**当前进度**：Phase 0-4 全部完成（v1.0.0）。含字典管理、嘉宾端门户、会议独立资源池、导航标签页。
+**当前进度**：Phase 0-4 + 审计补全全部完成。含字典管理、嘉宾端门户、会议独立资源池、导航标签页、审计日志自动记录、费用自动生成、任务分配、MeetingStaff 角色、批量签到、报表导出、RSVP、室友分配、司机日程、字段脱敏、速率限制、通知系统。
 
 ## Critical Project Rules
 
@@ -163,9 +163,26 @@ pnpm lint && pnpm typecheck && pnpm format:check && pnpm test && pnpm build
 
 ### 导航架构
 
-- **MeetingTabs**：会议所有子页面顶部横向标签（详情/嘉宾/议程/签到/接送/住宿/餐饮/礼品/陪同/费用/资源）
+- **MeetingTabs**：会议所有子页面顶部横向标签（详情/嘉宾/议程/签到/接送/住宿/餐饮/礼品/陪同/费用/人员/资源）
 - **Breadcrumbs**：非会议页面用面包屑（嘉宾详情等）
 - **StaffNav**：侧边栏分两组（核心业务 + 系统），资源管理已移入会议内
+
+### 审计与费用自动化
+
+- **审计日志**：所有 Server Action 的 create/update/delete 操作自动记录到 `AuditLog` 表（`auditLog()` helper）
+- **费用自动生成**：TransportOrder→COMPLETED / LodgingOrder→CHECKED_OUT / GiftOrder→DELIVERED 时自动创建 FeeRecord（fire-and-forget）
+
+### 任务分配与会议角色
+
+- **assigneeId**：TransportOrder/LodgingOrder/CateringOrder/GiftOrder 都有 `assigneeId`（关联 User）
+- **我的任务**：`/my-tasks` 页面显示分配给当前用户的所有任务
+- **MeetingStaff**：会议级角色（OWNER/RECEPTION_LEAD/TRANSPORT_LEAD 等 10 种），在 `/meetings/[id]/staff` 管理
+
+### 安全加固
+
+- **字段脱敏**：VIEWER 角色看到掩码手机（138\*\*\*\*1234）和身份证
+- **速率限制**：登录 5 次/5 分钟窗口（Redis 滑动窗口），fail-open 设计
+- **备份恢复**：`scripts/backup.sh`（gzip pg_dump, 保留 7 份）+ `scripts/restore.sh`
 
 ## Key Files
 

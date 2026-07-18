@@ -6,6 +6,30 @@
 
 ---
 
+## [Unreleased] — 2026-07-18 审计补全
+
+### Phase 1 — 核心业务逻辑修复
+
+- **审计日志自动记录**：所有 16 个 Server Action 文件的 create/update/delete 操作（共 48 个日志点）自动记录到 AuditLog 表。新增 `auditLog()` helper 提取 session 中的操作者信息。
+- **费用自动生成钩子**：TransportOrder→COMPLETED、LodgingOrder→CHECKED_OUT、GiftOrder→DELIVERED 时自动创建 FeeRecord（fire-and-forget，不阻塞主操作）。
+- **任务分配 + 我的任务**：TransportOrder/LodgingOrder/CateringOrder/GiftOrder 新增 `assigneeId` 字段。`/my-tasks` 页面显示分配给当前用户的所有任务，按类型分组。`assignTask()` Server Action 支持分配/取消分配。
+
+### Phase 2 — 重要功能增强
+
+- **MeetingStaff 会议角色**：MeetingStaff 模型 + MeetingRole 枚举（10 种角色：OWNER/RECEPTION_LEAD/TRANSPORT_LEAD 等）。`/meetings/[id]/staff` 页面管理工作人员分配。
+- **批量签到**：签到台 Kanban 支持多选嘉宾 + 浮动批量签到按钮。
+- **报表导出**：`/api/meetings/[id]/export` 端点支持 3 种 Excel 导出（概览/嘉宾名单/费用明细）。
+- **RSVP 管理**：工作人员可修改嘉宾参会状态（PENDING/CONFIRMED/DECLINED），嘉宾端显示参会状态。
+- **室友分配**：住宿管理界面支持多选室友，`assignRoommates()` action + service。
+- **司机当日任务列表**：司机端从单任务改为显示同车当日全部任务，当前任务高亮。
+
+### Phase 3 — 运维安全加固
+
+- **字段级脱敏**：VIEWER 角色看到掩码手机（138\*\*\*\*1234）和身份证号，11 个单元测试。
+- **速率限制**：登录端点 Redis 滑动窗口（5 次/5 分钟），fail-open 设计，6 个单元测试。
+- **备份恢复脚本**：`scripts/backup.sh`（gzip pg_dump, 保留 7 份）+ `scripts/restore.sh`（交互式确认）。
+- **通知系统基础**：NotificationTemplate + NotificationLog Prisma 模型 + sender 接口（日志模式，无真实 SMS）。
+
 ## [Unreleased] — 2026-07-17/18 迭代改进
 
 ### Changed — 架构级变更
