@@ -1,4 +1,5 @@
 import { lodgingRepository } from './repository';
+import { feeService } from '@/lib/domain/fee/service';
 import { ConflictError, NotFoundError, ValidationError } from '@/lib/shared/errors';
 import type { LodgingStatus } from '@/lib/generated/prisma/enums';
 import type { LodgingCreateData, LodgingUpdateData } from './types';
@@ -41,7 +42,21 @@ export const lodgingService = {
     if (!STATUS_TRANSITIONS[current].includes(target)) {
       throw new ValidationError(`非法状态转换: ${current} -> ${target}`);
     }
-    return lodgingRepository.updateStatus(id, target);
+    const updated = await lodgingRepository.updateStatus(id, target);
+
+    // Auto-generate fee when checked out
+    if (target === 'CHECKED_OUT') {
+      await feeService.create({
+        meetingId: order.meetingId,
+        meetingGuestId: order.meetingGuestId,
+        category: 'LODGING',
+        amount: 0,
+        notes: 'Lodging auto-fee',
+        createdBy: 'system',
+      }).catch(() => {});
+    }
+
+    return updated;
   },
 
   async findById(id: string) {

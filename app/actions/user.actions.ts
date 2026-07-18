@@ -3,6 +3,7 @@
 import bcrypt from 'bcryptjs';
 import { prisma } from '@/lib/db/client';
 import { getContext, handleError, assertAuthorized, type ActionResult } from '@/lib/actions/utils';
+import { auditLog } from '@/lib/audit/logger';
 import { revalidatePath } from 'next/cache';
 
 export async function listUsers(): Promise<
@@ -27,7 +28,7 @@ export async function createUser(input: {
   role: string;
 }): Promise<ActionResult<{ id: string }>> {
   try {
-    const { ability } = await getContext();
+    const { session, ability } = await getContext();
     assertAuthorized(ability, 'manage', 'all');
 
     const existing = await prisma.user.findUnique({ where: { email: input.email } });
@@ -43,6 +44,9 @@ export async function createUser(input: {
         passwordHash,
         role: input.role as 'SUPER_ADMIN' | 'VIEWER',
       },
+    });
+    await auditLog(session, 'create', 'User', user.id, {
+      after: { email: input.email, name: input.name, role: input.role },
     });
     revalidatePath('/admin/users');
     return { ok: true, data: { id: user.id } };
@@ -60,7 +64,7 @@ export async function updateUser(
   },
 ): Promise<ActionResult<{ id: string }>> {
   try {
-    const { ability } = await getContext();
+    const { session, ability } = await getContext();
     assertAuthorized(ability, 'manage', 'all');
 
     const data: { name?: string; role?: 'SUPER_ADMIN' | 'VIEWER'; passwordHash?: string } = {};
@@ -69,6 +73,9 @@ export async function updateUser(
     if (input.password) data.passwordHash = await bcrypt.hash(input.password, 12);
 
     await prisma.user.update({ where: { id }, data });
+    await auditLog(session, 'update', 'User', id, {
+      after: { name: input.name, role: input.role, passwordChanged: Boolean(input.password) },
+    });
     revalidatePath('/admin/users');
     return { ok: true, data: { id } };
   } catch (e) {
@@ -86,6 +93,7 @@ export async function deleteUser(id: string): Promise<ActionResult<{ id: string 
     }
 
     await prisma.user.delete({ where: { id } });
+    await auditLog(session, 'delete', 'User', id);
     revalidatePath('/admin/users');
     return { ok: true, data: { id } };
   } catch (e) {

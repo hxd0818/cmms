@@ -1,5 +1,6 @@
 import { giftRepository } from './repository';
 import { prisma } from '@/lib/db/client';
+import { feeService } from '@/lib/domain/fee/service';
 import { ConflictError, NotFoundError } from '@/lib/shared/errors';
 import type { GiftStatus } from '@/lib/generated/prisma/enums';
 import type { GiftOrderCreateData } from './types';
@@ -39,6 +40,19 @@ export const giftService = {
         data: { status: 'DELIVERED' as GiftStatus, deliveredAt: new Date() },
       }),
     ]);
+
+    // Auto-generate fee for gift delivery
+    const unitPrice = order.gift.unitPrice ? Number(order.gift.unitPrice) : 0;
+    await feeService.create({
+      meetingId: order.meetingId,
+      meetingGuestId: order.meetingGuestId,
+      category: 'GIFT',
+      amount: unitPrice * order.quantity,
+      notes: 'Gift auto-fee: ' + order.gift.name + ' x' + order.quantity,
+      createdBy: 'system',
+    }).catch(() => {});
+
+    return order;
   },
 
   async listOrdersByMeeting(meetingId: string) {

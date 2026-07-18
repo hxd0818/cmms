@@ -3,6 +3,7 @@
 import { hotelCreateSchema, hotelRoomCreateSchema } from '@/lib/shared/lodging';
 import { hotelService } from '@/lib/domain/hotel/service';
 import { assertAuthorized, getContext, handleError, type ActionResult } from '@/lib/actions/utils';
+import { auditLog } from '@/lib/audit/logger';
 import { revalidatePath } from 'next/cache';
 
 export async function createHotel(input: {
@@ -12,7 +13,7 @@ export async function createHotel(input: {
   contactPhone?: string;
 }): Promise<ActionResult<{ id: string }>> {
   try {
-    const { ability } = await getContext();
+    const { session, ability } = await getContext();
     assertAuthorized(ability, 'create', 'Hotel');
     const data = hotelCreateSchema.parse({
       name: input.name,
@@ -20,6 +21,7 @@ export async function createHotel(input: {
       contactPhone: input.contactPhone,
     });
     const hotel = await hotelService.create({ ...data, meetingId: input.meetingId });
+    await auditLog(session, 'create', 'Hotel', hotel.id, { after: input });
     revalidatePath(`/meetings/${input.meetingId}/lodging`);
     return { ok: true, data: { id: hotel.id } };
   } catch (e) {
@@ -74,7 +76,7 @@ export async function addHotelRoom(input: {
   meetingId: string;
 }): Promise<ActionResult<{ id: string }>> {
   try {
-    const { ability } = await getContext();
+    const { session, ability } = await getContext();
     assertAuthorized(ability, 'create', 'Hotel');
     const data = hotelRoomCreateSchema.parse({
       hotelId: input.hotelId,
@@ -82,6 +84,7 @@ export async function addHotelRoom(input: {
       roomType: input.roomType,
     });
     const room = await hotelService.addRoom(data.hotelId, data.roomNumber, data.roomType as never);
+    await auditLog(session, 'create', 'HotelRoom', room.id, { after: input });
     revalidatePath(`/meetings/${input.meetingId}/lodging`);
     return { ok: true, data: { id: room.id } };
   } catch (e) {

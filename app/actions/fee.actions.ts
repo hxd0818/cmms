@@ -3,6 +3,7 @@
 import { feeCreateSchema } from '@/lib/shared/gift';
 import { feeService } from '@/lib/domain/fee/service';
 import { assertAuthorized, getContext, handleError, type ActionResult } from '@/lib/actions/utils';
+import { auditLog } from '@/lib/audit/logger';
 import { revalidatePath } from 'next/cache';
 
 export async function createFeeRecord(input: {
@@ -20,6 +21,7 @@ export async function createFeeRecord(input: {
       ...data,
       createdBy: session.user.id,
     });
+    await auditLog(session, 'create', 'FeeRecord', record.id, { after: input });
     revalidatePath(`/meetings/${input.meetingId}/fees`);
     return { ok: true, data: { id: record.id } };
   } catch (e) {
@@ -32,9 +34,10 @@ export async function deleteFeeRecord(
   meetingId: string,
 ): Promise<ActionResult<{ id: string }>> {
   try {
-    const { ability } = await getContext();
+    const { session, ability } = await getContext();
     assertAuthorized(ability, 'delete', 'FeeRecord');
     await feeService.delete(recordId);
+    await auditLog(session, 'delete', 'FeeRecord', recordId);
     revalidatePath(`/meetings/${meetingId}/fees`);
     return { ok: true, data: { id: recordId } };
   } catch (e) {

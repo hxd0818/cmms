@@ -1,6 +1,7 @@
 import { transportRepository } from './repository';
 import { vehicleRepository } from '@/lib/domain/vehicle/repository';
 import { meetingGuestRepository } from '@/lib/domain/meeting-guest/repository';
+import { feeService } from '@/lib/domain/fee/service';
 import { ConflictError, NotFoundError, ValidationError } from '@/lib/shared/errors';
 import type { TransportStatus } from '@/lib/generated/prisma/enums';
 import type { TransportCreateData, TransportUpdateData } from './types';
@@ -73,7 +74,21 @@ export const transportService = {
     if (!STATUS_TRANSITIONS[current].includes(target)) {
       throw new ValidationError(`非法状态转换: ${current} -> ${target}`);
     }
-    return transportRepository.updateStatus(id, target);
+    const updated = await transportRepository.updateStatus(id, target);
+
+    // Auto-generate fee when transport completes
+    if (target === 'COMPLETED') {
+      await feeService.create({
+        meetingId: order.meetingId,
+        meetingGuestId: order.meetingGuestId,
+        category: 'TRANSPORT',
+        amount: 0, // actual cost recorded by finance later
+        notes: 'Transport auto-fee: ' + order.pickupLocation + ' -> ' + order.dropoffLocation,
+        createdBy: 'system',
+      }).catch(() => {}); // fire-and-forget, don't block on fee errors
+    }
+
+    return updated;
   },
 
   async findById(id: string) {

@@ -8,6 +8,7 @@ import { meetingGuestImportQueue } from '@/lib/queue/meeting-guest-import.queue'
 import { meetingGuestService } from '@/lib/domain/meeting-guest/service';
 import { meetingGuestRepository } from '@/lib/domain/meeting-guest/repository';
 import { guestService } from '@/lib/domain/guest/service';
+import { auditLog } from '@/lib/audit/logger';
 import { revalidatePath } from 'next/cache';
 import type { EntourageRole, GuestLevel } from '@/lib/generated/prisma/enums';
 
@@ -56,11 +57,12 @@ export async function addGuestToMeeting(input: {
   inheritTransport?: boolean;
 }): Promise<ActionResult<{ id: string }>> {
   try {
-    const { ability } = await getContext();
+    const { session, ability } = await getContext();
     if (!ability.can('create', 'MeetingGuest')) {
       return { ok: false, error: { code: 'FORBIDDEN', message: '无权添加会议嘉宾' } };
     }
     const mg = await meetingGuestService.create(input);
+    await auditLog(session, 'create', 'MeetingGuest', mg.id, { after: input });
     revalidatePath(`/meetings/${input.meetingId}/guests`);
     return { ok: true, data: { id: mg.id } };
   } catch (e) {
@@ -73,11 +75,12 @@ export async function removeGuestFromMeeting(
   meetingId: string,
 ): Promise<ActionResult<{ id: string }>> {
   try {
-    const { ability } = await getContext();
+    const { session, ability } = await getContext();
     if (!ability.can('delete', 'MeetingGuest')) {
       return { ok: false, error: { code: 'FORBIDDEN', message: '无权删除会议嘉宾' } };
     }
     await meetingGuestService.delete(meetingGuestId);
+    await auditLog(session, 'delete', 'MeetingGuest', meetingGuestId);
     revalidatePath(`/meetings/${meetingId}/guests`);
     return { ok: true, data: { id: meetingGuestId } };
   } catch (e) {
@@ -98,7 +101,7 @@ export async function updateMeetingGuest(
   },
 ): Promise<ActionResult<{ id: string }>> {
   try {
-    const { ability } = await getContext();
+    const { session, ability } = await getContext();
     assertAuthorized(ability, 'update', 'MeetingGuest');
     await meetingGuestRepository.update(meetingGuestId, {
       entourageRole: (input.entourageRole || null) as never,
@@ -108,6 +111,7 @@ export async function updateMeetingGuest(
       inheritLodging: input.inheritLodging,
       groupTags: input.groupTags,
     });
+    await auditLog(session, 'update', 'MeetingGuest', meetingGuestId, { after: input });
     revalidatePath(`/meetings/${meetingId}/guests`);
     return { ok: true, data: { id: meetingGuestId } };
   } catch (e) {

@@ -3,6 +3,7 @@
 import { prisma } from '@/lib/db/client';
 import { generateToken } from '@/lib/auth/tokens';
 import { getContext, handleError, type ActionResult } from '@/lib/actions/utils';
+import { auditLog } from '@/lib/audit/logger';
 import { revalidatePath } from 'next/cache';
 
 const GUEST_TOKEN_TTL_MS = 30 * 24 * 60 * 60 * 1000; // 30 days
@@ -13,7 +14,7 @@ export async function issueGuestToken(
   meetingId: string,
 ): Promise<ActionResult<{ url: string }>> {
   try {
-    const { ability } = await getContext();
+    const { session, ability } = await getContext();
     if (!ability.can('update', 'MeetingGuest')) {
       return { ok: false, error: { code: 'FORBIDDEN', message: '无权发放 Token' } };
     }
@@ -53,6 +54,7 @@ export async function issueGuestToken(
       },
     });
 
+    await auditLog(session, 'issue', 'GuestAccessToken', meetingGuestId);
     revalidatePath(`/meetings/${meetingId}/guests`);
     return { ok: true, data: { url: `/guest/${raw}` } };
   } catch (e) {
@@ -65,7 +67,7 @@ export async function revokeGuestToken(
   meetingId: string,
 ): Promise<ActionResult<{ meetingGuestId: string }>> {
   try {
-    const { ability } = await getContext();
+    const { session, ability } = await getContext();
     if (!ability.can('update', 'MeetingGuest')) {
       return { ok: false, error: { code: 'FORBIDDEN', message: '无权吊销 Token' } };
     }
@@ -75,6 +77,7 @@ export async function revokeGuestToken(
       data: { revokedAt: new Date() },
     });
 
+    await auditLog(session, 'revoke', 'GuestAccessToken', meetingGuestId);
     revalidatePath(`/meetings/${meetingId}/guests`);
     return { ok: true, data: { meetingGuestId } };
   } catch (e) {
@@ -87,7 +90,7 @@ export async function issueDriverToken(
   meetingId: string,
 ): Promise<ActionResult<{ url: string }>> {
   try {
-    const { ability } = await getContext();
+    const { session, ability } = await getContext();
     if (!ability.can('update', 'TransportOrder')) {
       return { ok: false, error: { code: 'FORBIDDEN', message: '无权发放 Token' } };
     }
@@ -110,6 +113,7 @@ export async function issueDriverToken(
       },
     });
 
+    await auditLog(session, 'issue', 'DriverAccessToken', transportOrderId);
     revalidatePath(`/meetings/${meetingId}/transport`);
     return { ok: true, data: { url: `/d/${raw}` } };
   } catch (e) {

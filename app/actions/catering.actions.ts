@@ -3,6 +3,7 @@
 import { cateringFormSchema } from '@/lib/shared/catering';
 import { cateringService } from '@/lib/domain/catering/service';
 import { assertAuthorized, getContext, handleError, type ActionResult } from '@/lib/actions/utils';
+import { auditLog } from '@/lib/audit/logger';
 import { revalidatePath } from 'next/cache';
 
 export async function createCateringOrder(input: {
@@ -13,7 +14,7 @@ export async function createCateringOrder(input: {
   notes?: string;
 }): Promise<ActionResult<{ id: string }>> {
   try {
-    const { ability } = await getContext();
+    const { session, ability } = await getContext();
     assertAuthorized(ability, 'create', 'CateringOrder');
     const data = cateringFormSchema.parse({
       mealType: input.mealType,
@@ -25,6 +26,7 @@ export async function createCateringOrder(input: {
       meetingGuestId: input.meetingGuestId,
       ...data,
     });
+    await auditLog(session, 'create', 'CateringOrder', order.id, { after: input });
     revalidatePath(`/meetings/${input.meetingId}/catering`);
     return { ok: true, data: { id: order.id } };
   } catch (e) {
@@ -38,9 +40,10 @@ export async function assignTable(
   meetingId: string,
 ): Promise<ActionResult<{ id: string }>> {
   try {
-    const { ability } = await getContext();
+    const { session, ability } = await getContext();
     assertAuthorized(ability, 'update', 'CateringOrder');
     await cateringService.assignTable(orderId, tableId);
+    await auditLog(session, 'assign', 'CateringOrder', orderId, { after: { tableId } });
     revalidatePath(`/meetings/${meetingId}/catering`);
     return { ok: true, data: { id: orderId } };
   } catch (e) {
@@ -53,9 +56,10 @@ export async function deleteCateringOrder(
   meetingId: string,
 ): Promise<ActionResult<{ id: string }>> {
   try {
-    const { ability } = await getContext();
+    const { session, ability } = await getContext();
     assertAuthorized(ability, 'delete', 'CateringOrder');
     await cateringService.delete(orderId);
+    await auditLog(session, 'delete', 'CateringOrder', orderId);
     revalidatePath(`/meetings/${meetingId}/catering`);
     revalidatePath(`/meetings/${meetingId}/resources`);
     return { ok: true, data: { id: orderId } };
@@ -71,7 +75,7 @@ export async function createDiningTable(input: {
   type: string;
 }): Promise<ActionResult<{ id: string }>> {
   try {
-    const { ability } = await getContext();
+    const { session, ability } = await getContext();
     assertAuthorized(ability, 'create', 'CateringOrder');
     const { prisma } = await import('@/lib/db/client');
     const table = await prisma.diningTable.create({
@@ -82,6 +86,7 @@ export async function createDiningTable(input: {
         type: input.type as never,
       },
     });
+    await auditLog(session, 'create', 'DiningTable', table.id, { after: input });
     revalidatePath(`/meetings/${input.meetingId}/resources`);
     revalidatePath(`/meetings/${input.meetingId}/catering`);
     return { ok: true, data: { id: table.id } };
@@ -95,10 +100,11 @@ export async function deleteDiningTable(
   meetingId: string,
 ): Promise<ActionResult<{ id: string }>> {
   try {
-    const { ability } = await getContext();
+    const { session, ability } = await getContext();
     assertAuthorized(ability, 'delete', 'CateringOrder');
     const { prisma } = await import('@/lib/db/client');
     await prisma.diningTable.delete({ where: { id: tableId } });
+    await auditLog(session, 'delete', 'DiningTable', tableId);
     revalidatePath(`/meetings/${meetingId}/resources`);
     revalidatePath(`/meetings/${meetingId}/catering`);
     return { ok: true, data: { id: tableId } };

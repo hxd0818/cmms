@@ -33,6 +33,28 @@ export async function logAction(params: {
   }
 }
 
+/**
+ * Convenience helper for Server Actions.
+ * Extracts actor info from session and calls logAction.
+ */
+export async function auditLog(
+  session: { user?: { id?: string | null; role?: string | null } } | null,
+  action: string,
+  entityType: string,
+  entityId: string,
+  extra?: { before?: unknown; after?: unknown; source?: string },
+) {
+  return logAction({
+    actorType: 'USER',
+    actorId: session?.user?.id ?? undefined,
+    actorRole: session?.user?.role ?? undefined,
+    action,
+    entityType,
+    entityId,
+    ...extra,
+  });
+}
+
 export const auditService = {
   async list(params: {
     entityType?: string;

@@ -3,6 +3,7 @@
 import { vehicleCreateSchema } from '@/lib/shared/transport';
 import { vehicleService } from '@/lib/domain/vehicle/service';
 import { assertAuthorized, getContext, handleError, type ActionResult } from '@/lib/actions/utils';
+import { auditLog } from '@/lib/audit/logger';
 import { revalidatePath } from 'next/cache';
 
 export async function createVehicle(input: {
@@ -15,7 +16,7 @@ export async function createVehicle(input: {
   belongs?: string;
 }): Promise<ActionResult<{ id: string }>> {
   try {
-    const { ability } = await getContext();
+    const { session, ability } = await getContext();
     assertAuthorized(ability, 'create', 'Vehicle');
     const data = vehicleCreateSchema.parse({
       plateNo: input.plateNo,
@@ -26,6 +27,7 @@ export async function createVehicle(input: {
       belongs: input.belongs,
     });
     const v = await vehicleService.create({ ...data, meetingId: input.meetingId });
+    await auditLog(session, 'create', 'Vehicle', v.id, { after: input });
     revalidatePath(`/meetings/${input.meetingId}/transport`);
     return { ok: true, data: { id: v.id } };
   } catch (e) {
@@ -38,9 +40,10 @@ export async function deleteVehicle(
   meetingId: string,
 ): Promise<ActionResult<{ id: string }>> {
   try {
-    const { ability } = await getContext();
+    const { session, ability } = await getContext();
     assertAuthorized(ability, 'delete', 'Vehicle');
     await vehicleService.delete(id);
+    await auditLog(session, 'delete', 'Vehicle', id);
     revalidatePath(`/meetings/${meetingId}/transport`);
     return { ok: true, data: { id } };
   } catch (e) {
