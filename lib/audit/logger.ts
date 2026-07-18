@@ -13,8 +13,9 @@ export async function logAction(params: {
   after?: unknown;
   source?: string;
 }) {
-  try {
-    await prisma.auditLog.create({
+  // Fire-and-forget: audit logging must never block the main operation
+  prisma.auditLog
+    .create({
       data: {
         actorType: params.actorType,
         actorId: params.actorId,
@@ -26,11 +27,10 @@ export async function logAction(params: {
         after: params.after as never,
         source: params.source,
       },
+    })
+    .catch((e) => {
+      logger.error({ err: e instanceof Error ? e.message : 'unknown', params }, 'audit log failed');
     });
-  } catch (e) {
-    // Audit logging should never break the main operation
-    logger.error({ err: e instanceof Error ? e.message : 'unknown', params }, 'audit log failed');
-  }
 }
 
 /**

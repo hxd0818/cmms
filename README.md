@@ -81,14 +81,14 @@ pnpm worker:start
 
 ## 项目状态
 
-| 阶段     | 状态                            | 内容                                                    |
-| -------- | ------------------------------- | ------------------------------------------------------- |
-| Phase 0  | ✅ 完成 (`v0.1.0-foundation`)   | 项目骨架、认证、CI                                      |
-| Phase 1  | ✅ 完成 (`v0.2.0-guest-module`) | 嘉宾信息库（参考实现）                                  |
-| Phase 2  | ✅ 完成 (`v0.3.0-phase2`)       | Meeting/Reception/Transport/Driver portal               |
-| Phase 3  | ✅ 完成 (`v0.4.0-phase3`)       | Lodging/Catering/Gift/Companion/Fee + Guest 360         |
-| Phase 4  | ✅ 完成 (`v1.0.0`)              | Reports/Audit/Docker/Health + 生产硬化                  |
-| 迭代改进 | ✅ 完成                         | 资源独立化/字典系统/导航重构/嘉宾端门户/拼车/资源管理页 |
+| 阶段     | 状态                            | 内容                                                                                                                 |
+| -------- | ------------------------------- | -------------------------------------------------------------------------------------------------------------------- |
+| Phase 0  | ✅ 完成 (`v0.1.0-foundation`)   | 项目骨架、认证、CI                                                                                                   |
+| Phase 1  | ✅ 完成 (`v0.2.0-guest-module`) | 嘉宾信息库（参考实现）                                                                                               |
+| Phase 2  | ✅ 完成 (`v0.3.0-phase2`)       | Meeting/Reception/Transport/Driver portal                                                                            |
+| Phase 3  | ✅ 完成 (`v0.4.0-phase3`)       | Lodging/Catering/Gift/Companion/Fee + Guest 360                                                                      |
+| Phase 4  | ✅ 完成 (`v1.0.0`)              | Reports/Audit/Docker/Health + 生产硬化                                                                               |
+| 迭代改进 | ✅ 完成                         | 资源独立化/字典系统/导航重构/嘉宾端门户/拼车/资源管理页                                                              |
 | 审计补全 | ✅ 完成                         | 审计日志/费用自动生成/任务分配/MeetingStaff/批量签到/报表导出/RSVP/室友/司机日程/字段脱敏/速率限制/通知系统/备份脚本 |
 
 详见 [CHANGELOG.md](./CHANGELOG.md) 与 [docs/plans/](./docs/plans/)。

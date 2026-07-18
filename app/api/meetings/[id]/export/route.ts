@@ -46,16 +46,16 @@ export async function GET(request: Request, { params }: RouteParams) {
 }
 
 async function exportSummary(workbook: ExcelJS.Workbook, meetingId: string) {
-  const meeting = await prisma.meeting.findUnique({ where: { id: meetingId } });
-  const guestCount = await prisma.meetingGuest.count({ where: { meetingId } });
-  const transportCount = await prisma.transportOrder.count({ where: { meetingId } });
-  const lodgingCount = await prisma.lodgingOrder.count({ where: { meetingId } });
-  const cateringCount = await prisma.cateringOrder.count({ where: { meetingId } });
-  const giftCount = await prisma.giftOrder.count({ where: { meetingId } });
-  const feeResult = await prisma.feeRecord.aggregate({
-    where: { meetingId },
-    _sum: { amount: true },
-  });
+  const [meeting, guestCount, transportCount, lodgingCount, cateringCount, giftCount, feeResult] =
+    await Promise.all([
+      prisma.meeting.findUnique({ where: { id: meetingId } }),
+      prisma.meetingGuest.count({ where: { meetingId } }),
+      prisma.transportOrder.count({ where: { meetingId } }),
+      prisma.lodgingOrder.count({ where: { meetingId } }),
+      prisma.cateringOrder.count({ where: { meetingId } }),
+      prisma.giftOrder.count({ where: { meetingId } }),
+      prisma.feeRecord.aggregate({ where: { meetingId }, _sum: { amount: true } }),
+    ]);
 
   const sheet = workbook.addWorksheet('会议概览');
   sheet.columns = [

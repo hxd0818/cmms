@@ -1,5 +1,5 @@
 import { describe, it, expect, beforeAll } from 'vitest';
-import { encrypt, decrypt, maskPhone, maskIdNumber } from '@/lib/db/field-encryption';
+import { encrypt, decrypt } from '@/lib/db/field-encryption';
 
 describe('field encryption', () => {
   beforeAll(() => {
@@ -30,19 +30,5 @@ describe('field encryption', () => {
     const b = encrypt('13812345678');
     expect(a).not.toBe(b);
     expect(decrypt(a)).toBe(decrypt(b));
-  });
-
-  it('maskPhone returns 138****5678 format', () => {
-    expect(maskPhone('13812345678')).toBe('138****5678');
-  });
-
-  it('maskPhone handles short / null inputs', () => {
-    expect(maskPhone('123')).toBe('123');
-    expect(maskPhone(null)).toBe(null);
-    expect(maskPhone(undefined)).toBe(undefined);
-  });
-
-  it('maskIdNumber returns 110101********1234 format', () => {
-    expect(maskIdNumber('110101199001011234')).toBe('110101********1234');
   });
 });

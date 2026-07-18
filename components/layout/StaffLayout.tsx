@@ -9,15 +9,19 @@ export default async function StaffLayout({ children }: { children: React.ReactN
   const session = await auth();
   if (!session) redirect('/login');
 
-  // Load all dictionary labels from DB (with 1-min cache in service)
+  // Load all dictionary labels from DB in parallel (1-min cache in service)
+  const categories = Object.keys(DICTIONARY) as DictKey[];
+  const labelResults = await Promise.all(
+    categories.map(async (cat) => {
+      try {
+        return [cat, await dictionaryService.getLabels(cat)] as const;
+      } catch {
+        return [cat, DICTIONARY[cat]] as const;
+      }
+    }),
+  );
   const labels: Record<string, Record<string, string>> = {};
-  for (const category of Object.keys(DICTIONARY) as DictKey[]) {
-    try {
-      labels[category] = await dictionaryService.getLabels(category);
-    } catch {
-      labels[category] = DICTIONARY[category];
-    }
-  }
+  for (const [cat, vals] of labelResults) labels[cat] = vals;
 
   return (
     <div className="flex min-h-screen" style={{ background: 'var(--background)' }}>

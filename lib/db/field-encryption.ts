@@ -39,17 +39,5 @@ export function decrypt(ciphertext: string | null | undefined): string | null {
 }
 
 /**
- * Returns a mask-friendly version: 138****5678
+ * Masking helpers have moved to lib/shared/field-masking.ts
  */
-export function maskPhone(phone: string | null | undefined): string | null | undefined {
-  if (!phone || phone.length < 7) return phone;
-  return phone.slice(0, 3) + '****' + phone.slice(-4);
-}
-
-/**
- * Returns a mask-friendly version: 110101********1234
- */
-export function maskIdNumber(id: string | null | undefined): string | null | undefined {
-  if (!id || id.length < 8) return id;
-  return id.slice(0, 6) + '********' + id.slice(-4);
-}

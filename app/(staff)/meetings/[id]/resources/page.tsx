@@ -27,7 +27,9 @@ export default async function ResourcesPage({ params }: PageProps) {
     vehicleRepository.listByMeeting(id),
     hotelRepository.listByMeeting(id),
     prisma.diningTable.findMany({ where: { meetingId: id }, orderBy: { name: 'asc' } }),
-  ]);
+  ]).catch(() => {
+    notFound();
+  });
 
   // Get all rooms for all hotels
   const hotelIds = hotels.map((h) => h.id);

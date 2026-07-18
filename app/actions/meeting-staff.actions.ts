@@ -12,19 +12,9 @@ import {
 import { auditLog } from '@/lib/audit/logger';
 import { revalidatePath } from 'next/cache';
 import { NotFoundError, ConflictError } from '@/lib/shared/errors';
+import { dict } from '@/lib/shared/dictionary';
 
-const VALID_ROLES = [
-  'OWNER',
-  'RECEPTION_LEAD',
-  'RECEPTION_STAFF',
-  'TRANSPORT_LEAD',
-  'TRANSPORT_STAFF',
-  'LODGING_LEAD',
-  'CATERING_LEAD',
-  'GIFT_LEAD',
-  'FINANCE',
-  'STAFF',
-] as const;
+const VALID_ROLES = Object.keys(dict.meetingRole);
 
 const addStaffSchema = z.object({
   meetingId: z.string().min(1),
@@ -92,7 +82,7 @@ export async function addStaff(input: {
       data: {
         meetingId: data.meetingId,
         userId: data.userId,
-        role: data.role,
+        role: data.role as never,
       },
     });
     await auditLog(session, 'assign', 'MeetingStaff', staff.id, {
@@ -151,7 +141,7 @@ export async function updateStaffRole(input: {
 
     const updated = await prisma.meetingStaff.update({
       where: { meetingId_userId: { meetingId: data.meetingId, userId: data.userId } },
-      data: { role: data.role },
+      data: { role: data.role as never },
     });
     await auditLog(session, 'update-role', 'MeetingStaff', updated.id, {
       before: { role: existing.role },

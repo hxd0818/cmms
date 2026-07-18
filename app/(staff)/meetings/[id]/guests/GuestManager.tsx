@@ -2,6 +2,7 @@
 
 import { useState, Fragment } from 'react';
 import { useRouter } from 'next/navigation';
+import Link from 'next/link';
 import { useDbDict } from '@/components/providers/DictProvider';
 import type { MeetingGuest, Guest } from '@/lib/generated/prisma/client';
 import {
@@ -833,5 +834,3 @@ function ShareLinkButton({
     </div>
   );
 }
-
-import Link from 'next/link';
