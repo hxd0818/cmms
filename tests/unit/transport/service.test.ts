@@ -26,11 +26,17 @@ vi.mock('@/lib/domain/meeting-guest/repository', () => ({
   },
 }));
 
+vi.mock('@/lib/domain/fee/service', () => ({
+  feeService: {
+    create: vi.fn().mockResolvedValue({}),
+  },
+}));
+
 import { transportService } from '@/lib/domain/transport/service';
 import { transportRepository } from '@/lib/domain/transport/repository';
 import { vehicleRepository } from '@/lib/domain/vehicle/repository';
 import { meetingGuestRepository } from '@/lib/domain/meeting-guest/repository';
-import { ConflictError, NotFoundError, ValidationError } from '@/lib/shared/errors';
+import { NotFoundError, ValidationError } from '@/lib/shared/errors';
 
 describe('transportService', () => {
   beforeEach(() => vi.clearAllMocks());
@@ -57,8 +63,10 @@ describe('transportService', () => {
         id: 'v1',
         capacity: 7,
       } as never);
+      vi.mocked(transportRepository.assign).mockResolvedValue({ id: 'o1', vehicleId: 'v1' } as never);
       // 1 existing + 1 new = 2 ≤ 7 capacity, should succeed
-      await expect(transportService.assign('o1', 'v1')).resolves.toBeDefined();
+      const result = await transportService.assign('o1', 'v1');
+      expect(result).toBeDefined();
     });
 
     it('rejects when vehicle capacity < guests + inheritTransport subordinates', async () => {
