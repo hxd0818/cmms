@@ -235,7 +235,9 @@ function VehicleAssignDialog({
   // Fetch seat info when a vehicle is selected
   useEffect(() => {
     if (!selectedVehicle || !pickupTime) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setSeatInfo(null);
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setNeedConfirm(false);
       return;
     }
