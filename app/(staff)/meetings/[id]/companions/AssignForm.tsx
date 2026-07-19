@@ -38,15 +38,23 @@ export function AssignForm({
 
   async function onAssign(e: React.FormEvent) {
     e.preventDefault();
-    if (!meetingGuestId) { toast.error('请选择嘉宾'); return; }
-    if (!companionId) { toast.error('请选择接待人员'); return; }
+    if (!meetingGuestId) {
+      toast.error('请选择嘉宾');
+      return;
+    }
+    if (!companionId) {
+      toast.error('请选择接待人员');
+      return;
+    }
     setSubmitting(true);
     const r = await assignCompanion({ meetingId, meetingGuestId, companionId, assignmentScope });
     setSubmitting(false);
     if (r.ok) {
       toast.success('接待已分配');
       setAssignOpen(false);
-      setMeetingGuestId(''); setCompanionId(''); setAssignmentScope('FULL');
+      setMeetingGuestId('');
+      setCompanionId('');
+      setAssignmentScope('FULL');
       router.refresh();
     } else {
       toast.error(r.error?.message ?? '分配失败');
@@ -55,19 +63,28 @@ export function AssignForm({
 
   async function onCreate(e: React.FormEvent) {
     e.preventDefault();
-    if (!newName) { toast.error('请输入姓名'); return; }
+    if (!newName) {
+      toast.error('请输入姓名');
+      return;
+    }
     setSubmitting(true);
     const r = await createCompanion({
       name: newName,
       phone: newPhone || undefined,
-      languages: newLanguages.split(',').map((l) => l.trim()).filter(Boolean),
+      languages: newLanguages
+        .split(',')
+        .map((l) => l.trim())
+        .filter(Boolean),
       role: newRole,
     });
     setSubmitting(false);
     if (r.ok) {
       toast.success('接待人员已添加');
       setCreateOpen(false);
-      setNewName(''); setNewPhone(''); setNewRole('翻译'); setNewLanguages('');
+      setNewName('');
+      setNewPhone('');
+      setNewRole('翻译');
+      setNewLanguages('');
       router.refresh();
     } else {
       toast.error(r.error?.message ?? '添加失败');
@@ -77,10 +94,22 @@ export function AssignForm({
   return (
     <div className="space-y-3">
       <div className="flex gap-2">
-        <Button onClick={() => { setAssignOpen(!assignOpen); setCreateOpen(false); }} variant="outline">
+        <Button
+          onClick={() => {
+            setAssignOpen(!assignOpen);
+            setCreateOpen(false);
+          }}
+          variant="outline"
+        >
           分配接待
         </Button>
-        <Button onClick={() => { setCreateOpen(!createOpen); setAssignOpen(false); }} variant="outline">
+        <Button
+          onClick={() => {
+            setCreateOpen(!createOpen);
+            setAssignOpen(false);
+          }}
+          variant="outline"
+        >
           <UserPlus size={14} className="mr-1" /> 新增接待人员
         </Button>
       </div>
@@ -92,24 +121,48 @@ export function AssignForm({
           <div className="grid grid-cols-4 gap-3">
             <div>
               <Label className="text-xs text-stone-400">姓名 *</Label>
-              <Input className="h-8 mt-1" value={newName} onChange={(e) => setNewName(e.target.value)} required />
+              <Input
+                className="h-8 mt-1"
+                value={newName}
+                onChange={(e) => setNewName(e.target.value)}
+                required
+              />
             </div>
             <div>
               <Label className="text-xs text-stone-400">手机</Label>
-              <Input className="h-8 mt-1" value={newPhone} onChange={(e) => setNewPhone(e.target.value)} placeholder="11 位手机号" />
+              <Input
+                className="h-8 mt-1"
+                value={newPhone}
+                onChange={(e) => setNewPhone(e.target.value)}
+                placeholder="11 位手机号"
+              />
             </div>
             <div>
               <Label className="text-xs text-stone-400">职务</Label>
-              <Input className="h-8 mt-1" value={newRole} onChange={(e) => setNewRole(e.target.value)} placeholder="翻译/接待/安保..." />
+              <Input
+                className="h-8 mt-1"
+                value={newRole}
+                onChange={(e) => setNewRole(e.target.value)}
+                placeholder="翻译/接待/安保..."
+              />
             </div>
             <div>
               <Label className="text-xs text-stone-400">语言能力</Label>
-              <Input className="h-8 mt-1" value={newLanguages} onChange={(e) => setNewLanguages(e.target.value)} placeholder="英语, 日语" />
+              <Input
+                className="h-8 mt-1"
+                value={newLanguages}
+                onChange={(e) => setNewLanguages(e.target.value)}
+                placeholder="英语, 日语"
+              />
             </div>
           </div>
           <div className="flex gap-2">
-            <Button size="sm" type="submit" disabled={submitting}>{submitting ? '创建中...' : '创建'}</Button>
-            <Button size="sm" type="button" variant="outline" onClick={() => setCreateOpen(false)}>取消</Button>
+            <Button size="sm" type="submit" disabled={submitting}>
+              {submitting ? '创建中...' : '创建'}
+            </Button>
+            <Button size="sm" type="button" variant="outline" onClick={() => setCreateOpen(false)}>
+              取消
+            </Button>
           </div>
         </form>
       )}
@@ -131,7 +184,9 @@ export function AssignForm({
                 </SelectTrigger>
                 <SelectContent>
                   {guests.map((g) => (
-                    <SelectItem key={g.id} value={g.id}>{g.name}</SelectItem>
+                    <SelectItem key={g.id} value={g.id}>
+                      {g.name}
+                    </SelectItem>
                   ))}
                 </SelectContent>
               </Select>
@@ -151,10 +206,14 @@ export function AssignForm({
                 </SelectTrigger>
                 <SelectContent>
                   {companions.length === 0 ? (
-                    <SelectItem value="" disabled>请先新增接待人员</SelectItem>
+                    <SelectItem value="" disabled>
+                      请先新增接待人员
+                    </SelectItem>
                   ) : (
                     companions.map((c) => (
-                      <SelectItem key={c.id} value={c.id}>{c.name} ({c.role})</SelectItem>
+                      <SelectItem key={c.id} value={c.id}>
+                        {c.name} ({c.role})
+                      </SelectItem>
                     ))
                   )}
                 </SelectContent>
@@ -162,21 +221,30 @@ export function AssignForm({
             </div>
             <div>
               <Label htmlFor="scope">接待范围 *</Label>
-              <Select value={assignmentScope} onValueChange={(v) => setAssignmentScope(v ?? 'FULL')}>
+              <Select
+                value={assignmentScope}
+                onValueChange={(v) => setAssignmentScope(v ?? 'FULL')}
+              >
                 <SelectTrigger>
                   <span>{dict.assignmentScope[assignmentScope] ?? assignmentScope}</span>
                 </SelectTrigger>
                 <SelectContent>
                   {Object.entries(dict.assignmentScope).map(([v, l]) => (
-                    <SelectItem key={v} value={v}>{l}</SelectItem>
+                    <SelectItem key={v} value={v}>
+                      {l}
+                    </SelectItem>
                   ))}
                 </SelectContent>
               </Select>
             </div>
           </div>
           <div className="flex gap-2">
-            <Button size="sm" type="submit" disabled={submitting}>{submitting ? '分配中...' : '确认分配'}</Button>
-            <Button size="sm" type="button" variant="outline" onClick={() => setAssignOpen(false)}>取消</Button>
+            <Button size="sm" type="submit" disabled={submitting}>
+              {submitting ? '分配中...' : '确认分配'}
+            </Button>
+            <Button size="sm" type="button" variant="outline" onClick={() => setAssignOpen(false)}>
+              取消
+            </Button>
           </div>
           {companions.length === 0 && (
             <p className="text-xs text-amber-600">接待人员库为空，请先点击「新增接待人员」添加</p>

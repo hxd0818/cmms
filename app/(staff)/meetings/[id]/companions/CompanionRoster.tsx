@@ -40,9 +40,20 @@ export function CompanionRoster({ companions }: { companions: RosterItem[] }) {
       <div className="divide-y divide-stone-100">
         {companions.map((c) =>
           editingId === c.id ? (
-            <EditRow key={c.id} item={c} onDone={() => { setEditingId(null); router.refresh(); }} onCancel={() => setEditingId(null)} />
+            <EditRow
+              key={c.id}
+              item={c}
+              onDone={() => {
+                setEditingId(null);
+                router.refresh();
+              }}
+              onCancel={() => setEditingId(null)}
+            />
           ) : (
-            <div key={c.id} className="flex items-center justify-between px-4 py-3 hover:bg-stone-50">
+            <div
+              key={c.id}
+              className="flex items-center justify-between px-4 py-3 hover:bg-stone-50"
+            >
               <div className="flex items-center gap-3">
                 <div className="w-8 h-8 rounded-full bg-stone-100 flex items-center justify-center text-xs font-bold text-stone-500">
                   {c.name.charAt(0)}
@@ -50,16 +61,52 @@ export function CompanionRoster({ companions }: { companions: RosterItem[] }) {
                 <div>
                   <p className="text-sm font-medium">{c.name}</p>
                   <p className="text-xs text-stone-400">
-                    {c.role}{c.languages.length > 0 && ' · ' + c.languages.join(', ')}{c.phone && ' · ' + c.phone}
+                    {c.role}
+                    {c.languages.length > 0 && ' · ' + c.languages.join(', ')}
+                    {c.phone && ' · ' + c.phone}
                   </p>
                 </div>
               </div>
               <div className="flex items-center gap-1">
-                {c.assigned ? <Badge variant="secondary">{c.count} 位嘉宾</Badge> : <span className="text-xs text-stone-300 mr-2">未分配</span>}
-                <button onClick={async () => { await navigator.clipboard.writeText(window.location.origin + '/companion/' + c.id); toast.success('已复制接待链接'); }} className="text-stone-400 hover:text-stone-600 p-1.5 rounded hover:bg-stone-100" title="分享"><Share2 size={14} /></button>
-                <button onClick={() => setEditingId(c.id)} className="text-stone-400 hover:text-stone-600 p-1.5 rounded hover:bg-stone-100" title="编辑"><Pencil size={14} /></button>
+                {c.assigned ? (
+                  <Badge variant="secondary">{c.count} 位嘉宾</Badge>
+                ) : (
+                  <span className="text-xs text-stone-300 mr-2">未分配</span>
+                )}
+                <button
+                  onClick={async () => {
+                    await navigator.clipboard.writeText(
+                      window.location.origin + '/companion/' + c.id,
+                    );
+                    toast.success('已复制接待链接');
+                  }}
+                  className="text-stone-400 hover:text-stone-600 p-1.5 rounded hover:bg-stone-100"
+                  title="分享"
+                >
+                  <Share2 size={14} />
+                </button>
+                <button
+                  onClick={() => setEditingId(c.id)}
+                  className="text-stone-400 hover:text-stone-600 p-1.5 rounded hover:bg-stone-100"
+                  title="编辑"
+                >
+                  <Pencil size={14} />
+                </button>
                 {!c.assigned && (
-                  <button onClick={async () => { if (!confirm('确认删除「' + c.name + '」？')) return; const r = await deleteCompanion(c.id); if (r.ok) { toast.success('已删除'); router.refresh(); } else toast.error('删除失败'); }} className="text-stone-300 hover:text-red-500 p-1.5 rounded hover:bg-stone-100" title="删除"><Trash2 size={14} /></button>
+                  <button
+                    onClick={async () => {
+                      if (!confirm('确认删除「' + c.name + '」？')) return;
+                      const r = await deleteCompanion(c.id);
+                      if (r.ok) {
+                        toast.success('已删除');
+                        router.refresh();
+                      } else toast.error('删除失败');
+                    }}
+                    className="text-stone-300 hover:text-red-500 p-1.5 rounded hover:bg-stone-100"
+                    title="删除"
+                  >
+                    <Trash2 size={14} />
+                  </button>
                 )}
               </div>
             </div>
@@ -70,7 +117,15 @@ export function CompanionRoster({ companions }: { companions: RosterItem[] }) {
   );
 }
 
-function EditRow({ item, onDone, onCancel }: { item: RosterItem; onDone: () => void; onCancel: () => void }) {
+function EditRow({
+  item,
+  onDone,
+  onCancel,
+}: {
+  item: RosterItem;
+  onDone: () => void;
+  onCancel: () => void;
+}) {
   const [name, setName] = useState(item.name);
   const [phone, setPhone] = useState(item.phone ?? '');
   const [role, setRole] = useState(item.role);
@@ -79,22 +134,68 @@ function EditRow({ item, onDone, onCancel }: { item: RosterItem; onDone: () => v
 
   async function onSave() {
     setSaving(true);
-    const r = await updateCompanion(item.id, { name, phone: phone || undefined, role, languages: languages.split(',').map((l) => l.trim()).filter(Boolean) });
+    const r = await updateCompanion(item.id, {
+      name,
+      phone: phone || undefined,
+      role,
+      languages: languages
+        .split(',')
+        .map((l) => l.trim())
+        .filter(Boolean),
+    });
     setSaving(false);
-    if (r.ok) { toast.success('已保存'); onDone(); } else toast.error('保存失败');
+    if (r.ok) {
+      toast.success('已保存');
+      onDone();
+    } else toast.error('保存失败');
   }
 
   return (
     <div className="px-4 py-3 bg-stone-50 space-y-2">
       <div className="grid grid-cols-4 gap-2">
-        <div><Label className="text-xs text-stone-400">姓名</Label><Input className="h-7 mt-0.5 text-xs" value={name} onChange={(e) => setName(e.target.value)} /></div>
-        <div><Label className="text-xs text-stone-400">职务</Label><Input className="h-7 mt-0.5 text-xs" value={role} onChange={(e) => setRole(e.target.value)} /></div>
-        <div><Label className="text-xs text-stone-400">手机</Label><Input className="h-7 mt-0.5 text-xs" value={phone} onChange={(e) => setPhone(e.target.value)} /></div>
-        <div><Label className="text-xs text-stone-400">语言</Label><Input className="h-7 mt-0.5 text-xs" value={languages} onChange={(e) => setLanguages(e.target.value)} placeholder="英语, 日语" /></div>
+        <div>
+          <Label className="text-xs text-stone-400">姓名</Label>
+          <Input
+            className="h-7 mt-0.5 text-xs"
+            value={name}
+            onChange={(e) => setName(e.target.value)}
+          />
+        </div>
+        <div>
+          <Label className="text-xs text-stone-400">职务</Label>
+          <Input
+            className="h-7 mt-0.5 text-xs"
+            value={role}
+            onChange={(e) => setRole(e.target.value)}
+          />
+        </div>
+        <div>
+          <Label className="text-xs text-stone-400">手机</Label>
+          <Input
+            className="h-7 mt-0.5 text-xs"
+            value={phone}
+            onChange={(e) => setPhone(e.target.value)}
+          />
+        </div>
+        <div>
+          <Label className="text-xs text-stone-400">语言</Label>
+          <Input
+            className="h-7 mt-0.5 text-xs"
+            value={languages}
+            onChange={(e) => setLanguages(e.target.value)}
+            placeholder="英语, 日语"
+          />
+        </div>
       </div>
       <div className="flex gap-2">
-        <Button size="sm" onClick={onSave} disabled={saving}><Check size={13} className="mr-1" />{saving ? '保存中...' : '保存'}</Button>
-        <Button size="sm" variant="outline" onClick={onCancel}><X size={13} className="mr-1" />取消</Button>
+        <Button size="sm" onClick={onSave} disabled={saving}>
+          <Check size={13} className="mr-1" />
+          {saving ? '保存中...' : '保存'}
+        </Button>
+        <Button size="sm" variant="outline" onClick={onCancel}>
+          <X size={13} className="mr-1" />
+          取消
+        </Button>
       </div>
     </div>
   );

@@ -49,7 +49,8 @@ export default async function CompanionsPage({ params, searchParams }: PageProps
         <div>
           <h1 className="text-xl font-bold">接待管理</h1>
           <p className="text-sm text-stone-400">
-            接待人员 {companions.length} 名 · 待分配嘉宾 {unassignedGuestCount} 位 · 已分配 {assignments.length} 个
+            接待人员 {companions.length} 名 · 待分配嘉宾 {unassignedGuestCount} 位 · 已分配{' '}
+            {assignments.length} 个
           </p>
         </div>
         <ViewToggle basePath={`/meetings/${id}/companions`} boardMode={boardMode} />

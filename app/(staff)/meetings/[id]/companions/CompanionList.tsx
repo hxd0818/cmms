@@ -111,9 +111,9 @@ export function CompanionList({ meetingId, assignments }: Props) {
                       variant="ghost"
                       onClick={() => onUnassign(a.id)}
                       disabled={unassigning === a.id}
-                  >
-                    {unassigning === a.id ? '取消中...' : '取消分配'}
-                  </Button>
+                    >
+                      {unassigning === a.id ? '取消中...' : '取消分配'}
+                    </Button>
                   </div>
                 </TableCell>
               </TableRow>

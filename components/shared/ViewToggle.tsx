@@ -2,13 +2,7 @@ import Link from 'next/link';
 import { cn } from '@/lib/utils';
 import { List, LayoutGrid } from 'lucide-react';
 
-export function ViewToggle({
-  basePath,
-  boardMode,
-}: {
-  basePath: string;
-  boardMode: boolean;
-}) {
+export function ViewToggle({ basePath, boardMode }: { basePath: string; boardMode: boolean }) {
   return (
     <div className="flex items-center gap-0.5 border border-stone-200 rounded-lg p-0.5 bg-white">
       <Link

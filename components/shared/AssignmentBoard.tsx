@@ -106,7 +106,10 @@ export function AssignmentBoard({
         </div>
         <div className="p-2 border-b">
           <div className="relative">
-            <Search size={13} className="absolute left-2.5 top-1/2 -translate-y-1/2 text-stone-300" />
+            <Search
+              size={13}
+              className="absolute left-2.5 top-1/2 -translate-y-1/2 text-stone-300"
+            />
             <Input
               className="h-8 pl-8 text-xs"
               placeholder={leftSearchPlaceholder}
@@ -144,7 +147,12 @@ export function AssignmentBoard({
                     <div className="flex items-center gap-2">
                       <span className="text-sm font-medium truncate">{item.title}</span>
                       {item.badge && (
-                        <span className={cn('text-xs px-1.5 py-0.5 rounded shrink-0', item.badge.className)}>
+                        <span
+                          className={cn(
+                            'text-xs px-1.5 py-0.5 rounded shrink-0',
+                            item.badge.className,
+                          )}
+                        >
                           {item.badge.text}
                         </span>
                       )}
@@ -170,7 +178,10 @@ export function AssignmentBoard({
         </div>
         <div className="p-2 border-b">
           <div className="relative">
-            <Search size={13} className="absolute left-2.5 top-1/2 -translate-y-1/2 text-stone-300" />
+            <Search
+              size={13}
+              className="absolute left-2.5 top-1/2 -translate-y-1/2 text-stone-300"
+            />
             <Input
               className="h-8 pl-8 text-xs"
               placeholder={rightSearchPlaceholder}
@@ -203,7 +214,12 @@ export function AssignmentBoard({
                   <div className="flex items-center gap-2">
                     <span className="text-sm font-medium truncate">{item.title}</span>
                     {item.badge && (
-                      <span className={cn('text-xs px-1.5 py-0.5 rounded shrink-0', item.badge.className)}>
+                      <span
+                        className={cn(
+                          'text-xs px-1.5 py-0.5 rounded shrink-0',
+                          item.badge.className,
+                        )}
+                      >
                         {item.badge.text}
                       </span>
                     )}
@@ -213,7 +229,12 @@ export function AssignmentBoard({
                   )}
                 </div>
                 {item.meta && (
-                  <span className={cn('text-xs shrink-0 ml-2', item.disabled ? 'text-red-400' : 'text-stone-500')}>
+                  <span
+                    className={cn(
+                      'text-xs shrink-0 ml-2',
+                      item.disabled ? 'text-red-400' : 'text-stone-500',
+                    )}
+                  >
                     {item.meta}
                   </span>
                 )}

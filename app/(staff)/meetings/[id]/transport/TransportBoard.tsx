@@ -42,7 +42,12 @@ export function TransportBoard({
     id: o.id,
     title: o.guestName,
     subtitle: o.pickupLocation + ' -> ' + o.dropoffLocation,
-    meta: new Date(o.pickupTime).toLocaleString('zh-CN', { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' }),
+    meta: new Date(o.pickupTime).toLocaleString('zh-CN', {
+      month: 'short',
+      day: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit',
+    }),
     badge: { text: o.level, className: getBadgeStyle(o.level) },
   }));
 

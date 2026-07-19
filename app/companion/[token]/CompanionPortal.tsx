@@ -3,7 +3,18 @@
 import { useState } from 'react';
 import { dict } from '@/lib/shared/dictionary';
 import { GuestShareButton } from './GuestShareButton';
-import { Phone, Globe, Clock, MapPin, Car, Bed, UtensilsCrossed, Star, AlertCircle, ChevronRight } from 'lucide-react';
+import {
+  Phone,
+  Globe,
+  Clock,
+  MapPin,
+  Car,
+  Bed,
+  UtensilsCrossed,
+  Star,
+  AlertCircle,
+  ChevronRight,
+} from 'lucide-react';
 import type { LucideIcon } from 'lucide-react';
 
 interface GuestTaskData {
@@ -112,9 +123,7 @@ export function CompanionPortal({
             placeholder="手机后 4 位"
             className={`w-full text-center text-2xl tracking-[0.5em] py-3 rounded-lg border ${pinError ? 'border-red-400 bg-red-50' : 'border-stone-200'} focus:border-stone-800 focus:outline-none`}
           />
-          {pinError && (
-            <p className="text-xs text-red-500 text-center">输入不正确，请重试</p>
-          )}
+          {pinError && <p className="text-xs text-red-500 text-center">输入不正确，请重试</p>}
           <button
             onClick={() => {
               if (pin === phoneLastFour) {
@@ -152,8 +161,16 @@ export function CompanionPortal({
           <h1 className="text-lg font-bold text-stone-800">{companionName}</h1>
           <div className="flex flex-wrap gap-3 mt-1 text-xs text-stone-400">
             <span>{companionRole}</span>
-            {companionPhone && <span className="flex items-center gap-1"><Phone size={11} /> {companionPhone}</span>}
-            {companionLanguages.length > 0 && <span className="flex items-center gap-1"><Globe size={11} /> {companionLanguages.join(', ')}</span>}
+            {companionPhone && (
+              <span className="flex items-center gap-1">
+                <Phone size={11} /> {companionPhone}
+              </span>
+            )}
+            {companionLanguages.length > 0 && (
+              <span className="flex items-center gap-1">
+                <Globe size={11} /> {companionLanguages.join(', ')}
+              </span>
+            )}
           </div>
         </div>
 
@@ -172,7 +189,9 @@ export function CompanionPortal({
               >
                 <div className="flex items-center gap-1.5">
                   <span>{g.guestName}</span>
-                  <span className={`text-[10px] px-1 py-0.5 rounded ${i === activeIdx ? 'bg-white/20' : 'bg-stone-100'}`}>
+                  <span
+                    className={`text-[10px] px-1 py-0.5 rounded ${i === activeIdx ? 'bg-white/20' : 'bg-stone-100'}`}
+                  >
                     {dict.guestLevel[g.guestLevel] ?? g.guestLevel}
                   </span>
                 </div>
@@ -204,7 +223,11 @@ function GuestDetail({ guest }: { guest: GuestTaskData }) {
           {new Date(guest.meetingStart).toLocaleDateString('zh-CN')}
           {' ~ '}
           {new Date(guest.meetingEnd).toLocaleDateString('zh-CN')}
-          {guest.meetingVenue && <><MapPin size={11} className="ml-1" /> {guest.meetingVenue}</>}
+          {guest.meetingVenue && (
+            <>
+              <MapPin size={11} className="ml-1" /> {guest.meetingVenue}
+            </>
+          )}
         </div>
       </div>
 
@@ -221,7 +244,9 @@ function GuestDetail({ guest }: { guest: GuestTaskData }) {
           {guest.guestCompany && <span>单位: {guest.guestCompany}</span>}
           {guest.guestTitle && <span>职务: {guest.guestTitle}</span>}
           {guest.guestPhone && <span className="font-mono">电话: {guest.guestPhone}</span>}
-          {guest.guestGender && <span>性别: {dict.gender[guest.guestGender] ?? guest.guestGender}</span>}
+          {guest.guestGender && (
+            <span>性别: {dict.gender[guest.guestGender] ?? guest.guestGender}</span>
+          )}
         </div>
         {guest.dietaryTags.length > 0 && (
           <div className="flex items-center gap-1 text-xs text-orange-600 bg-orange-50 rounded px-2 py-1">
@@ -243,12 +268,23 @@ function GuestDetail({ guest }: { guest: GuestTaskData }) {
                 <span className="text-xs text-stone-500">{dict.pickupType[t.pickupType]}</span>
                 <Badge>{dict.transportStatus[t.status] ?? t.status}</Badge>
               </div>
-              <p className="text-sm text-stone-700 mt-1">{t.pickupLocation} {'->'} {t.dropoffLocation}</p>
+              <p className="text-sm text-stone-700 mt-1">
+                {t.pickupLocation} {'->'} {t.dropoffLocation}
+              </p>
               <p className="text-xs text-stone-400 mt-0.5">
-                {new Date(t.pickupTime).toLocaleString('zh-CN', { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' })}
+                {new Date(t.pickupTime).toLocaleString('zh-CN', {
+                  month: 'short',
+                  day: 'numeric',
+                  hour: '2-digit',
+                  minute: '2-digit',
+                })}
                 {t.flightNo && <span className="font-mono ml-2">{t.flightNo}</span>}
               </p>
-              {t.plateNo && <p className="text-xs text-stone-500 mt-0.5">{t.plateNo} · {t.driverName} {t.driverPhone}</p>}
+              {t.plateNo && (
+                <p className="text-xs text-stone-500 mt-0.5">
+                  {t.plateNo} · {t.driverName} {t.driverPhone}
+                </p>
+              )}
             </Card>
           ))}
         </Section>
@@ -261,7 +297,9 @@ function GuestDetail({ guest }: { guest: GuestTaskData }) {
             <Card key={i}>
               {l.hotelName ? (
                 <>
-                  <p className="text-sm text-stone-700 font-medium">{l.hotelName} {l.roomNumber}</p>
+                  <p className="text-sm text-stone-700 font-medium">
+                    {l.hotelName} {l.roomNumber}
+                  </p>
                   <p className="text-xs text-stone-400">
                     {dict.roomType[l.roomType ?? ''] ?? l.roomType}
                     {' · '}
@@ -270,7 +308,9 @@ function GuestDetail({ guest }: { guest: GuestTaskData }) {
                     {new Date(l.checkOut).toLocaleDateString('zh-CN')}
                   </p>
                 </>
-              ) : <p className="text-sm text-stone-400">房间待分配</p>}
+              ) : (
+                <p className="text-sm text-stone-400">房间待分配</p>
+              )}
             </Card>
           ))}
         </Section>
@@ -286,9 +326,16 @@ function GuestDetail({ guest }: { guest: GuestTaskData }) {
                 {c.tableName && <span className="text-xs text-stone-400">{c.tableName}</span>}
               </div>
               <p className="text-xs text-stone-400 mt-0.5">
-                {new Date(c.mealTime).toLocaleString('zh-CN', { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' })}
+                {new Date(c.mealTime).toLocaleString('zh-CN', {
+                  month: 'short',
+                  day: 'numeric',
+                  hour: '2-digit',
+                  minute: '2-digit',
+                })}
               </p>
-              {c.dietary.length > 0 && <p className="text-xs text-orange-500 mt-0.5">饮食: {c.dietary.join(', ')}</p>}
+              {c.dietary.length > 0 && (
+                <p className="text-xs text-orange-500 mt-0.5">饮食: {c.dietary.join(', ')}</p>
+              )}
             </Card>
           ))}
         </Section>
@@ -301,12 +348,22 @@ function GuestDetail({ guest }: { guest: GuestTaskData }) {
             <Card key={i}>
               <div className="flex items-center justify-between">
                 <span className="text-sm text-stone-700">{a.title}</span>
-                <span className="text-xs text-stone-400 bg-stone-100 px-1.5 py-0.5 rounded">{dict.agendaType[a.type]}</span>
+                <span className="text-xs text-stone-400 bg-stone-100 px-1.5 py-0.5 rounded">
+                  {dict.agendaType[a.type]}
+                </span>
               </div>
               <p className="text-xs text-stone-400 mt-0.5">
-                {new Date(a.start).toLocaleString('zh-CN', { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' })}
+                {new Date(a.start).toLocaleString('zh-CN', {
+                  month: 'short',
+                  day: 'numeric',
+                  hour: '2-digit',
+                  minute: '2-digit',
+                })}
                 {' ~ '}
-                {new Date(a.end).toLocaleTimeString('zh-CN', { hour: '2-digit', minute: '2-digit' })}
+                {new Date(a.end).toLocaleTimeString('zh-CN', {
+                  hour: '2-digit',
+                  minute: '2-digit',
+                })}
                 {a.venue && <span className="ml-2">{a.venue}</span>}
               </p>
             </Card>
@@ -317,7 +374,15 @@ function GuestDetail({ guest }: { guest: GuestTaskData }) {
   );
 }
 
-function Section({ icon: Icon, title, children }: { icon: LucideIcon; title: string; children: React.ReactNode }) {
+function Section({
+  icon: Icon,
+  title,
+  children,
+}: {
+  icon: LucideIcon;
+  title: string;
+  children: React.ReactNode;
+}) {
   return (
     <div>
       <div className="flex items-center gap-1.5 mb-2 px-1">
@@ -334,5 +399,7 @@ function Card({ children }: { children: React.ReactNode }) {
 }
 
 function Badge({ children }: { children: React.ReactNode }) {
-  return <span className="text-xs px-2 py-0.5 rounded-full bg-stone-100 text-stone-500">{children}</span>;
+  return (
+    <span className="text-xs px-2 py-0.5 rounded-full bg-stone-100 text-stone-500">{children}</span>
+  );
 }

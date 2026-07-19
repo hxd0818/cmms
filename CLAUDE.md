@@ -193,27 +193,27 @@ pnpm lint && pnpm typecheck && pnpm format:check && pnpm test && pnpm build
 
 ## Key Files
 
-| 路径                                                    | 内容                                                |
-| ------------------------------------------------------- | --------------------------------------------------- |
-| `docs/plans/2026-07-15-cmms-design.md`                  | 完整设计（800+ 行）                                 |
-| `docs/plans/2026-07-15-cmms-foundation.md`              | Phase 0+1 实施计划（3900+ 行）                      |
-| `docs/plans/2026-07-17-navigation-redesign.md`          | 导航重构设计                                        |
-| `prisma/schema.prisma`                                  | 数据模型（含 meetingId 绑定的 Vehicle/Hotel）       |
-| `proxy.ts`                                              | Next.js 16 Edge middleware（路由保护）              |
-| `lib/auth/{config,index}.ts`                            | Dual NextAuth config                                |
-| `lib/db/{client,prisma-extensions,field-encryption}.ts` | Prisma + 加密                                       |
-| `lib/shared/dictionary.ts`                              | 字典常量（19 个枚举分类，唯一数据源）               |
-| `lib/domain/dictionary/service.ts`                      | 字典 DB 服务（1 分钟缓存 + 后台可配置）             |
-| `components/providers/DictProvider.tsx`                 | React Context 注入 DB 标签给客户端组件              |
-| `components/layout/MeetingTabs.tsx`                     | 会议标签页导航组件                                  |
-| `components/shared/AssignmentBoard.tsx`                 | 通用分配看板组件（左栏多选 + 右栏资源批量分配）     |
-| `components/shared/ViewToggle.tsx`                      | 列表/看板双模式切换按钮（`?view=board`）             |
-| `app/(staff)/meetings/[id]/companions/CompanionRoster.tsx` | 接待人员名册（行内编辑/删除/分享）                |
-| `app/companion/[token]/CompanionPortal.tsx`             | 接待端门户（手机验证门 + 嘉宾切换 + 详情卡片）       |
-| `app/companion/[token]/GuestShareButton.tsx`            | 接待端分享嘉宾行程链接按钮                          |
-| `lib/domain/guest/`                                     | 参考实现（Repository + Service + Importer）         |
-| `lib/actions/utils.ts`                                  | Server Action 通用工具（auth + validation + error） |
-| `docker/docker-compose.yml`                             | 独立的 PostgreSQL + Redis                           |
+| 路径                                                       | 内容                                                |
+| ---------------------------------------------------------- | --------------------------------------------------- |
+| `docs/plans/2026-07-15-cmms-design.md`                     | 完整设计（800+ 行）                                 |
+| `docs/plans/2026-07-15-cmms-foundation.md`                 | Phase 0+1 实施计划（3900+ 行）                      |
+| `docs/plans/2026-07-17-navigation-redesign.md`             | 导航重构设计                                        |
+| `prisma/schema.prisma`                                     | 数据模型（含 meetingId 绑定的 Vehicle/Hotel）       |
+| `proxy.ts`                                                 | Next.js 16 Edge middleware（路由保护）              |
+| `lib/auth/{config,index}.ts`                               | Dual NextAuth config                                |
+| `lib/db/{client,prisma-extensions,field-encryption}.ts`    | Prisma + 加密                                       |
+| `lib/shared/dictionary.ts`                                 | 字典常量（19 个枚举分类，唯一数据源）               |
+| `lib/domain/dictionary/service.ts`                         | 字典 DB 服务（1 分钟缓存 + 后台可配置）             |
+| `components/providers/DictProvider.tsx`                    | React Context 注入 DB 标签给客户端组件              |
+| `components/layout/MeetingTabs.tsx`                        | 会议标签页导航组件                                  |
+| `components/shared/AssignmentBoard.tsx`                    | 通用分配看板组件（左栏多选 + 右栏资源批量分配）     |
+| `components/shared/ViewToggle.tsx`                         | 列表/看板双模式切换按钮（`?view=board`）            |
+| `app/(staff)/meetings/[id]/companions/CompanionRoster.tsx` | 接待人员名册（行内编辑/删除/分享）                  |
+| `app/companion/[token]/CompanionPortal.tsx`                | 接待端门户（手机验证门 + 嘉宾切换 + 详情卡片）      |
+| `app/companion/[token]/GuestShareButton.tsx`               | 接待端分享嘉宾行程链接按钮                          |
+| `lib/domain/guest/`                                        | 参考实现（Repository + Service + Importer）         |
+| `lib/actions/utils.ts`                                     | Server Action 通用工具（auth + validation + error） |
+| `docker/docker-compose.yml`                                | 独立的 PostgreSQL + Redis                           |
 
 ## Git Workflow
 
