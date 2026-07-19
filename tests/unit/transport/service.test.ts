@@ -41,17 +41,24 @@ describe('transportService', () => {
       await expect(transportService.assign('missing', 'v1')).rejects.toThrow(NotFoundError);
     });
 
-    it('rejects when vehicle has time conflict', async () => {
+    it('allows ride-sharing when vehicle has existing bookings but capacity available', async () => {
       vi.mocked(transportRepository.findById).mockResolvedValue({
         id: 'o1',
         meetingGuestId: 'mg1',
+        meetingId: 'm1',
         pickupTime: new Date('2026-08-01T10:00:00Z'),
         status: 'UNASSIGNED',
       } as never);
       vi.mocked(transportRepository.findVehicleBookingsInRange).mockResolvedValue([
-        { id: 'other' } as never,
+        { id: 'other', meetingGuestId: 'mg2' } as never,
       ]);
-      await expect(transportService.assign('o1', 'v1')).rejects.toThrow(ConflictError);
+      vi.mocked(meetingGuestRepository.findSubordinates).mockResolvedValue([]);
+      vi.mocked(vehicleRepository.findById).mockResolvedValue({
+        id: 'v1',
+        capacity: 7,
+      } as never);
+      // 1 existing + 1 new = 2 ≤ 7 capacity, should succeed
+      await expect(transportService.assign('o1', 'v1')).resolves.toBeDefined();
     });
 
     it('rejects when vehicle capacity < guests + inheritTransport subordinates', async () => {
