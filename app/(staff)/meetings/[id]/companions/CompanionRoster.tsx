@@ -11,6 +11,7 @@ interface RosterItem {
   languages: string[];
   phone: string | null;
   count: number;
+  assigned: boolean;
 }
 
 export function CompanionRoster({ companions }: { companions: RosterItem[] }) {
@@ -36,7 +37,11 @@ export function CompanionRoster({ companions }: { companions: RosterItem[] }) {
               </div>
             </div>
             <div className="flex items-center gap-2">
-              <Badge variant="secondary">{c.count} 位嘉宾</Badge>
+              {c.assigned ? (
+                <Badge variant="secondary">{c.count} 位嘉宾</Badge>
+              ) : (
+                <span className="text-xs text-stone-300">未分配</span>
+              )}
               <button
                 onClick={async () => {
                   const url = window.location.origin + '/companion/' + c.id;
