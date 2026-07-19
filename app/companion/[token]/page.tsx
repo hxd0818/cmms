@@ -134,6 +134,7 @@ export default async function CompanionPortalPage({ params }: Props) {
       companionName={companion.name}
       companionRole={companion.role}
       companionPhone={companion.phone}
+      phoneLastFour={companion.phone ? companion.phone.slice(-4) : null}
       companionLanguages={companion.languages}
       guests={guestDataList}
     />

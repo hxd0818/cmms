@@ -61,14 +61,77 @@ export function CompanionPortal({
   companionPhone,
   companionLanguages,
   guests,
+  phoneLastFour,
 }: {
   companionName: string;
   companionRole: string;
   companionPhone: string | null;
   companionLanguages: string[];
   guests: GuestTaskData[];
+  phoneLastFour: string | null;
 }) {
   const [activeIdx, setActiveIdx] = useState(0);
+  const [verified, setVerified] = useState(false);
+  const [pin, setPin] = useState('');
+  const [pinError, setPinError] = useState(false);
+
+  // No phone on record → skip verification
+  const needVerify = phoneLastFour !== null && phoneLastFour.length === 4;
+
+  if (needVerify && !verified) {
+    return (
+      <main className="min-h-screen bg-stone-50 flex items-center justify-center p-6">
+        <div className="w-full max-w-xs space-y-4">
+          <div className="text-center">
+            <div className="w-14 h-14 rounded-2xl flex items-center justify-center font-bold text-2xl text-white mx-auto mb-4 bg-stone-900">
+              C
+            </div>
+            <h1 className="text-lg font-bold text-stone-800">接待任务验证</h1>
+            <p className="text-xs text-stone-400 mt-1">
+              {companionName}，请输入您手机号的后 4 位以查看任务
+            </p>
+          </div>
+          <input
+            type="text"
+            inputMode="numeric"
+            maxLength={4}
+            value={pin}
+            onChange={(e) => {
+              setPin(e.target.value.replace(/\D/g, ''));
+              setPinError(false);
+            }}
+            onKeyDown={(e) => {
+              if (e.key === 'Enter' && pin.length === 4) {
+                if (pin === phoneLastFour) {
+                  setVerified(true);
+                } else {
+                  setPinError(true);
+                }
+              }
+            }}
+            placeholder="手机后 4 位"
+            className={`w-full text-center text-2xl tracking-[0.5em] py-3 rounded-lg border ${pinError ? 'border-red-400 bg-red-50' : 'border-stone-200'} focus:border-stone-800 focus:outline-none`}
+          />
+          {pinError && (
+            <p className="text-xs text-red-500 text-center">输入不正确，请重试</p>
+          )}
+          <button
+            onClick={() => {
+              if (pin === phoneLastFour) {
+                setVerified(true);
+              } else {
+                setPinError(true);
+              }
+            }}
+            disabled={pin.length !== 4}
+            className="w-full py-2.5 rounded-lg bg-stone-800 text-white text-sm font-medium disabled:opacity-30"
+          >
+            验证
+          </button>
+        </div>
+      </main>
+    );
+  }
 
   if (guests.length === 0) {
     return (
