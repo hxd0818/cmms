@@ -13,7 +13,7 @@ This file provides project-specific guidance to Claude Code when working in this
 
 CMMS（会务管理系统）是单组织内部使用的、以接待运营为核心的通用会务管理平台。Next.js 16 全栈单体，非 monorepo。
 
-**当前进度**：Phase 0-4 + 审计补全全部完成。含字典管理、嘉宾端门户、会议独立资源池、导航标签页、审计日志自动记录、费用自动生成、任务分配、MeetingStaff 角色、批量签到、报表导出、RSVP、室友分配、司机日程、字段脱敏、速率限制、通知系统。
+**当前进度**：Phase 0-4 + 审计补全 + 分配看板 + 接待端验证门全部完成。含字典管理、嘉宾端门户、会议独立资源池、导航标签页、审计日志自动记录、费用自动生成、任务分配、MeetingStaff 角色、批量签到、报表导出、RSVP、室友分配、司机日程、字段脱敏、速率限制、通知系统、接送/住宿/餐饮/接待四类分配看板、接待人员名册 CRUD、接待端手机验证门 + 嘉宾切换卡片 + 分享嘉宾链接。
 
 ## Critical Project Rules
 
@@ -93,6 +93,12 @@ pnpm lint && pnpm typecheck && pnpm format:check && pnpm test && pnpm build
 - **2026-07-17 字典系统**：所有枚举标签集中到 `lib/shared/dictionary.ts`（代码层）+ `DictionaryEntry` 数据库表（后台可配置）。客户端组件通过 `DictProvider` + `useDbDict()` hook 获取 DB 标签。
 - **2026-07-17 SelectValue 问题**：base-ui 的 `<SelectValue />` 显示原始枚举值（非中文），全项目已替换为手动 `<span>` 映射。**严禁使用 `<SelectValue />`**。
 - **2026-07-17 导航标签页**：会议所有子页面用 `<MeetingTabs>` 组件做横向标签页导航，不再有死胡同。
+- **2026-07-19 分配看板**：接送/住宿/餐饮/接待四个标签页通过 `?view=board` URL 参数切换到双栏分配看板模式（`AssignmentBoard` 通用组件 + `ViewToggle` 切换按钮）。左栏多选待分配项（住宿为单选），右栏点击资源批量分配。接待看板顶部有 scope 选择器。住宿看板禁用 OCCUPIED/MAINTENANCE 房间。
+- **2026-07-19 接待端手机验证门**：`/companion/{id}` 打开时若档案有手机号，需输入后 4 位验证（前端比对）才能查看任务详情。缓解 Companion ID 永久 token 的安全风险。
+- **2026-07-19 接待人员 CRUD**：新增 `updateCompanion` / `deleteCompanion` Server Actions。名册行内编辑/删除（已分配的不允许删除）。
+- **2026-07-19 接待端嘉宾切换**：门户顶部横向嘉宾切换卡片（姓名 + 等级），仅渲染当前嘉宾详情。
+- **2026-07-19 Prisma 加密扩展修复**：`decryptFieldsOn` 改为递归解密（`decryptRecursive`），处理 `include` 嵌套关系中的加密字段（如 `MeetingGuest` include `Guest.phone`）。原按 `model` 参数只解密顶层的实现已废弃。
+- **2026-07-19 术语变更**：UI 文案中「陪同」全部改为「接待」（MeetingTabs 标签、名册标题、接待端标题等）。代码中 Companion 模型/字段名保持不变。
 
 ## Architecture Quick Reference
 
@@ -131,6 +137,7 @@ pnpm lint && pnpm typecheck && pnpm format:check && pnpm test && pnpm build
 - 通过 Prisma `$extends` 拦截器透明加密/解密
 - 当前加密：`Guest.phone`, `Guest.idNumber`
 - 新增字段加密：在 `lib/db/prisma-extensions.ts` 的 `ENCRYPTED_FIELDS` 添加
+- **递归解密**：`decryptFieldsOn` 调用 `decryptRecursive` 深度遍历返回对象，处理 `include` 嵌套关系中的加密字段（如 `MeetingGuest` include `Guest.phone`）。不依赖 `model` 参数。
 
 ### 嘉宾/陪同/司机端 Token
 
@@ -199,6 +206,11 @@ pnpm lint && pnpm typecheck && pnpm format:check && pnpm test && pnpm build
 | `lib/domain/dictionary/service.ts`                      | 字典 DB 服务（1 分钟缓存 + 后台可配置）             |
 | `components/providers/DictProvider.tsx`                 | React Context 注入 DB 标签给客户端组件              |
 | `components/layout/MeetingTabs.tsx`                     | 会议标签页导航组件                                  |
+| `components/shared/AssignmentBoard.tsx`                 | 通用分配看板组件（左栏多选 + 右栏资源批量分配）     |
+| `components/shared/ViewToggle.tsx`                      | 列表/看板双模式切换按钮（`?view=board`）             |
+| `app/(staff)/meetings/[id]/companions/CompanionRoster.tsx` | 接待人员名册（行内编辑/删除/分享）                |
+| `app/companion/[token]/CompanionPortal.tsx`             | 接待端门户（手机验证门 + 嘉宾切换 + 详情卡片）       |
+| `app/companion/[token]/GuestShareButton.tsx`            | 接待端分享嘉宾行程链接按钮                          |
 | `lib/domain/guest/`                                     | 参考实现（Repository + Service + Importer）         |
 | `lib/actions/utils.ts`                                  | Server Action 通用工具（auth + validation + error） |
 | `docker/docker-compose.yml`                             | 独立的 PostgreSQL + Redis                           |

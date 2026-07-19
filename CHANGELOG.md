@@ -6,6 +6,34 @@
 
 ---
 
+## [Unreleased] — 2026-07-19 分配看板 + 接待端增强
+
+### Added — 新功能
+
+- **分配看板模式**（`?view=board`）：接送 / 住宿 / 餐饮 / 接待四个标签页新增双栏分配看板视图，由顶部 `ViewToggle` 切换。
+  - 通用组件 `components/shared/AssignmentBoard.tsx`：左栏多选（住宿为单选）+ 右栏资源点击批量分配，含搜索过滤、禁用状态、部分成功 toast。
+  - 通用组件 `components/shared/ViewToggle.tsx`：列表/看板双模式 URL 参数切换按钮。
+  - **接送看板**（`TransportBoard`）：多选订单 → 点击车辆批量分配。
+  - **住宿看板**（`LodgingBoard`）：单选订单 → 点击可用房间分配；OCCUPIED/MAINTENANCE 房间禁用。
+  - **餐饮看板**（`CateringBoard`）：多选订单 → 点击餐桌批量分配；满桌禁用。
+  - **接待看板**（`CompanionBoard`）：多选嘉宾 → 选择 scope → 点击接待人员批量分配。
+- **接待人员名册**（`CompanionRoster`）：列表模式下接待标签页首部集中展示所有接待人员，每行含分享/编辑/删除按钮，行内编辑模式支持姓名/职务/手机/语言修改。
+- **接待端手机验证门**（`CompanionPortal`）：打开 `/companion/{id}` 时若档案有手机号，需输入后 4 位验证才能查看任务详情，前端比对，缓解 Companion ID 永久 token 的安全风险。
+- **接待端嘉宾切换卡片**：接待人员负责多位嘉宾时，门户顶部提供横向嘉宾切换栏（姓名 + 等级 Badge），仅渲染当前嘉宾详情卡片。
+- **分享嘉宾链接按钮**（`GuestShareButton`）：接待端每张嘉宾详情卡片底部有「分享嘉宾行程给本人」按钮，POST `/api/companion/share-guest` 生成嘉宾端 URL 并复制到剪贴板。
+- **接待人员 CRUD**：新增 `updateCompanion` / `deleteCompanion` Server Actions。已分配的接待人员不允许删除。
+
+### Changed
+
+- **术语变更**：UI 文案中所有「陪同」改为「接待」（MeetingTabs 标签从「陪同」改为「接待」，名册标题、门户标题等同步更新）。代码中 Companion 模型与字段名不变。
+- **Prisma 加密扩展嵌套解密修复**：`lib/db/prisma-extensions.ts` 的 `decryptFieldsOn` 从按 `model` 顶层字段解密改为递归扫描（`decryptRecursive`），处理 `include` 嵌套关系中的加密字段。例如 `prisma.meetingGuest.findMany({ include: { guest: true } })` 返回结果中的 `guest.phone` 现在能正确解密。引入 `ALL_ENCRYPTED_FIELDS` 全局字段集合 + 深度遍历，不再依赖 `model` 参数。
+
+### Security
+
+- 接待端 Token 安全性缓解：Companion ID 仍为永久 CUID，但新增手机后 4 位二次验证门，降低链接泄露的暴露面。后端升级为 HMAC Token 仍为待改进项（PRD §16.4 已降级为低优先级）。
+
+---
+
 ## [Unreleased] — 2026-07-18 审计补全
 
 ### Phase 1 — 核心业务逻辑修复
