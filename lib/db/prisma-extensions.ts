@@ -9,6 +9,9 @@ const ENCRYPTED_FIELDS: Record<string, string[]> = {
   Guest: ['phone', 'idNumber'],
 };
 
+// Flat set of all encrypted field names for recursive nested-object scanning
+const ALL_ENCRYPTED_FIELDS = new Set(Object.values(ENCRYPTED_FIELDS).flat());
+
 type AnyArgs = { data?: unknown; where?: Record<string, unknown> };
 
 function encryptFieldsOn<T>(model: string, payload: T): T {
@@ -24,20 +27,33 @@ function encryptFieldsOn<T>(model: string, payload: T): T {
   return payload;
 }
 
+/**
+ * Recursively decrypts known encrypted fields in any result object,
+ * including nested Prisma include relations. Handles the case where
+ * the top-level model (e.g. MeetingGuest) includes a nested model
+ * with encrypted fields (e.g. Guest.phone).
+ */
 function decryptFieldsOn<T>(model: string, payload: T): T {
-  const fields = ENCRYPTED_FIELDS[model];
-  if (!fields || payload == null) return payload;
-  if (Array.isArray(payload)) {
-    return payload.map((item) => decryptFieldsOn(model, item)) as unknown as T;
-  }
-  if (typeof payload !== 'object') return payload;
-  const record = payload as Record<string, unknown>;
-  for (const f of fields) {
-    if (record[f] != null && record[f] !== '') {
-      record[f] = decrypt(record[f] as string);
+  return decryptRecursive(payload) as T;
+}
+
+function decryptRecursive(obj: unknown): unknown {
+  if (obj == null) return obj;
+  if (Array.isArray(obj)) return obj.map(decryptRecursive);
+  if (typeof obj !== 'object') return obj;
+
+  const record = obj as Record<string, unknown>;
+  for (const key of Object.keys(record)) {
+    const val = record[key];
+    if (val == null) continue;
+
+    if (ALL_ENCRYPTED_FIELDS.has(key) && typeof val === 'string' && val.startsWith('enc:')) {
+      record[key] = decrypt(val);
+    } else if (typeof val === 'object') {
+      record[key] = decryptRecursive(val);
     }
   }
-  return payload;
+  return obj;
 }
 
 export function applyEncryptionExtension(client: PrismaClient): PrismaClient {
