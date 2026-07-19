@@ -2,6 +2,7 @@
 
 import { companionCreateSchema, companionAssignSchema } from '@/lib/shared/gift';
 import { companionService } from '@/lib/domain/companion/service';
+import { prisma } from '@/lib/db/client';
 import { assertAuthorized, getContext, handleError, type ActionResult } from '@/lib/actions/utils';
 import { auditLog } from '@/lib/audit/logger';
 import { revalidatePath } from 'next/cache';
@@ -24,6 +25,41 @@ export async function createCompanion(input: {
     });
     await auditLog(session, 'create', 'Companion', companion.id, { after: data });
     return { ok: true, data: { id: companion.id } };
+  } catch (e) {
+    return handleError(e);
+  }
+}
+
+export async function updateCompanion(
+  id: string,
+  input: { name?: string; phone?: string; role?: string; languages?: string[] },
+): Promise<ActionResult<{ id: string }>> {
+  try {
+    const { session, ability } = await getContext();
+    assertAuthorized(ability, 'update', 'Companion');
+    await prisma.companion.update({
+      where: { id },
+      data: {
+        ...(input.name !== undefined && { name: input.name }),
+        ...(input.phone !== undefined && { phone: input.phone || null }),
+        ...(input.role !== undefined && { role: input.role }),
+        ...(input.languages !== undefined && { languages: input.languages }),
+      },
+    });
+    await auditLog(session, 'update', 'Companion', id, { after: input });
+    return { ok: true, data: { id } };
+  } catch (e) {
+    return handleError(e);
+  }
+}
+
+export async function deleteCompanion(id: string): Promise<ActionResult<{ id: string }>> {
+  try {
+    const { session, ability } = await getContext();
+    assertAuthorized(ability, 'delete', 'Companion');
+    await prisma.companion.delete({ where: { id } });
+    await auditLog(session, 'delete', 'Companion', id);
+    return { ok: true, data: { id } };
   } catch (e) {
     return handleError(e);
   }
