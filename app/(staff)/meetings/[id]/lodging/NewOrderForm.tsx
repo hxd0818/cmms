@@ -6,7 +6,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
-import { Select, SelectContent, SelectItem, SelectTrigger } from '@/components/ui/select';
+import { GuestSearchSelect } from '@/components/shared/GuestSearchSelect';
 import { createLodgingOrder } from '@/app/actions/lodging.actions';
 import { toast } from 'sonner';
 
@@ -71,22 +71,7 @@ export function NewOrderForm({
       <div className="grid grid-cols-2 gap-4">
         <div>
           <Label htmlFor="guest">嘉宾 *</Label>
-          <Select value={meetingGuestId} onValueChange={(v) => setMeetingGuestId(v ?? '')}>
-            <SelectTrigger>
-              <span className={meetingGuestId ? '' : 'text-stone-400'}>
-                {meetingGuestId
-                  ? (guests.find((g) => g.id === meetingGuestId)?.name ?? meetingGuestId)
-                  : '选择会议嘉宾'}
-              </span>
-            </SelectTrigger>
-            <SelectContent>
-              {guests.map((g) => (
-                <SelectItem key={g.id} value={g.id}>
-                  {g.name}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
+          <GuestSearchSelect guests={guests} value={meetingGuestId} onChange={setMeetingGuestId} />
         </div>
         <div>
           <Label htmlFor="checkInAt">入住时间 *</Label>
