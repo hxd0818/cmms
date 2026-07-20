@@ -8,6 +8,7 @@ export type AppSubject =
   | 'AgendaItem'
   | 'Vehicle'
   | 'TransportOrder'
+  | 'TicketOrder'
   | 'LodgingOrder'
   | 'CateringOrder'
   | 'Gift'
@@ -46,6 +47,7 @@ export function defineAbilityFor(user: AppUser): AppAbility {
     'AgendaItem',
     'Vehicle',
     'TransportOrder',
+    'TicketOrder',
     'LodgingOrder',
     'CateringOrder',
     'Gift',

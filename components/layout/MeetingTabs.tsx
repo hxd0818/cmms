@@ -8,6 +8,7 @@ const TABS = [
   { key: 'detail', label: '详情', path: '' },
   { key: 'guests', label: '嘉宾', path: '/guests' },
   { key: 'agenda', label: '议程', path: '/agenda' },
+  { key: 'tickets', label: '订票', path: '/tickets' },
   { key: 'reception', label: '签到', path: '/reception' },
   { key: 'transport', label: '接送', path: '/transport' },
   { key: 'lodging', label: '住宿', path: '/lodging' },

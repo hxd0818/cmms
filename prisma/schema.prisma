@@ -218,6 +218,51 @@ model AgendaItem {
   @@map("agenda_items")
 }
 
+// ============ Ticket Management ============
+
+model TicketOrder {
+  id               String       @id @default(cuid())
+  meetingId        String
+  meetingGuestId   String
+  ticketType       TicketType
+  tripNo           String
+  ticketNo         String?
+  departureCity    String
+  arrivalCity      String
+  departureAt      DateTime
+  arrivalAt        DateTime
+  cabinClass       String?
+  price            Decimal?     @db.Decimal(10, 2)
+  paymentMethod    PaymentMethod @default(COMPANY)
+  status           TicketStatus @default(PENDING)
+  transportOrderId String?
+  notes            String?
+  createdAt        DateTime     @default(now())
+  updatedAt        DateTime     @updatedAt
+
+  @@index([meetingId])
+  @@index([meetingGuestId])
+  @@map("ticket_orders")
+}
+
+enum TicketType {
+  FLIGHT
+  TRAIN
+}
+
+enum TicketStatus {
+  PENDING
+  BOOKED
+  CONFIRMED
+  TICKETED
+  CANCELED
+}
+
+enum PaymentMethod {
+  COMPANY
+  SELF
+}
+
 enum AgendaType {
   KEYNOTE
   PANEL
@@ -275,6 +320,7 @@ model TransportOrder {
   dropoffLocation String
   flightNo        String?
   status          TransportStatus @default(UNASSIGNED)
+  paymentMethod   PaymentMethod   @default(COMPANY)
   actualPickupAt  DateTime?
   createdAt       DateTime        @default(now())
   updatedAt       DateTime        @updatedAt
@@ -387,6 +433,7 @@ model LodgingOrder {
   checkOutAt       DateTime
   specialRequests  String?
   status           LodgingStatus @default(UNASSIGNED)
+  paymentMethod    PaymentMethod  @default(COMPANY)
   roommateIds      String[]
   actualCheckInAt  DateTime?
   actualCheckOutAt DateTime?
@@ -441,6 +488,7 @@ model CateringOrder {
   assigneeId     String?
   specialDietary String[]
   status         CateringStatus  @default(SCHEDULED)
+  paymentMethod  PaymentMethod   @default(COMPANY)
   notes          String?
   createdAt      DateTime        @default(now())
   updatedAt      DateTime        @updatedAt

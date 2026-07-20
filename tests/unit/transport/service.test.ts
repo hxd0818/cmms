@@ -63,7 +63,10 @@ describe('transportService', () => {
         id: 'v1',
         capacity: 7,
       } as never);
-      vi.mocked(transportRepository.assign).mockResolvedValue({ id: 'o1', vehicleId: 'v1' } as never);
+      vi.mocked(transportRepository.assign).mockResolvedValue({
+        id: 'o1',
+        vehicleId: 'v1',
+      } as never);
       // 1 existing + 1 new = 2 ≤ 7 capacity, should succeed
       const result = await transportService.assign('o1', 'v1');
       expect(result).toBeDefined();

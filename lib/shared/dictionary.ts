@@ -179,6 +179,24 @@ export const DICTIONARY = {
     TRANSPORT: '接送期间',
     LODGING: '住宿期间',
   } as Record<string, string>,
+
+  ticketType: {
+    FLIGHT: '机票',
+    TRAIN: '火车票',
+  } as Record<string, string>,
+
+  ticketStatus: {
+    PENDING: '待订',
+    BOOKED: '已订',
+    CONFIRMED: '已确认',
+    TICKETED: '已出票',
+    CANCELED: '已取消',
+  } as Record<string, string>,
+
+  paymentMethod: {
+    COMPANY: '公付',
+    SELF: '自付',
+  } as Record<string, string>,
 } as const;
 
 export type DictKey = keyof typeof DICTIONARY;
