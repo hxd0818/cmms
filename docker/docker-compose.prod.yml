@@ -52,12 +52,11 @@ services:
     restart: unless-stopped
     ports:
       - '${WEB_PORT:-3010}:3000'
+    env_file:
+      - ../.env
     environment:
       DATABASE_URL: postgresql://${DB_USER:-cmms}:${DB_PASSWORD:-cmms_prod_password}@postgres:5432/${DB_NAME:-cmms}?schema=public
       REDIS_URL: redis://redis:6379
-      NEXTAUTH_SECRET: ${NEXTAUTH_SECRET}
-      NEXTAUTH_URL: ${NEXTAUTH_URL:-http://localhost:3010}
-      FIELD_ENCRYPTION_KEY: ${FIELD_ENCRYPTION_KEY}
       NODE_ENV: production
     depends_on:
       postgres:
