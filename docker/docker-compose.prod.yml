@@ -65,6 +65,8 @@ services:
         condition: service_healthy
     networks:
       - cmms-network
+    volumes:
+      - uploads:/app/tmp/uploads
     healthcheck:
       test: ['CMD-SHELL', 'wget -q --spider http://localhost:3000/api/health || exit 1']
       interval: 30s
@@ -92,8 +94,14 @@ services:
         condition: service_healthy
     networks:
       - cmms-network
+    volumes:
+      - uploads:/app/tmp/uploads
 
 networks:
   cmms-network:
     name: cmms-network
     driver: bridge
+
+volumes:
+  uploads:
+    name: cmms-uploads
