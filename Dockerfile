@@ -31,6 +31,7 @@ ENV NEXT_TELEMETRY_DISABLED=1
 
 RUN addgroup -g 1001 -S nodejs && adduser -S nextjs -u 1001
 RUN apk add --no-cache wget
+RUN mkdir -p /app/tmp/uploads && chown nextjs:nodejs /app/tmp
 
 # Next.js standalone server
 COPY --from=builder --chown=nextjs:nodejs /app/.next/standalone ./
