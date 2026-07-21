@@ -2,7 +2,7 @@
 set -e
 
 echo "Running database migrations..."
-npx prisma migrate deploy
+npx prisma db push --accept-data-loss
 
 echo "Seeding initial data..."
 npx tsx prisma/seed/index.ts || echo "Seed skipped (may already exist)"
