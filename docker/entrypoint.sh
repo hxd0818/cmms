@@ -1,12 +1,18 @@
 #!/bin/sh
 set -e
 
-echo "Running database migrations..."
-npx prisma db push --accept-data-loss
+# Fix volume permissions (named volumes mount as root)
+mkdir -p /app/tmp/uploads
+chown -R nextjs:nodejs /app/tmp 2>/dev/null || true
 
-echo "Seeding initial data..."
-npx tsx prisma/seed/index.ts || echo "User seed skipped"
-npx tsx prisma/seed/dictionary.ts || echo "Dictionary seed skipped"
+echo "Running database schema sync..."
+./node_modules/.bin/prisma db push --accept-data-loss
+
+echo "Seeding users..."
+./node_modules/.bin/tsx prisma/seed/index.ts || echo "  User seed skipped"
+
+echo "Seeding dictionary..."
+./node_modules/.bin/tsx prisma/seed/dictionary.ts || echo "  Dictionary seed skipped"
 
 echo "Starting CMMS server..."
 exec node server.js

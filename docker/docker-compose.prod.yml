@@ -1,12 +1,9 @@
 # CMMS Production Docker Compose — All-in-One
-# Everything runs in containers: Web + Worker + PostgreSQL + Redis
 #
 # Usage:
-#   1. cp .env.example .env  → edit secrets
-#   2. docker compose -f docker/docker-compose.prod.yml up -d
-#   3. docker compose -f docker/docker-compose.prod.yml exec web pnpm exec prisma migrate deploy
-#   4. docker compose -f docker/docker-compose.prod.yml exec web pnpm db:seed
-#
+#   1. cp .env.example .env → edit NEXTAUTH_SECRET, FIELD_ENCRYPTION_KEY, NEXTAUTH_URL
+#   2. docker compose -f docker/docker-compose.prod.yml up -d --build
+#   Container auto-runs: db push + seed + server start
 # Access: http://server-ip:3010
 
 name: cmms
@@ -71,7 +68,7 @@ services:
       test: ['CMD-SHELL', 'wget -q --spider http://localhost:3000/api/health || exit 1']
       interval: 30s
       timeout: 10s
-      start_period: 40s
+      start_period: 60s
       retries: 3
 
   worker:
@@ -80,7 +77,7 @@ services:
       dockerfile: Dockerfile
     container_name: cmms-worker
     restart: unless-stopped
-    command: npx tsx worker/index.ts
+    command: su-exec nextjs ./node_modules/.bin/tsx worker/index.ts
     env_file:
       - ../.env
     environment:
