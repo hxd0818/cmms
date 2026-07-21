@@ -4,6 +4,7 @@ import type { NextAuthConfig } from 'next-auth';
 
 export const edgeAuthConfig: NextAuthConfig = {
   session: { strategy: 'jwt', maxAge: 60 * 60 * 8 },
+  trustHost: true,
   pages: { signIn: '/login' },
   providers: [], // providers with authorize() live in lib/auth/index.ts (Node-only)
   callbacks: {
