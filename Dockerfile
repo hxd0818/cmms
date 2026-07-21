@@ -39,6 +39,7 @@ COPY --from=builder --chown=nextjs:nodejs /app/public ./public
 
 # Prisma + generated client (for migrations)
 COPY --from=builder --chown=nextjs:nodejs /app/prisma ./prisma
+COPY --from=builder --chown=nextjs:nodejs /app/prisma.config.ts ./prisma.config.ts
 COPY --from=builder --chown=nextjs:nodejs /app/lib/generated ./lib/generated
 
 # Worker: full node_modules for BullMQ/ExcelJS/ioredis
