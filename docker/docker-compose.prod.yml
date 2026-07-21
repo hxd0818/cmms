@@ -80,7 +80,7 @@ services:
       dockerfile: Dockerfile
     container_name: cmms-worker
     restart: unless-stopped
-    command: node worker/index.js
+    command: npx tsx worker/index.ts
     env_file:
       - ../.env
     environment:
