@@ -18,6 +18,8 @@ RUN corepack enable pnpm
 COPY --from=deps /app/node_modules ./node_modules
 COPY . .
 ENV NEXT_TELEMETRY_DISABLED=1
+# Placeholder DATABASE_URL for prisma generate (real URL injected at runtime)
+ENV DATABASE_URL="postgresql://x:x@localhost:5432/x"
 RUN pnpm db:generate
 RUN pnpm build
 
