@@ -1,6 +1,8 @@
 # CMMS Production Dockerfile (multi-stage, non-root)
+# Builds both Web (Next.js standalone) + Worker (BullMQ)
+#
 # Build: docker build -t cmms:latest .
-# Run:   docker run -p 3000:3000 --env-file .env.production cmms:latest
+# Run:   docker compose -f docker/docker-compose.prod.yml up -d
 
 # ============ Stage 1: Dependencies ============
 FROM node:22-alpine AS deps
@@ -24,19 +26,25 @@ WORKDIR /app
 ENV NODE_ENV=production
 ENV NEXT_TELEMETRY_DISABLED=1
 
-# Create non-root user
 RUN addgroup -g 1001 -S nodejs && adduser -S nextjs -u 1001
+RUN apk add --no-cache wget
 
-# Copy only production files
+# Next.js standalone server
 COPY --from=builder --chown=nextjs:nodejs /app/.next/standalone ./
 COPY --from=builder --chown=nextjs:nodejs /app/.next/static ./.next/static
 COPY --from=builder --chown=nextjs:nodejs /app/public ./public
+
+# Prisma + generated client (for migrations)
 COPY --from=builder --chown=nextjs:nodejs /app/prisma ./prisma
 COPY --from=builder --chown=nextjs:nodejs /app/lib/generated ./lib/generated
+
+# Worker: full node_modules for BullMQ/ExcelJS/ioredis
+COPY --from=builder --chown=nextjs:nodejs /app/worker ./worker
+COPY --from=builder --chown=nextjs:nodejs /app/node_modules ./node_modules
 COPY --from=builder --chown=nextjs:nodejs /app/package.json ./package.json
+COPY --from=builder --chown=nextjs:nodejs /app/tsconfig.json ./tsconfig.json
 
 USER nextjs
-
 EXPOSE 3000
 
 HEALTHCHECK --interval=30s --timeout=10s --start-period=40s --retries=3 \

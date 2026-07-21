@@ -1,0 +1,100 @@
+# CMMS Production Docker Compose — All-in-One
+# Everything runs in containers: Web + Worker + PostgreSQL + Redis
+#
+# Usage:
+#   1. cp .env.example .env  → edit secrets
+#   2. docker compose -f docker/docker-compose.prod.yml up -d
+#   3. docker compose -f docker/docker-compose.prod.yml exec web pnpm exec prisma migrate deploy
+#   4. docker compose -f docker/docker-compose.prod.yml exec web pnpm db:seed
+#
+# Access: http://server-ip:3010
+
+name: cmms
+
+services:
+  postgres:
+    image: postgres:16-alpine
+    container_name: cmms-postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: ${DB_USER:-cmms}
+      POSTGRES_PASSWORD: ${DB_PASSWORD:-cmms_prod_password}
+      POSTGRES_DB: ${DB_NAME:-cmms}
+    volumes:
+      - ./data/postgres:/var/lib/postgresql/data
+    networks:
+      - cmms-network
+    healthcheck:
+      test: ['CMD-SHELL', 'pg_isready -U ${DB_USER:-cmms}']
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  redis:
+    image: redis:7-alpine
+    container_name: cmms-redis
+    restart: unless-stopped
+    volumes:
+      - ./data/redis:/data
+    networks:
+      - cmms-network
+    healthcheck:
+      test: ['CMD', 'redis-cli', 'ping']
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  web:
+    build:
+      context: ..
+      dockerfile: Dockerfile
+    container_name: cmms-web
+    restart: unless-stopped
+    ports:
+      - '${WEB_PORT:-3010}:3000'
+    environment:
+      DATABASE_URL: postgresql://${DB_USER:-cmms}:${DB_PASSWORD:-cmms_prod_password}@postgres:5432/${DB_NAME:-cmms}?schema=public
+      REDIS_URL: redis://redis:6379
+      NEXTAUTH_SECRET: ${NEXTAUTH_SECRET}
+      NEXTAUTH_URL: ${NEXTAUTH_URL:-http://localhost:3010}
+      FIELD_ENCRYPTION_KEY: ${FIELD_ENCRYPTION_KEY}
+      NODE_ENV: production
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    networks:
+      - cmms-network
+    healthcheck:
+      test: ['CMD-SHELL', 'wget -q --spider http://localhost:3000/api/health || exit 1']
+      interval: 30s
+      timeout: 10s
+      start_period: 40s
+      retries: 3
+
+  worker:
+    build:
+      context: ..
+      dockerfile: Dockerfile
+    container_name: cmms-worker
+    restart: unless-stopped
+    command: node worker/index.js
+    environment:
+      DATABASE_URL: postgresql://${DB_USER:-cmms}:${DB_PASSWORD:-cmms_prod_password}@postgres:5432/${DB_NAME:-cmms}?schema=public
+      REDIS_URL: redis://redis:6379
+      NEXTAUTH_SECRET: ${NEXTAUTH_SECRET}
+      FIELD_ENCRYPTION_KEY: ${FIELD_ENCRYPTION_KEY}
+      NODE_ENV: production
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    networks:
+      - cmms-network
+
+networks:
+  cmms-network:
+    name: cmms-network
+    driver: bridge
