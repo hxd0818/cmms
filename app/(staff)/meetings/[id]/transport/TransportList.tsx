@@ -22,6 +22,7 @@ import {
   DialogFooter,
 } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
 import { CheckCircle2 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import {
@@ -29,6 +30,7 @@ import {
   getVehicleSeatInfo,
   updateTransportStatus,
   deleteTransportOrder,
+  updateTransportOrder,
 } from '@/app/actions/transport.actions';
 import { toast } from 'sonner';
 import { dict } from '@/lib/shared/dictionary';
@@ -94,6 +96,8 @@ export function TransportList({ meetingId, orders, vehicles }: Props) {
       toast.error(r.error?.message ?? '状态切换失败');
     }
   }
+
+  const [editingId, setEditingId] = useState<string | null>(null);
 
   async function onDelete(orderId: string) {
     if (!confirm('确认删除该接送任务？')) return;
@@ -182,6 +186,13 @@ export function TransportList({ meetingId, orders, vehicles }: Props) {
                         </SelectContent>
                       </Select>
                     )}
+                    <Button
+                      size="sm"
+                      variant="ghost"
+                      onClick={() => setEditingId(o.id)}
+                    >
+                      编辑
+                    </Button>
                     <Button size="sm" variant="ghost" onClick={() => onDelete(o.id)}>
                       删除
                     </Button>
@@ -189,6 +200,27 @@ export function TransportList({ meetingId, orders, vehicles }: Props) {
                 </TableCell>
               </TableRow>
             ))
+          )}
+          {editingId && (
+            <TableRow>
+              <TableCell colSpan={9} className="bg-stone-50 p-4">
+                <EditOrderRow
+                  orderId={editingId}
+                  meetingId={meetingId}
+                  current={{
+                    pickupLocation: orders.find((o) => o.id === editingId)?.pickupLocation ?? '',
+                    dropoffLocation: orders.find((o) => o.id === editingId)?.dropoffLocation ?? '',
+                    pickupTime: orders.find((o) => o.id === editingId)?.pickupTime.toISOString().slice(0, 16) ?? '',
+                    flightNo: orders.find((o) => o.id === editingId)?.flightNo ?? '',
+                  }}
+                  onDone={() => {
+                    setEditingId(null);
+                    router.refresh();
+                  }}
+                  onCancel={() => setEditingId(null)}
+                />
+              </TableCell>
+            </TableRow>
           )}
         </TableBody>
       </Table>
@@ -353,5 +385,73 @@ function VehicleAssignDialog({
         </DialogFooter>
       </DialogContent>
     </Dialog>
+  );
+}
+
+function EditOrderRow({
+  orderId,
+  current,
+  onDone,
+  onCancel,
+}: {
+  orderId: string;
+  meetingId: string;
+  current: { pickupLocation: string; dropoffLocation: string; pickupTime: string; flightNo: string };
+  onDone: () => void;
+  onCancel: () => void;
+}) {
+  const router = useRouter();
+  const [pickupLocation, setPickupLocation] = useState(current.pickupLocation);
+  const [dropoffLocation, setDropoffLocation] = useState(current.dropoffLocation);
+  const [pickupTime, setPickupTime] = useState(current.pickupTime);
+  const [flightNo, setFlightNo] = useState(current.flightNo);
+  const [saving, setSaving] = useState(false);
+
+  async function onSave() {
+    setSaving(true);
+    const r = await updateTransportOrder(orderId, {
+      pickupLocation,
+      dropoffLocation,
+      pickupTime,
+      flightNo: flightNo || null,
+    });
+    setSaving(false);
+    if (r.ok) {
+      toast.success('已保存');
+      onDone();
+    } else {
+      toast.error(r.error?.message ?? '保存失败');
+    }
+  }
+
+  return (
+    <div className="space-y-2">
+      <div className="grid grid-cols-4 gap-2">
+        <div>
+          <Label className="text-xs text-stone-400">上车地点</Label>
+          <Input className="h-7 mt-0.5 text-xs" value={pickupLocation} onChange={(e) => setPickupLocation(e.target.value)} />
+        </div>
+        <div>
+          <Label className="text-xs text-stone-400">下车地点</Label>
+          <Input className="h-7 mt-0.5 text-xs" value={dropoffLocation} onChange={(e) => setDropoffLocation(e.target.value)} />
+        </div>
+        <div>
+          <Label className="text-xs text-stone-400">接送时间</Label>
+          <Input className="h-7 mt-0.5 text-xs" type="datetime-local" value={pickupTime} onChange={(e) => setPickupTime(e.target.value)} />
+        </div>
+        <div>
+          <Label className="text-xs text-stone-400">航班/车次</Label>
+          <Input className="h-7 mt-0.5 text-xs" value={flightNo} onChange={(e) => setFlightNo(e.target.value)} />
+        </div>
+      </div>
+      <div className="flex gap-2">
+        <Button size="sm" onClick={onSave} disabled={saving}>
+          {saving ? '保存中...' : '保存'}
+        </Button>
+        <Button size="sm" variant="outline" onClick={onCancel}>
+          取消
+        </Button>
+      </div>
+    </div>
   );
 }

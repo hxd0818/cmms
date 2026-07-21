@@ -73,6 +73,35 @@ export async function updateTransportStatus(
   }
 }
 
+export async function updateTransportOrder(
+  orderId: string,
+  input: {
+    pickupLocation?: string;
+    dropoffLocation?: string;
+    pickupTime?: string;
+    flightNo?: string | null;
+  },
+): Promise<ActionResult<{ id: string }>> {
+  try {
+    const { session, ability } = await getContext();
+    assertAuthorized(ability, 'update', 'TransportOrder');
+    const { prisma } = await import('@/lib/db/client');
+    await prisma.transportOrder.update({
+      where: { id: orderId },
+      data: {
+        ...(input.pickupLocation !== undefined && { pickupLocation: input.pickupLocation }),
+        ...(input.dropoffLocation !== undefined && { dropoffLocation: input.dropoffLocation }),
+        ...(input.pickupTime !== undefined && { pickupTime: new Date(input.pickupTime) }),
+        ...(input.flightNo !== undefined && { flightNo: input.flightNo || null }),
+      },
+    });
+    await auditLog(session, 'update', 'TransportOrder', orderId, { after: input });
+    return { ok: true, data: { id: orderId } };
+  } catch (e) {
+    return handleError(e);
+  }
+}
+
 export async function deleteTransportOrder(
   orderId: string,
   meetingId: string,
