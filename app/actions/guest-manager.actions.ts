@@ -54,6 +54,36 @@ export async function listManagerTokens(meetingId: string) {
   }
 }
 
+export async function regenerateManagerToken(
+  tokenId: string,
+  meetingId: string,
+): Promise<ActionResult<{ url: string }>> {
+  try {
+    const { session, ability } = await getContext();
+    assertAuthorized(ability, 'manage', 'all');
+
+    const { raw, hash } = generateToken();
+    const expiresAt = new Date(Date.now() + MANAGER_TOKEN_TTL_MS);
+
+    await prisma.guestManagerToken.update({
+      where: { id: tokenId },
+      data: {
+        tokenHash: hash,
+        issuedAt: new Date(),
+        expiresAt,
+        revokedAt: null,
+        accessCount: 0,
+        lastAccessedAt: null,
+      },
+    });
+
+    await auditLog(session, 'regenerate', 'GuestManagerToken', tokenId);
+    return { ok: true, data: { url: '/manage/' + raw } };
+  } catch (e) {
+    return handleError(e);
+  }
+}
+
 export async function revokeManagerToken(tokenId: string, meetingId: string) {
   try {
     const { session, ability } = await getContext();

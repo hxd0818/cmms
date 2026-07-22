@@ -9,12 +9,12 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger } from '@/components/ui/select';
 import { addStaff, removeStaff, updateStaffRole } from '@/app/actions/meeting-staff.actions';
-import { issueManagerToken, revokeManagerToken } from '@/app/actions/guest-manager.actions';
+import { issueManagerToken, revokeManagerToken, regenerateManagerToken } from '@/app/actions/guest-manager.actions';
 import { createCompanion, deleteCompanion, updateCompanion } from '@/app/actions/companion.actions';
 import { copyToClipboard } from '@/lib/utils/clipboard';
 import { dict } from '@/lib/shared/dictionary';
 import { toast } from 'sonner';
-import { UserPlus, Trash2, Link2, Share2, Pencil, Plus, LayoutGrid, Check, X } from 'lucide-react';
+import { UserPlus, Trash2, Link2, Share2, Pencil, Plus, LayoutGrid, Check, X, Copy } from 'lucide-react';
 
 interface StaffItem {
   id: string;
@@ -266,21 +266,40 @@ export function StaffManager({ meetingId, staff, users, managers, companions }: 
                     </p>
                   </div>
                 </div>
-                {!m.revokedAt && (
+                <div className="flex items-center gap-1">
                   <button
                     onClick={async () => {
-                      if (!confirm('吊销「' + m.name + '」的链接？')) return;
-                      const r = await revokeManagerToken(m.id, meetingId);
-                      if (r.ok) {
-                        toast.success('已吊销');
+                      if (!confirm('为「' + m.name + '」重新生成链接？旧链接将失效。')) return;
+                      const r = await regenerateManagerToken(m.id, meetingId);
+                      if (r.ok && r.data) {
+                        await copyToClipboard(window.location.origin + r.data.url);
+                        toast.success('新链接已复制');
                         router.refresh();
+                      } else {
+                        toast.error('生成失败');
                       }
                     }}
-                    className="text-xs text-red-400 hover:text-red-600 px-2 py-1 rounded hover:bg-red-50"
+                    className="text-stone-400 hover:text-stone-600 p-1.5 rounded hover:bg-stone-100"
+                    title="重新生成链接"
                   >
-                    吊销
+                    <Copy size={14} />
                   </button>
-                )}
+                  {!m.revokedAt && (
+                    <button
+                      onClick={async () => {
+                        if (!confirm('吊销「' + m.name + '」的链接？')) return;
+                        const r = await revokeManagerToken(m.id, meetingId);
+                        if (r.ok) {
+                          toast.success('已吊销');
+                          router.refresh();
+                        }
+                      }}
+                      className="text-xs text-red-400 hover:text-red-600 px-2 py-1 rounded hover:bg-red-50"
+                    >
+                      吊销
+                    </button>
+                  )}
+                </div>
               </div>
             ))
           )}
