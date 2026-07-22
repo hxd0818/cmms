@@ -1,6 +1,10 @@
 import { z } from 'zod';
 
-export const agendaTypeSchema = z.enum(['KEYNOTE', 'PANEL', 'BREAK', 'MEAL', 'TOUR', 'OTHER']);
+export const agendaTypeSchema = z.enum([
+  'KEYNOTE', 'PANEL', 'BREAK', 'MEAL', 'TOUR',
+  'CLOSED_MEETING', 'RESEARCH', 'SALON', 'REVIEW', 'ROADSHOW', 'DEFENSE',
+  'OTHER',
+]);
 export type AgendaType = z.infer<typeof agendaTypeSchema>;
 
 const agendaBaseSchema = z.object({
