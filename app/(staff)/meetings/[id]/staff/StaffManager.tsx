@@ -3,13 +3,16 @@
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { Button } from '@/components/ui/button';
-import { Label } from '@/components/ui/label';
 import { Badge } from '@/components/ui/badge';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger } from '@/components/ui/select';
 import { addStaff, removeStaff, updateStaffRole } from '@/app/actions/meeting-staff.actions';
+import { issueManagerToken } from '@/app/actions/guest-manager.actions';
+import { copyToClipboard } from '@/lib/utils/clipboard';
 import { dict } from '@/lib/shared/dictionary';
 import { toast } from 'sonner';
-import { UserPlus, Trash2 } from 'lucide-react';
+import { UserPlus, Trash2, Link2 } from 'lucide-react';
 
 interface StaffItem {
   id: string;
@@ -34,6 +37,37 @@ interface Props {
 export function StaffManager({ meetingId, staff, users }: Props) {
   const router = useRouter();
   const [showAdd, setShowAdd] = useState(false);
+  const [showManager, setShowManager] = useState(false);
+  const [mgrName, setMgrName] = useState('');
+  const [mgrPhone, setMgrPhone] = useState('');
+  const [mgrScope, setMgrScope] = useState('ASSIGNED');
+  const [mgrLoading, setMgrLoading] = useState(false);
+
+  async function onIssueManagerLink() {
+    if (!mgrName.trim() || !mgrPhone.trim()) {
+      toast.error('请填写姓名和手机号');
+      return;
+    }
+    setMgrLoading(true);
+    const r = await issueManagerToken({
+      meetingId,
+      name: mgrName.trim(),
+      phone: mgrPhone.trim(),
+      scope: mgrScope,
+    });
+    setMgrLoading(false);
+    if (r.ok && r.data) {
+      const url = window.location.origin + r.data.url;
+      await copyToClipboard(url);
+      toast.success('链接已复制，发给维护人员');
+      setShowManager(false);
+      setMgrName('');
+      setMgrPhone('');
+      setMgrScope('ASSIGNED');
+    } else {
+      toast.error(r.error?.message ?? '生成失败');
+    }
+  }
 
   async function onRemove(userId: string, name: string) {
     if (!confirm('确认移除「' + name + '」的工作人员身份？')) return;
@@ -48,11 +82,74 @@ export function StaffManager({ meetingId, staff, users }: Props) {
 
   return (
     <div className="space-y-4">
-      <div className="flex justify-end">
-        <Button size="sm" onClick={() => setShowAdd(!showAdd)}>
+      <div className="flex justify-end gap-2">
+        <Button
+          size="sm"
+          variant="outline"
+          onClick={() => {
+            setShowManager(!showManager);
+            setShowAdd(false);
+          }}
+        >
+          <Link2 size={14} className="mr-1" /> 嘉宾维护链接
+        </Button>
+        <Button
+          size="sm"
+          onClick={() => {
+            setShowAdd(!showAdd);
+            setShowManager(false);
+          }}
+        >
           <UserPlus size={14} className="mr-1" /> 添加工作人员
         </Button>
       </div>
+
+      {showManager && (
+        <div className="cmms-card p-4 space-y-3 max-w-lg">
+          <h3 className="text-sm font-semibold">生成嘉宾维护链接</h3>
+          <p className="text-xs text-stone-400">维护人员通过链接在手机端录入嘉宾信息，无需登录</p>
+          <div className="grid grid-cols-2 gap-3">
+            <div>
+              <Label className="text-xs text-stone-400">姓名 *</Label>
+              <Input
+                className="h-8 mt-1"
+                value={mgrName}
+                onChange={(e) => setMgrName(e.target.value)}
+              />
+            </div>
+            <div>
+              <Label className="text-xs text-stone-400">手机号 *</Label>
+              <Input
+                className="h-8 mt-1"
+                type="tel"
+                value={mgrPhone}
+                onChange={(e) => setMgrPhone(e.target.value)}
+                placeholder="11 位"
+              />
+            </div>
+          </div>
+          <div>
+            <Label className="text-xs text-stone-400">权限范围</Label>
+            <Select value={mgrScope} onValueChange={(v) => setMgrScope(v ?? 'ASSIGNED')}>
+              <SelectTrigger className="h-8 mt-1 w-48">
+                <span>{mgrScope === 'ALL' ? '查看全部嘉宾' : '只看自己添加的'}</span>
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="ASSIGNED">只看自己添加的</SelectItem>
+                <SelectItem value="ALL">查看全部嘉宾</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
+          <div className="flex gap-2">
+            <Button size="sm" onClick={onIssueManagerLink} disabled={mgrLoading}>
+              {mgrLoading ? '生成中...' : '生成并复制链接'}
+            </Button>
+            <Button size="sm" variant="outline" onClick={() => setShowManager(false)}>
+              取消
+            </Button>
+          </div>
+        </div>
+      )}
 
       {showAdd && (
         <AddStaffForm

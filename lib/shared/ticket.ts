@@ -30,13 +30,10 @@ const ticketBaseSchema = z.object({
   notes: z.string().max(500).optional(),
 });
 
-export const ticketCreateSchema = ticketBaseSchema.refine(
-  (d) => d.arrivalAt > d.departureAt,
-  {
-    message: '到达时间必须晚于出发时间',
-    path: ['arrivalAt'],
-  },
-);
+export const ticketCreateSchema = ticketBaseSchema.refine((d) => d.arrivalAt > d.departureAt, {
+  message: '到达时间必须晚于出发时间',
+  path: ['arrivalAt'],
+});
 
 export type TicketCreateInput = z.infer<typeof ticketCreateSchema>;
 

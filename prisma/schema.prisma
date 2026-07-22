@@ -646,7 +646,32 @@ enum ActorType {
   USER
   GUEST_PORTAL
   DRIVER_PORTAL
+  MANAGER_PORTAL
   SYSTEM
+}
+
+// ============ Guest Manager Portal ============
+
+model GuestManagerToken {
+  id             String   @id @default(cuid())
+  meetingId      String
+  name           String
+  phone          String
+  tokenHash      String   @unique
+  scope          ManagerScope @default(ASSIGNED)
+  issuedAt       DateTime @default(now())
+  expiresAt      DateTime
+  revokedAt      DateTime?
+  lastAccessedAt DateTime?
+  accessCount    Int      @default(0)
+
+  @@index([meetingId])
+  @@map("guest_manager_tokens")
+}
+
+enum ManagerScope {
+  ASSIGNED
+  ALL
 }
 
 // ============ Notifications ============

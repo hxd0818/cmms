@@ -18,6 +18,8 @@ export const edgeAuthConfig: NextAuthConfig = {
         '/guest/',
         '/driver/',
         '/companion/',
+        '/manage/',
+        '/api/manage/',
       ];
 
       if (PUBLIC_PATHS.some((p) => pathname.startsWith(p))) {

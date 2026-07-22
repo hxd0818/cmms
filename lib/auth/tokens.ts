@@ -61,3 +61,25 @@ export async function verifyDriverToken(raw: string): Promise<{ transportOrderId
 
   return { transportOrderId: record.transportOrderId };
 }
+
+/**
+ * Verify a guest manager portal token. Returns token record if valid.
+ */
+export async function verifyManagerToken(raw: string) {
+  const hash = hashToken(raw);
+  const record = await prisma.guestManagerToken.findUnique({
+    where: { tokenHash: hash },
+  });
+  if (!record) return null;
+  if (record.revokedAt) return null;
+  if (record.expiresAt < new Date()) return null;
+
+  prisma.guestManagerToken
+    .update({
+      where: { id: record.id },
+      data: { lastAccessedAt: new Date(), accessCount: { increment: 1 } },
+    })
+    .catch(() => {});
+
+  return record;
+}
