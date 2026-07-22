@@ -799,7 +799,7 @@ function ShareLinkButton({
   }
 
   async function onCopy() {
-    await copyToClipboard();
+    await copyToClipboard(url);
     setCopied(true);
     setTimeout(() => setCopied(false), 2000);
   }

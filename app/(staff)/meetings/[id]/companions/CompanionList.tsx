@@ -101,7 +101,7 @@ export function CompanionList({ meetingId, assignments }: Props) {
                       title="分享接待任务链接"
                       onClick={async () => {
                         const url = window.location.origin + '/companion/' + a.companion.id;
-                        await copyToClipboard();
+                        await copyToClipboard(url);
                         toast.success('链接已复制：' + a.companion.name + ' 的接待任务');
                       }}
                     >

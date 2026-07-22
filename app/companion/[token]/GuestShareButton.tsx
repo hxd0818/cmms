@@ -21,7 +21,7 @@ export function GuestShareButton({ meetingGuestId }: { meetingGuestId: string })
       if (data.ok) {
         const fullUrl = window.location.origin + data.url;
         setUrl(fullUrl);
-        await copyToClipboard();
+        await copyToClipboard(fullUrl);
         setCopied(true);
         setTimeout(() => setCopied(false), 3000);
       }
