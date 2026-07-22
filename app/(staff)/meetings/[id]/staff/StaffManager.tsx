@@ -28,13 +28,26 @@ interface UserOption {
   role: string;
 }
 
+interface ManagerItem {
+  id: string;
+  name: string;
+  phone: string;
+  scope: string;
+  issuedAt: string;
+  expiresAt: string;
+  revokedAt: string | null;
+  accessCount: number;
+  lastAccessedAt: string | null;
+}
+
 interface Props {
   meetingId: string;
   staff: StaffItem[];
   users: UserOption[];
+  managers: ManagerItem[];
 }
 
-export function StaffManager({ meetingId, staff, users }: Props) {
+export function StaffManager({ meetingId, staff, users, managers }: Props) {
   const router = useRouter();
   const [showAdd, setShowAdd] = useState(false);
   const [showManager, setShowManager] = useState(false);
@@ -181,6 +194,61 @@ export function StaffManager({ meetingId, staff, users }: Props) {
           )}
         </div>
       </div>
+
+      {/* Guest manager tokens list */}
+      {managers.length > 0 && (
+        <div className="cmms-card overflow-hidden">
+          <div className="px-4 py-2.5 bg-stone-50 border-b">
+            <h3 className="text-sm font-semibold text-stone-700">嘉宾维护人员</h3>
+          </div>
+          <div className="divide-y divide-stone-100">
+            {managers.map((m) => (
+              <div key={m.id} className="flex items-center justify-between px-4 py-3">
+                <div className="flex items-center gap-3">
+                  <div className="w-8 h-8 rounded-full bg-stone-100 flex items-center justify-center text-xs font-bold text-stone-500">
+                    {m.name.charAt(0)}
+                  </div>
+                  <div>
+                    <p className="text-sm font-medium">
+                      {m.name}
+                      {m.revokedAt && <span className="text-xs text-red-400 ml-1">已吊销</span>}
+                    </p>
+                    <p className="text-xs text-stone-400">
+                      {m.phone}
+                      {' · '}
+                      {m.scope === 'ALL' ? '全部嘉宾' : '仅自己添加'}
+                      {m.accessCount > 0 && ' · 访问 ' + m.accessCount + ' 次'}
+                    </p>
+                  </div>
+                </div>
+                <div className="flex items-center gap-2">
+                  <Badge variant={m.scope === 'ALL' ? 'default' : 'secondary'} className="text-xs">
+                    {m.scope === 'ALL' ? '全权限' : '受限'}
+                  </Badge>
+                  {!m.revokedAt && (
+                    <button
+                      onClick={async () => {
+                        if (!confirm('确认吊销「' + m.name + '」的维护链接？')) return;
+                        const { revokeManagerToken } = await import('@/app/actions/guest-manager.actions');
+                        const r = await revokeManagerToken(m.id, meetingId);
+                        if (r.ok) {
+                          toast.success('已吊销');
+                          router.refresh();
+                        } else {
+                          toast.error('吊销失败');
+                        }
+                      }}
+                      className="text-xs text-red-400 hover:text-red-600 px-2 py-1 rounded hover:bg-red-50"
+                    >
+                      吊销
+                    </button>
+                  )}
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
     </div>
   );
 }
