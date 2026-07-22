@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import { Share2 } from 'lucide-react';
+import { copyToClipboard } from '@/lib/utils/clipboard';
 
 export function GuestShareButton({ meetingGuestId }: { meetingGuestId: string }) {
   const [url, setUrl] = useState('');
@@ -20,7 +21,7 @@ export function GuestShareButton({ meetingGuestId }: { meetingGuestId: string })
       if (data.ok) {
         const fullUrl = window.location.origin + data.url;
         setUrl(fullUrl);
-        await navigator.clipboard.writeText(fullUrl);
+        await copyToClipboard();
         setCopied(true);
         setTimeout(() => setCopied(false), 3000);
       }
@@ -33,8 +34,8 @@ export function GuestShareButton({ meetingGuestId }: { meetingGuestId: string })
   if (url) {
     return (
       <button
-        onClick={() => {
-          navigator.clipboard.writeText(url);
+        onClick={async () => {
+          await copyToClipboard(url);
           setCopied(true);
           setTimeout(() => setCopied(false), 3000);
         }}

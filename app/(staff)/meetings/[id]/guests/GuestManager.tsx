@@ -40,6 +40,7 @@ import { toast } from 'sonner';
 import { Car, Bed, UtensilsCrossed, Gift, UserCheck, Receipt } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { dict as staticDict } from '@/lib/shared/dictionary';
+import { copyToClipboard } from '@/lib/utils/clipboard';
 
 type MeetingGuestWithGuest = MeetingGuest & { guest: Guest };
 
@@ -798,7 +799,7 @@ function ShareLinkButton({
   }
 
   async function onCopy() {
-    await navigator.clipboard.writeText(url);
+    await copyToClipboard();
     setCopied(true);
     setTimeout(() => setCopied(false), 2000);
   }

@@ -9,6 +9,7 @@ import { Label } from '@/components/ui/label';
 import { updateCompanion, deleteCompanion } from '@/app/actions/companion.actions';
 import { toast } from 'sonner';
 import { Share2, Pencil, Trash2, Check, X } from 'lucide-react';
+import { copyToClipboard } from '@/lib/utils/clipboard';
 
 interface RosterItem {
   id: string;
@@ -75,10 +76,13 @@ export function CompanionRoster({ companions }: { companions: RosterItem[] }) {
                 )}
                 <button
                   onClick={async () => {
-                    await navigator.clipboard.writeText(
-                      window.location.origin + '/companion/' + c.id,
-                    );
-                    toast.success('已复制接待链接');
+                    const url = window.location.origin + '/companion/' + c.id;
+                    const ok = await copyToClipboard(url);
+                    if (ok) {
+                      toast.success('已复制接待链接');
+                    } else {
+                      toast.info('请手动复制：' + url);
+                    }
                   }}
                   className="text-stone-400 hover:text-stone-600 p-1.5 rounded hover:bg-stone-100"
                   title="分享"
